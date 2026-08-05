@@ -8,6 +8,7 @@ export default function Login() {
   const navigate = useNavigate();
   const [form, setForm] = useState(initialForm);
   const [setupRequired, setSetupRequired] = useState(false);
+  const [mode, setMode] = useState("login");
   const [ready, setReady] = useState(false);
   const [error, setError] = useState("");
   const [submitting, setSubmitting] = useState(false);
@@ -16,7 +17,11 @@ export default function Login() {
   useEffect(() => {
     let cancelled = false;
     fetch("/api/auth/setup-status", { credentials: "include" })
-      .then((response) => response.json())
+      .then(async (response) => {
+        const body = await response.json().catch(() => ({}));
+        if (!response.ok) throw new Error(body.error || "Máy chủ đăng nhập chưa sẵn sàng.");
+        return body;
+      })
       .then((body) => {
         if (!cancelled) setSetupRequired(Boolean(body.setupRequired));
       })
@@ -39,10 +44,8 @@ export default function Login() {
     setError("");
     setSubmitting(true);
     try {
-      const endpoint = setupRequired ? "/api/auth/bootstrap" : "/api/auth/login";
-      const payload = setupRequired
-        ? form
-        : { email: form.email, password: form.password };
+      const endpoint = setupRequired ? "/api/auth/bootstrap" : mode === "register" ? "/api/auth/register" : "/api/auth/login";
+      const payload = setupRequired || mode === "register" ? form : { email: form.email, password: form.password };
 
       const response = await fetch(endpoint, {
         method: "POST",
@@ -51,7 +54,7 @@ export default function Login() {
         body: JSON.stringify(payload),
       });
 
-      const body = await response.json();
+      const body = await response.json().catch(() => ({}));
       if (!response.ok) {
         throw new Error(body.errors?.[0] || body.error || "Không thể đăng nhập");
       }
@@ -71,18 +74,18 @@ export default function Login() {
         </Link>
 
         <p className="auth-eyebrow">BThander Workspace</p>
-        <h1>{setupRequired ? "Tạo tài khoản quản trị" : "Đăng nhập"}</h1>
+        <h1>{setupRequired ? "Tạo tài khoản quản trị" : mode === "register" ? "Đăng ký tài khoản" : "Đăng nhập"}</h1>
         <p className="auth-subtitle">
           {setupRequired
             ? "Thiết lập quản trị viên đầu tiên cho hệ thống."
-            : "Đăng nhập để quản lý dự án và yêu cầu hỗ trợ."}
+            : mode === "register" ? "Tạo tài khoản để theo dõi và xử lý các yêu cầu hỗ trợ." : "Đăng nhập để quản lý dự án và yêu cầu hỗ trợ."}
         </p>
 
         {!ready ? (
           <p className="auth-loading">Đang kiểm tra hệ thống...</p>
         ) : (
           <form onSubmit={submit} className="auth-form" noValidate>
-            {setupRequired && (
+            {(setupRequired || mode === "register") && (
               <label>
                 Họ và tên
                 <input
@@ -114,7 +117,7 @@ export default function Login() {
                   required
                   type={showPassword ? "text" : "password"}
                   minLength={10}
-                  autoComplete={setupRequired ? "new-password" : "current-password"}
+                  autoComplete={setupRequired || mode === "register" ? "new-password" : "current-password"}
                   value={form.password}
                   onChange={updateField("password")}
                   placeholder="••••••••••"
@@ -130,7 +133,7 @@ export default function Login() {
               </div>
             </label>
 
-            {setupRequired && (
+            {(setupRequired || mode === "register") && (
               <small>Mật khẩu cần tối thiểu 10 ký tự.</small>
             )}
 
@@ -139,10 +142,15 @@ export default function Login() {
             <button className="btn-primary" disabled={submitting}>
               {submitting
                 ? "Đang xử lý..."
-                : setupRequired
+                : setupRequired || mode === "register"
                 ? "Tạo tài khoản"
                 : "Đăng nhập"}
             </button>
+            {!setupRequired && (
+              <button className="auth-switch" type="button" onClick={() => { setMode((current) => current === "login" ? "register" : "login"); setError(""); }}>
+                {mode === "login" ? "Chưa có tài khoản? Đăng ký ngay" : "Đã có tài khoản? Đăng nhập"}
+              </button>
+            )}
           </form>
         )}
       </section>

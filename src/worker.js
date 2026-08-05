@@ -7,7 +7,7 @@ export default {
       return onRequest({ request, env, ctx });
     }
     const asset = await env.ASSETS.fetch(request);
-    if (asset.status === 404 && request.headers.get("accept")?.includes("text/html")) {
+    if (asset.status === 404) {
       return env.ASSETS.fetch(new Request(new URL("/", request.url), request));
     }
     return asset;
