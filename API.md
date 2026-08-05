@@ -1,6 +1,6 @@
-# Aurix API (Cloudflare Pages + D1)
+# Aurix API (Cloudflare Worker + D1)
 
-The backend runs as a Cloudflare Pages Function and stores data in the D1 database `app-db`.
+The backend runs in a Cloudflare Worker and stores data in the D1 database `app-db`.
 
 | Method | Endpoint | Purpose |
 | --- | --- | --- |
@@ -23,4 +23,4 @@ Project payload example:
 }
 ```
 
-All management routes require `x-admin-key`. Add an `ADMIN_API_KEY` secret under **Cloudflare Pages → aurix-landing → Settings → Variables and Secrets**. Do not put this key in the frontend or Git.
+All management routes require `x-admin-key`. Add an `ADMIN_API_KEY` secret under **Cloudflare Workers → bthander → Settings → Variables and Secrets**. Do not put this key in the frontend or Git.

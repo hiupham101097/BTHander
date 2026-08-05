@@ -1,6 +1,10 @@
 {
-  "name": "aurix-landing",
-  "pages_build_output_dir": "./dist",
+  "name": "bthander",
+  "main": "src/worker.js",
+  "assets": {
+    "directory": "./dist",
+    "binding": "ASSETS"
+  },
   "compatibility_date": "2026-08-05",
   "d1_databases": [
     {

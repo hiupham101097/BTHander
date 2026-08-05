@@ -7,9 +7,9 @@
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
-    "dev:api": "npx --yes wrangler@latest pages dev dist",
+    "dev:api": "npx --yes wrangler@latest dev",
     "lint": "eslint src --ext .js,.jsx",
-    "deploy:pages": "npx --yes wrangler@latest pages deploy dist --project-name=aurix-landing --branch=main"
+    "deploy:worker": "npm run build && npx --yes wrangler@latest deploy"
   },
   "dependencies": {
     "lucide-react": "^0.383.0",
