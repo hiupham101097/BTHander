@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import BrandLogo from "../components/ui/BrandLogo.jsx";
 
@@ -7,34 +7,10 @@ const initialForm = { name: "", email: "", password: "", confirmPassword: "" };
 export default function Login() {
   const navigate = useNavigate();
   const [form, setForm] = useState(initialForm);
-  const [setupRequired, setSetupRequired] = useState(false);
   const [mode, setMode] = useState("login"); // "login" | "register"
-  const [ready, setReady] = useState(false);
   const [error, setError] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
-
-  useEffect(() => {
-    let cancelled = false;
-    fetch("/api/auth/setup-status", { credentials: "include" })
-      .then(async (response) => {
-        const body = await response.json().catch(() => ({}));
-        if (!response.ok) throw new Error(body.error || "Máy chủ đăng nhập chưa sẵn sàng.");
-        return body;
-      })
-      .then((body) => {
-        if (!cancelled) setSetupRequired(Boolean(body.setupRequired));
-      })
-      .catch(() => {
-        if (!cancelled) setError("Không thể kết nối đến máy chủ đăng nhập.");
-      })
-      .finally(() => {
-        if (!cancelled) setReady(true);
-      });
-    return () => {
-      cancelled = true;
-    };
-  }, []);
 
   const updateField = (field) => (event) =>
     setForm((prev) => ({ ...prev, [field]: event.target.value }));
@@ -45,15 +21,12 @@ export default function Login() {
     setForm(initialForm);
   };
 
-  const isRegister = !setupRequired && mode === "register";
-  const isBootstrap = setupRequired;
-  const needsName = isBootstrap || isRegister;
-
+  const isRegister = mode === "register";
   const submit = async (event) => {
     event.preventDefault();
     setError("");
 
-    if (needsName && form.password !== form.confirmPassword) {
+    if (isRegister && form.password !== form.confirmPassword) {
       setError("Mật khẩu xác nhận không khớp.");
       return;
     }
@@ -63,10 +36,7 @@ export default function Login() {
       let endpoint = "/api/auth/login";
       let payload = { email: form.email, password: form.password };
 
-      if (isBootstrap) {
-        endpoint = "/api/auth/register";
-        payload = { name: form.name, email: form.email, password: form.password };
-      } else if (isRegister) {
+      if (isRegister) {
         endpoint = "/api/auth/register";
         payload = { name: form.name, email: form.email, password: form.password };
       }
@@ -90,21 +60,11 @@ export default function Login() {
     }
   };
 
-  const title = isBootstrap
-    ? "Đăng ký tài khoản quản trị"
-    : isRegister
-    ? "Đăng ký tài khoản"
-    : "Đăng nhập";
-
-  const subtitle = isBootstrap
-    ? "Tài khoản đầu tiên sẽ được lưu vào database với quyền quản trị viên."
-    : isRegister
-    ? "Tạo tài khoản mới để bắt đầu sử dụng."
-    : "Đăng nhập để quản lý dự án và yêu cầu hỗ trợ.";
-
-  const submitLabel = isBootstrap
-    ? "Đăng ký tài khoản"
-    : isRegister
+  const title = isRegister ? "Đăng ký người dùng" : "Đăng nhập";
+  const subtitle = isRegister
+    ? "Tạo tài khoản người dùng để bắt đầu sử dụng."
+    : "Đăng nhập để sử dụng các tính năng dành cho người dùng.";
+  const submitLabel = isRegister
     ? "Đăng ký"
     : "Đăng nhập";
 
@@ -119,12 +79,9 @@ export default function Login() {
         <h1>{title}</h1>
         <p className="auth-subtitle">{subtitle}</p>
 
-        {!ready ? (
-          <p className="auth-loading">Đang kiểm tra hệ thống...</p>
-        ) : (
-          <>
+        <>
             <form onSubmit={submit} className="auth-form" noValidate>
-              {needsName && (
+              {isRegister && (
                 <label>
                   Họ và tên
                   <input
@@ -156,7 +113,7 @@ export default function Login() {
                     required
                     type={showPassword ? "text" : "password"}
                     minLength={10}
-                    autoComplete={needsName ? "new-password" : "current-password"}
+                  autoComplete={isRegister ? "new-password" : "current-password"}
                     value={form.password}
                     onChange={updateField("password")}
                     placeholder="••••••••••"
@@ -172,7 +129,7 @@ export default function Login() {
                 </div>
               </label>
 
-              {needsName && (
+              {isRegister && (
                 <label>
                   Xác nhận mật khẩu
                   <input
@@ -187,7 +144,7 @@ export default function Login() {
                 </label>
               )}
 
-              {needsName && <small>Mật khẩu cần tối thiểu 10 ký tự.</small>}
+              {isRegister && <small>Mật khẩu cần tối thiểu 10 ký tự.</small>}
 
               {error && <p className="form-message form-error">{error}</p>}
 
@@ -196,8 +153,7 @@ export default function Login() {
               </button>
             </form>
 
-            {!isBootstrap && (
-              <p className="auth-switch">
+            <p className="auth-switch">
                 {mode === "login" ? (
                   <>
                     Chưa có tài khoản?{" "}
@@ -213,10 +169,8 @@ export default function Login() {
                     </button>
                   </>
                 )}
-              </p>
-            )}
-          </>
-        )}
+            </p>
+        </>
       </section>
     </main>
   );
