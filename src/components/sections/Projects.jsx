@@ -12,7 +12,8 @@ function formatPrice(price, currency) {
 export default function Projects() {
   const [projects, setProjects] = useState([]);
   const [state, setState] = useState("loading");
-
+ 
+  
   useEffect(() => {
     const controller = new AbortController();
     fetch(`${apiBaseUrl}/api/projects`, { signal: controller.signal })
