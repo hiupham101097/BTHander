@@ -16,7 +16,7 @@ export default function Hero() {
       </Reveal>
       <Reveal delay={160}>
         <p className="lead">
-          Aurix xây dựng phần cứng và nền tảng AI biên giúp nhà máy, lưới điện, cảng biển và nông trại
+          BThander xây dựng phần cứng và nền tảng AI biên giúp nhà máy, lưới điện, cảng biển và nông trại
           vận hành chính xác hơn — xử lý dữ liệu ngay tại chỗ, không phụ thuộc đường truyền.
         </p>
       </Reveal>

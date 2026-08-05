@@ -38,7 +38,7 @@ export default function Contact() {
           <div className="contact-copy">
             <SectionEyebrow label="Liên hệ" />
             <h2 className="section-title">Cùng đưa ý tưởng của bạn vào vận hành.</h2>
-            <p className="section-sub">Gửi nhu cầu của bạn, đội ngũ Aurix sẽ liên hệ để tư vấn giải pháp phù hợp.</p>
+            <p className="section-sub">Gửi nhu cầu của bạn, đội ngũ BThander sẽ liên hệ để tư vấn giải pháp phù hợp.</p>
             <div className="contact-note"><ChevronRight size={18} /> Phản hồi trong ngày làm việc.</div>
           </div>
         </Reveal>

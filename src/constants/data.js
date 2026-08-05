@@ -14,7 +14,7 @@ export const PROJECT_CATEGORIES = ["Sản xuất", "Năng lượng", "Logistics"
 
 export const PROJECTS = {
   "Sản xuất": {
-    icon: ScanEye, name: "AURIX VISION", tag: "Thị giác máy trong sản xuất",
+    icon: ScanEye, name: "BTHANDER VISION", tag: "Thị giác máy trong sản xuất",
     desc: "Giám sát dây chuyền lắp ráp linh kiện điện tử theo thời gian thực, phát hiện lỗi ở tốc độ 40 khung hình/giây.",
     metric: "Giảm 32% tỉ lệ lỗi sản phẩm", grad: "var(--g-violet-pink)",
   },
@@ -43,13 +43,13 @@ export const TEAM = [
 ];
 
 export const TRIAL_PRODUCTS = [
-  { icon: ScanEye, name: "Aurix Vision SDK", desc: "Bộ công cụ nhận diện lỗi qua camera công nghiệp, tích hợp vào dây chuyền có sẵn trong vài giờ.", perk: "Miễn phí 14 ngày" },
-  { icon: Cloud, name: "Aurix Cloud Sandbox", desc: "Môi trường huấn luyện và kiểm thử mô hình AI trên đám mây, không cần GPU riêng.", perk: "5 giờ tính toán / tháng" },
-  { icon: Boxes, name: "Aurix Configurator AR", desc: "Dựng cấu hình thiết bị IoT trong thực tế tăng cường trước khi đặt hàng lắp đặt.", perk: "Trải nghiệm trên trình duyệt" },
+  { icon: ScanEye, name: "BThander Vision SDK", desc: "Bộ công cụ nhận diện lỗi qua camera công nghiệp, tích hợp vào dây chuyền có sẵn trong vài giờ.", perk: "Miễn phí 14 ngày" },
+  { icon: Cloud, name: "BThander Cloud Sandbox", desc: "Môi trường huấn luyện và kiểm thử mô hình AI trên đám mây, không cần GPU riêng.", perk: "5 giờ tính toán / tháng" },
+  { icon: Boxes, name: "BThander Configurator AR", desc: "Dựng cấu hình thiết bị IoT trong thực tế tăng cường trước khi đặt hàng lắp đặt.", perk: "Trải nghiệm trên trình duyệt" },
 ];
 
 export const SALE_PRODUCTS = [
-  { icon: Cpu, name: "Aurix Edge Module X2", desc: "Board điện toán biên hỗ trợ suy luận AI thị giác tại chỗ, không phụ thuộc kết nối cloud.", specs: ["16 TOPS suy luận AI", "4 cổng camera MIPI-CSI", "Chống bụi/nước IP54"], price: "18.900.000₫" },
-  { icon: Wifi, name: "Aurix Sensor Hub", desc: "Bộ thu thập dữ liệu cảm biến công nghiệp, kết nối LoRaWAN tầm xa cho môi trường ngoài trời.", specs: ["Tầm phát 8km (line-of-sight)", "Pin dự phòng 6 tháng", "Tối đa 64 node/hub"], price: "6.400.000₫" },
-  { icon: ShieldCheck, name: "Aurix Cloud Pro", desc: "Gói dịch vụ đám mây cho giám sát, lưu trữ và cảnh báo tự động trên toàn bộ hệ thống Aurix.", specs: ["Lưu trữ 12 tháng dữ liệu", "SLA uptime 99.9%", "Hỗ trợ kỹ thuật 24/7"], price: "2.900.000₫ / tháng" },
+  { icon: Cpu, name: "BThander Edge Module X2", desc: "Board điện toán biên hỗ trợ suy luận AI thị giác tại chỗ, không phụ thuộc kết nối cloud.", specs: ["16 TOPS suy luận AI", "4 cổng camera MIPI-CSI", "Chống bụi/nước IP54"], price: "18.900.000₫" },
+  { icon: Wifi, name: "BThander Sensor Hub", desc: "Bộ thu thập dữ liệu cảm biến công nghiệp, kết nối LoRaWAN tầm xa cho môi trường ngoài trời.", specs: ["Tầm phát 8km (line-of-sight)", "Pin dự phòng 6 tháng", "Tối đa 64 node/hub"], price: "6.400.000₫" },
+  { icon: ShieldCheck, name: "BThander Cloud Pro", desc: "Gói dịch vụ đám mây cho giám sát, lưu trữ và cảnh báo tự động trên toàn bộ hệ thống BThander.", specs: ["Lưu trữ 12 tháng dữ liệu", "SLA uptime 99.9%", "Hỗ trợ kỹ thuật 24/7"], price: "2.900.000₫ / tháng" },
 ];

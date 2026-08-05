@@ -11,7 +11,7 @@ export default function Team() {
         <Reveal delay={60}><h2 className="section-title">Kỹ sư trước, người kể chuyện sau.</h2></Reveal>
         <Reveal delay={120}>
           <p className="section-sub">
-            Đội ngũ sáng lập từng vận hành dây chuyền sản xuất và hạ tầng mạng trước khi xây Aurix.
+            Đội ngũ sáng lập từng vận hành dây chuyền sản xuất và hạ tầng mạng trước khi xây BThander.
           </p>
         </Reveal>
         <div className="team-grid">

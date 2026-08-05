@@ -33,7 +33,7 @@ export default function Projects() {
       <div className="wrap">
         <Reveal><SectionEyebrow label="Dự án cốt lõi" /></Reveal>
         <Reveal delay={60}><h2 className="section-title">Các giải pháp được xây dựng cho vận hành thực tế.</h2></Reveal>
-        <Reveal delay={120}><p className="section-sub">Danh sách dự án được tải trực tiếp từ nền tảng Aurix.</p></Reveal>
+        <Reveal delay={120}><p className="section-sub">Danh sách dự án được tải trực tiếp từ nền tảng BThander.</p></Reveal>
 
         {state === "loading" && <p className="api-state">Đang tải dự án...</p>}
         {state === "error" && <p className="api-state api-state-error">Chưa thể tải dự án. Vui lòng thử lại sau.</p>}

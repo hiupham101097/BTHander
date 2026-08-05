@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { Menu, X } from "lucide-react";
+import BrandLogo from "../ui/BrandLogo.jsx";
 
 const NAV_ITEMS = [
   { href: "#projects", label: "Dự án" },
@@ -15,9 +16,7 @@ export default function Navbar() {
   return (
     <nav className="nav">
       <div className="wrap nav-inner">
-        <Link to="/" className="brand">
-          <span className="brand-dot" />AURIX
-        </Link>
+        <Link to="/" className="brand-link"><BrandLogo /></Link>
         <div className="nav-links">
           {NAV_ITEMS.map((item) => (
             <a key={item.href} href={item.href}>{item.label}</a>

@@ -14,7 +14,7 @@ export default function Products() {
         <Reveal delay={60}><h2 className="section-title">Dùng thử trước, triển khai thật sau.</h2></Reveal>
         <Reveal delay={120}>
           <p className="section-sub">
-            Trải nghiệm công nghệ Aurix miễn phí, hoặc trang bị phần cứng và dịch vụ đám mây cho hệ thống của bạn.
+            Trải nghiệm công nghệ BThander miễn phí, hoặc trang bị phần cứng và dịch vụ đám mây cho hệ thống của bạn.
           </p>
         </Reveal>
 
