@@ -46,6 +46,7 @@ export default function Projects() {
                 <div className="core-project-icon"><Database size={24} /></div>
                 <h3>{project.name}</h3>
                 <div className="project-languages"><Code2 size={15} /> {project.languages.join(" · ")}</div>
+                {project.description && <p className="project-description">{project.description}</p>}
                 <dl className="project-config">
                   {Object.entries(project.configuration).map(([key, value]) => (
                     <div key={key}><dt>{key}</dt><dd>{String(value)}</dd></div>

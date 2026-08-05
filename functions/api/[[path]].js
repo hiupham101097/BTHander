@@ -36,6 +36,7 @@ function projectErrors(input, partial = false) {
   if ((!partial || "name" in input) && (typeof input.name !== "string" || !input.name.trim())) errors.push("name is required");
   if ((!partial || "languages" in input) && (!Array.isArray(input.languages) || !input.languages.length || input.languages.some((item) => typeof item !== "string" || !item.trim()))) errors.push("languages must be a non-empty array of strings");
   if ((!partial || "configuration" in input) && (!input.configuration || Array.isArray(input.configuration) || typeof input.configuration !== "object")) errors.push("configuration must be an object");
+  if ("description" in input && (typeof input.description !== "string" || input.description.length > 1000)) errors.push("description must be a string up to 1000 characters");
   if ((!partial || "price" in input) && (typeof input.price !== "number" || !Number.isFinite(input.price) || input.price < 0)) errors.push("price must be a non-negative number");
   if ("currency" in input && (typeof input.currency !== "string" || !/^[A-Z]{3}$/.test(input.currency))) errors.push("currency must be a 3-letter uppercase code");
   return errors;
@@ -118,7 +119,7 @@ export async function onRequest({ request, env }) {
     if (method === "POST" && url.pathname === "/api/projects") {
       const input = await request.json(), errors = projectErrors(input);
       if (errors.length) return json({ errors }, 422);
-      const result = await env.DB.prepare("INSERT INTO projects (name,languages,configuration,price,currency) VALUES (?,?,?,?,?)").bind(input.name.trim(), JSON.stringify(input.languages), JSON.stringify(input.configuration), input.price, input.currency || "VND").run();
+      const result = await env.DB.prepare("INSERT INTO projects (name,description,languages,configuration,price,currency) VALUES (?,?,?,?,?,?)").bind(input.name.trim(), input.description?.trim() || null, JSON.stringify(input.languages), JSON.stringify(input.configuration), input.price, input.currency || "VND").run();
       return json({ data: projectFromRow(await env.DB.prepare("SELECT * FROM projects WHERE id=?").bind(result.meta.last_row_id).first()) }, 201);
     }
     if ((method === "PATCH" || method === "DELETE") && parts[1] === "projects" && parts[2]) {
@@ -129,7 +130,7 @@ export async function onRequest({ request, env }) {
       const current = await env.DB.prepare("SELECT * FROM projects WHERE id=?").bind(id).first();
       if (!current) return json({ error: "Project not found" }, 404);
       const merged = { ...projectFromRow(current), ...input };
-      await env.DB.prepare("UPDATE projects SET name=?,languages=?,configuration=?,price=?,currency=?,updated_at=CURRENT_TIMESTAMP WHERE id=?").bind(merged.name.trim(), JSON.stringify(merged.languages), JSON.stringify(merged.configuration), merged.price, merged.currency || "VND", id).run();
+      await env.DB.prepare("UPDATE projects SET name=?,description=?,languages=?,configuration=?,price=?,currency=?,updated_at=CURRENT_TIMESTAMP WHERE id=?").bind(merged.name.trim(), merged.description?.trim() || null, JSON.stringify(merged.languages), JSON.stringify(merged.configuration), merged.price, merged.currency || "VND", id).run();
       return json({ data: projectFromRow(await env.DB.prepare("SELECT * FROM projects WHERE id=?").bind(id).first()) });
     }
     return json({ error: "Route not found" }, 404);

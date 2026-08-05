@@ -16,6 +16,7 @@ Project payload example:
 ```json
 {
   "name": "Aurix Vision",
+  "description": "Tóm tắt ngắn về dự án.",
   "languages": ["JavaScript", "Python"],
   "configuration": { "hosting": "Cloudflare", "region": "APAC" },
   "price": 18900000,

@@ -127,6 +127,7 @@ a { color: inherit; }
 .core-project-card h3 { font: 700 20px 'Space Grotesk', sans-serif; margin: 18px 0 10px; }
 .core-project-icon { display: inline-flex; padding: 11px; border-radius: 12px; color: var(--violet); background: rgba(124,58,237,.1); }
 .project-languages { color: var(--pink); display: flex; align-items: center; gap: 7px; font-size: 13px; font-weight: 700; }
+.project-description { color: var(--ink-mid); font-size: 14px; line-height: 1.65; margin: 16px 0 0; }
 .project-config { border-top: 1px solid var(--line); margin: 19px 0; padding-top: 13px; }
 .project-config div { display: flex; justify-content: space-between; gap: 12px; padding: 5px 0; font-size: 13px; }
 .project-config dt { color: var(--ink-mid); text-transform: capitalize; }.project-config dd { margin: 0; text-align: right; font-weight: 600; }
