@@ -4,7 +4,7 @@ import Stats from "../components/sections/Stats.jsx";
 import Projects from "../components/sections/Projects.jsx";
 import Products from "../components/sections/Products.jsx";
 import Team from "../components/sections/Team.jsx";
-import CTA from "../components/sections/CTA.jsx";
+import Contact from "../components/sections/Contact.jsx";
 
 export default function Home() {
   return (
@@ -14,7 +14,7 @@ export default function Home() {
       <Projects />
       <Products />
       <Team />
-      <CTA />
+      <Contact />
     </>
   );
 }

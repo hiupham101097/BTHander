@@ -94,3 +94,25 @@ Thêm route mới chỉ cần 2 bước:
 - Toàn bộ nội dung mẫu (dự án, sản phẩm, đội ngũ, giá) nằm trong `src/constants/data.js`
   — chỉnh sửa trực tiếp file này để thay bằng thông tin thật.
 - Icon: `lucide-react`. Font: Sora (tiêu đề) + Inter (nội dung) qua Google Fonts.
+
+## Cloudflare Pages — Deploy
+
+Hướng dẫn nhanh để deploy site lên Cloudflare Pages bằng GitHub Actions.
+
+- Tạo một Cloudflare Pages project tên `aurix-landing` trong dashboard Cloudflare.
+- Tạo một API token (Permissions: *Pages:Edit* hoặc *All Pages*), và lấy `Account ID` từ dashboard.
+- Thêm 2 secret trong repository GitHub: `CF_PAGES_API_TOKEN` và `CF_ACCOUNT_ID`.
+
+Workflow CI nằm ở `.github/workflows/deploy-pages.yml` và sẽ:
+
+- Chạy `npm ci` rồi `npm run build`.
+- Đẩy thư mục `dist` lên Cloudflare Pages.
+
+Khi cần deploy thủ công từ máy local, bạn vẫn có thể build và preview:
+
+```bash
+npm run build
+npm run preview
+```
+
+Để deploy Pages từ máy local, chạy `npm run build` rồi `npm run deploy:pages`. Lệnh này dùng phiên đăng nhập Wrangler hiện có và đẩy thư mục `dist` lên project `aurix-landing`.

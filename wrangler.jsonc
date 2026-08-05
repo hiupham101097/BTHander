@@ -1,0 +1,13 @@
+{
+  "name": "aurix-landing",
+  "pages_build_output_dir": "./dist",
+  "compatibility_date": "2026-08-05",
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "app-db",
+      "database_id": "351a3f44-bb95-4748-b150-2025367aa148",
+      "migrations_dir": "migrations"
+    }
+  ]
+}
