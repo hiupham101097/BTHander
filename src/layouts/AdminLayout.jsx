@@ -1,6 +1,6 @@
 import React from "react";
 import { NavLink, Outlet, useNavigate } from "react-router-dom";
-import { ExternalLink, FolderKanban, LayoutDashboard, LogOut, Package, ShieldCheck, UserCircle, Users } from "lucide-react";
+import { ExternalLink, FolderKanban, LayoutDashboard, LogOut, Mail, Package, ShieldCheck, UserCircle, Users } from "lucide-react";
 import { useAuth } from "../context/AuthContext.jsx";
 import BrandLogo from "../components/ui/BrandLogo.jsx";
 
@@ -17,6 +17,7 @@ export default function AdminLayout() {
         {isAdmin && <NavLink to="/admin/products" className={({ isActive }) => `admin-nav-link ${isActive ? "active" : ""}`}><Package size={17} />Sản phẩm</NavLink>}
         {isAdmin && <NavLink to="/admin/team" className={({ isActive }) => `admin-nav-link ${isActive ? "active" : ""}`}><Users size={17} />Đội ngũ</NavLink>}
         {isAdmin && <NavLink to="/admin/users" className={({ isActive }) => `admin-nav-link ${isActive ? "active" : ""}`}><ShieldCheck size={17} />Tài khoản</NavLink>}
+        {isAdmin && <NavLink to="/admin/contacts" className={({ isActive }) => `admin-nav-link ${isActive ? "active" : ""}`}><Mail size={17} />Thông tin liên hệ</NavLink>}
         <NavLink to="/admin/profile" className={({ isActive }) => `admin-nav-link ${isActive ? "active" : ""}`}><UserCircle size={17} />Hồ sơ của tôi</NavLink>
       </nav>
       <a href="/" className="admin-nav-link admin-back-site"><ExternalLink size={17} />Xem trang chủ</a>

@@ -12,6 +12,7 @@ import ProjectsManager from "./pages/admin/ProjectsManager.jsx";
 import Profile from "./pages/admin/Profile.jsx";
 import CatalogManager from "./pages/admin/CatalogManager.jsx";
 import UsersManager from "./pages/admin/UsersManager.jsx";
+import ContactsManager from "./pages/admin/ContactsManager.jsx";
 
 export default function App() {
   return (
@@ -28,6 +29,7 @@ export default function App() {
           <Route path="products" element={<ProtectedRoute adminOnly><CatalogManager kind="products" /></ProtectedRoute>} />
           <Route path="team" element={<ProtectedRoute adminOnly><CatalogManager kind="team" /></ProtectedRoute>} />
           <Route path="users" element={<ProtectedRoute adminOnly><UsersManager /></ProtectedRoute>} />
+          <Route path="contacts" element={<ProtectedRoute adminOnly><ContactsManager /></ProtectedRoute>} />
           <Route path="profile" element={<Profile />} />
         </Route>
       </Routes>

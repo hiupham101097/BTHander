@@ -1,0 +1,10 @@
+import React, { useEffect, useState } from "react";
+import { Mail } from "lucide-react";
+
+export default function ContactsManager() {
+  const [contacts, setContacts] = useState([]); const [error, setError] = useState("");
+  const load = () => fetch("/api/support", { credentials: "include" }).then(async (response) => { const body = await response.json(); if (!response.ok) throw new Error(body.error); setContacts(body.data); }).catch(() => setError("Không tải được thông tin liên hệ."));
+  useEffect(() => { load(); }, []);
+  const updateStatus = async (id, status) => { const response = await fetch(`/api/support/${id}`, { method: "PATCH", credentials: "include", headers: { "content-type": "application/json" }, body: JSON.stringify({ status }) }); if (!response.ok) { setError("Không thể cập nhật trạng thái."); return; } load(); };
+  return <div><div className="admin-toolbar"><h2 className="admin-section-title">Thông tin liên hệ ({contacts.length})</h2></div><p className="admin-note">Các yêu cầu khách hàng gửi từ form liên hệ trên website.</p>{error && <p className="form-error">{error}</p>}<div className="admin-table-wrap"><table className="admin-table"><thead><tr><th>Khách hàng</th><th>Liên hệ</th><th>Nội dung</th><th>Trạng thái</th></tr></thead><tbody>{contacts.map((contact) => <tr key={contact.id}><td><div className="admin-table-item"><span className="admin-table-icon"><Mail size={15} /></span><strong>{contact.name}</strong></div></td><td>{contact.email}{contact.phone && <div className="admin-table-sub">{contact.phone}</div>}</td><td className="admin-table-sub">{contact.message}</td><td><select className="admin-select" value={contact.status} onChange={(event) => updateStatus(contact.id, event.target.value)}><option value="new">Mới</option><option value="in_progress">Đang xử lý</option><option value="resolved">Đã xử lý</option></select></td></tr>)}{!contacts.length && <tr><td colSpan="4" className="admin-table-empty">Chưa có thông tin liên hệ.</td></tr>}</tbody></table></div></div>;
+}

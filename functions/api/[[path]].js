@@ -59,6 +59,7 @@ function teamErrors(input, partial = false) {
   if ((!partial || "title" in input) && (typeof input.title !== "string" || !input.title.trim())) errors.push("title is required");
   if ("bio" in input && (typeof input.bio !== "string" || input.bio.length > 1000)) errors.push("bio must be a string up to 1000 characters");
   if ("avatar_url" in input && input.avatar_url !== null && typeof input.avatar_url !== "string") errors.push("avatar_url must be a string");
+  if ("contact_info" in input && input.contact_info !== null && (typeof input.contact_info !== "string" || input.contact_info.length > 300)) errors.push("contact_info must be a string up to 300 characters");
   if ("sort_order" in input && (!Number.isInteger(input.sort_order) || input.sort_order < 0)) errors.push("sort_order must be a non-negative integer");
   if ("status" in input && !["active", "inactive"].includes(input.status)) errors.push("status must be active or inactive");
   return errors;
@@ -199,7 +200,7 @@ export async function onRequest({ request, env }) {
     }
     if (method === "POST" && url.pathname === "/api/team") {
       const input = await request.json(), errors = teamErrors(input); if (errors.length) return json({ errors }, 422);
-      const result = await env.DB.prepare("INSERT INTO team_members (name,title,bio,avatar_url,sort_order,status) VALUES (?,?,?,?,?,?)").bind(input.name.trim(), input.title.trim(), input.bio?.trim() || null, input.avatar_url?.trim() || null, input.sort_order || 0, input.status || "active").run();
+      const result = await env.DB.prepare("INSERT INTO team_members (name,title,bio,avatar_url,contact_info,sort_order,status) VALUES (?,?,?,?,?,?,?)").bind(input.name.trim(), input.title.trim(), input.bio?.trim() || null, input.avatar_url?.trim() || null, input.contact_info?.trim() || null, input.sort_order || 0, input.status || "active").run();
       return json({ data: await env.DB.prepare("SELECT * FROM team_members WHERE id=?").bind(result.meta.last_row_id).first() }, 201);
     }
     if ((method === "PATCH" || method === "DELETE") && parts[1] === "team" && parts[2]) {
@@ -208,7 +209,7 @@ export async function onRequest({ request, env }) {
       const input = await request.json(), errors = teamErrors(input, true); if (errors.length || !Object.keys(input).length) return json({ errors: errors.length ? errors : ["At least one field is required"] }, 422);
       const current = await env.DB.prepare("SELECT * FROM team_members WHERE id=?").bind(id).first(); if (!current) return json({ error: "Team member not found" }, 404);
       const merged = { ...current, ...input };
-      await env.DB.prepare("UPDATE team_members SET name=?,title=?,bio=?,avatar_url=?,sort_order=?,status=?,updated_at=CURRENT_TIMESTAMP WHERE id=?").bind(merged.name.trim(), merged.title.trim(), merged.bio?.trim() || null, merged.avatar_url?.trim() || null, merged.sort_order, merged.status, id).run();
+      await env.DB.prepare("UPDATE team_members SET name=?,title=?,bio=?,avatar_url=?,contact_info=?,sort_order=?,status=?,updated_at=CURRENT_TIMESTAMP WHERE id=?").bind(merged.name.trim(), merged.title.trim(), merged.bio?.trim() || null, merged.avatar_url?.trim() || null, merged.contact_info?.trim() || null, merged.sort_order, merged.status, id).run();
       return json({ data: await env.DB.prepare("SELECT * FROM team_members WHERE id=?").bind(id).first() });
     }
     if (method === "GET" && url.pathname === "/api/accounts") return json({ data: (await env.DB.prepare("SELECT id,name,email,role,created_at,updated_at FROM accounts ORDER BY id DESC").all()).results });
