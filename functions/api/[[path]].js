@@ -65,6 +65,20 @@ async function authRoutes(request, env, url) {
     const result = await env.DB.prepare("INSERT INTO accounts (name,email,password_hash,password_salt,role) VALUES (?,?,?,?, 'admin')").bind(input.name.trim(), input.email.trim().toLowerCase(), hash, salt).run();
     return createSession(env, result.meta.last_row_id, 201);
   }
+  if (method === "POST" && url.pathname === "/api/auth/register") {
+    const input = await request.json(), errors = accountErrors(input);
+    if (errors.length) return json({ errors }, 422);
+    const existing = await env.DB.prepare("SELECT COUNT(*) AS count FROM accounts").first();
+    const salt = randomHex(16), hash = await passwordHash(input.password, salt);
+    try {
+      const role = Number(existing.count) === 0 ? "admin" : "staff";
+      const result = await env.DB.prepare("INSERT INTO accounts (name,email,password_hash,password_salt,role) VALUES (?,?,?,?,?)").bind(input.name.trim(), input.email.trim().toLowerCase(), hash, salt, role).run();
+      return createSession(env, result.meta.last_row_id, 201);
+    } catch (error) {
+      if (String(error).includes("UNIQUE")) return json({ error: "Email này đã được đăng ký" }, 409);
+      throw error;
+    }
+  }
   if (method === "POST" && url.pathname === "/api/auth/login") {
     const input = await request.json();
     if (typeof input.email !== "string" || typeof input.password !== "string") return json({ error: "email and password are required" }, 422);

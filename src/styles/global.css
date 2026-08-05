@@ -187,6 +187,7 @@ a { color: inherit; }
 .auth-eyebrow { margin: 28px 0 8px; color: var(--violet); font-size: 12px; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; }
 .auth-card h1 { margin: 0 0 10px; font: 700 30px/1.15 'Space Grotesk', sans-serif; letter-spacing: -.04em; }.auth-card > p:not(.auth-eyebrow) { color: var(--ink-mid); line-height: 1.6; }
 .auth-form { display: grid; gap: 16px; margin-top: 26px; }.auth-form label { display: grid; gap: 7px; font-size: 13px; font-weight: 700; }.auth-form input { font: inherit; padding: 12px; border: 1px solid var(--line); border-radius: 10px; outline: none; }.auth-form input:focus { border-color: var(--violet); box-shadow: 0 0 0 3px rgba(124,58,237,.12); }.auth-form small { color: var(--ink-mid); margin-top: -8px; }
+.auth-switch { border: 0; background: transparent; color: var(--violet); font: 700 13px 'Manrope', sans-serif; cursor: pointer; padding: 4px; }
 
 /* ---------- FOOTER ---------- */
 .footer { border-top: 1px solid var(--line); padding: 40px 0; }
