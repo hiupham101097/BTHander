@@ -1,0 +1,8 @@
+import React, { useEffect, useState } from "react";
+import { FolderKanban } from "lucide-react";
+
+export default function ProjectsManager() {
+  const [projects, setProjects] = useState([]); const [error, setError] = useState("");
+  useEffect(() => { fetch("/api/projects").then(async (r) => { const b = await r.json(); if (!r.ok) throw new Error(b.error); setProjects(b.data); }).catch(() => setError("Không tải được danh sách dự án.")); }, []);
+  return <div><div className="admin-toolbar"><h2 className="admin-section-title">Quản lý dự án ({projects.length})</h2></div><p className="admin-note">Giao diện quản trị đã được đưa vào. Chức năng thêm/sửa/xóa sẽ dùng API dự án hiện có ở bước tiếp theo.</p>{error ? <p className="form-error">{error}</p> : <div className="admin-table-wrap"><table className="admin-table"><thead><tr><th>Dự án</th><th>Ngôn ngữ</th><th>Cấu hình</th><th>Giá</th></tr></thead><tbody>{projects.map((project) => <tr key={project.id}><td><div className="admin-table-item"><span className="admin-table-icon"><FolderKanban size={15} /></span><div><div className="admin-table-name">{project.name}</div><div className="admin-table-sub">{project.description || "Chưa có mô tả"}</div></div></div></td><td>{project.languages?.join(", ")}</td><td>{Object.entries(project.configuration || {}).map(([key, value]) => `${key}: ${value}`).join(" · ") || "–"}</td><td>{new Intl.NumberFormat("vi-VN", { style: "currency", currency: project.currency || "VND", maximumFractionDigits: 0 }).format(project.price)}</td></tr>)}{!projects.length && <tr><td colSpan="4" className="admin-table-empty">Chưa có dự án nào.</td></tr>}</tbody></table></div>}</div>;
+}

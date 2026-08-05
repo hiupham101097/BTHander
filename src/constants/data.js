@@ -11,10 +11,10 @@ export const STATS = [
 ];
 
 export const TEAM = [
-  { name: "Ngô Minh Khôi", role: "Đồng sáng lập & Product Lead", init: "MK", grad: "var(--g-violet-pink)" },
-  { name: "Trần Bảo Anh", role: "Kỹ sư phần mềm", init: "BA", grad: "var(--g-cyan-violet)" },
+  { name: "Phạm Minh Hiếu", role: "Đồng sáng lập & Product Lead", init: "MK", grad: "var(--g-violet-pink)" },
+  { name: "Phạm Văn Bình", role: "Kỹ sư phần mềm", init: "BA", grad: "var(--g-cyan-violet)" },
   { name: "Lê Thu Hà", role: "UI/UX Designer", init: "TH", grad: "var(--g-amber-pink)" },
-  { name: "Phạm Đức Long", role: "Kỹ sư thiết kế cơ khí", init: "DL", grad: "var(--g-cyan-amber)" },
+  { name: "Phạm Minh Hiệp", role: "Kỹ sư thiết kế cơ khí", init: "DL", grad: "var(--g-cyan-amber)" },
 ];
 
 export const TRIAL_PRODUCTS = [

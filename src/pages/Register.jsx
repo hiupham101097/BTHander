@@ -20,7 +20,7 @@ export default function Register() {
       const response = await fetch("/api/auth/register", { method: "POST", credentials: "include", headers: { "content-type": "application/json" }, body: JSON.stringify({ name: form.name, email: form.email, password: form.password }) });
       const body = await response.json().catch(() => ({}));
       if (!response.ok) throw new Error(body.errors?.[0] || body.error || "Không thể đăng ký");
-      navigate("/");
+      navigate("/admin/profile");
     } catch (requestError) { setError(requestError.message); } finally { setSubmitting(false); }
   };
 

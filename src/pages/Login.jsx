@@ -16,7 +16,7 @@ export default function Login() {
       const response = await fetch("/api/auth/login", { method: "POST", credentials: "include", headers: { "content-type": "application/json" }, body: JSON.stringify({ email, password }) });
       const body = await response.json().catch(() => ({}));
       if (!response.ok) throw new Error(body.error || "Không thể đăng nhập");
-      navigate("/");
+      navigate("/admin");
     } catch (requestError) { setError(requestError.message); } finally { setSubmitting(false); }
   };
 
