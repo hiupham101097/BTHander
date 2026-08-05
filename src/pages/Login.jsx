@@ -115,7 +115,7 @@ export default function Login() {
           <BrandLogo />
         </Link>
 
-        <p className="auth-eyebrow">BThander Workspace</p>
+        <p className="auth-eyebrow">BThander · Brave Trust Hander</p>
         <h1>{title}</h1>
         <p className="auth-subtitle">{subtitle}</p>
 

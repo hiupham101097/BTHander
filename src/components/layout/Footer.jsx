@@ -8,7 +8,7 @@ export default function Footer() {
       <div className="wrap footer-inner">
         <div className="footer-brand">
           <BrandLogo compact />
-          <span>© {new Date().getFullYear()} BThander — nền tảng số cho vận hành thực tế.</span>
+          <span>© {new Date().getFullYear()} BThander · Brave Trust Hander — phần mềm và thiết kế kỹ thuật.</span>
         </div>
         <div className="footer-social">
           <a href="#"><Github size={18} /></a>
