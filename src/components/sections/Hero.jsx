@@ -16,7 +16,7 @@ export default function Hero() {
       </Reveal>
       <Reveal delay={160}>
         <p className="lead">
-          Brave Trust Hander triển ứng dụng di động, web app, landing page, dự án freelance và thiết kế bản vẽ chế tạo máy — từ ý tưởng ban đầu đến sản phẩm sẵn sàng vận hành.
+          Brave Trust Hander phát triển ứng dụng di động, web app, landing page, dự án freelance và thiết kế bản vẽ chế tạo máy — từ ý tưởng ban đầu đến sản phẩm sẵn sàng vận hành.
         </p>
       </Reveal>
       <Reveal delay={240}>
