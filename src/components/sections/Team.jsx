@@ -11,7 +11,7 @@ export default function Team() {
         <Reveal delay={60}><h2 className="section-title">Hiểu công nghệ, sát nhu cầu triển khai.</h2></Reveal>
         <Reveal delay={120}>
           <p className="section-sub">
-            BThander quy tụ kỹ sư phần mềm, thiết kế sản phẩm và kỹ sư cơ khí để giải quyết trọn vẹn các bài toán thực tế.
+            Brave Trust Hander quy tụ kỹ sư phần mềm, thiết kế sản phẩm và kỹ sư cơ khí để giải quyết trọn vẹn các bài toán thực tế.
           </p>
         </Reveal>
         <div className="team-grid">

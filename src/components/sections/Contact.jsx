@@ -38,7 +38,7 @@ export default function Contact() {
           <div className="contact-copy">
             <SectionEyebrow label="Liên hệ" />
             <h2 className="section-title">Cùng bắt đầu dự án của bạn.</h2>
-            <p className="section-sub">Cho chúng tôi biết mục tiêu, loại sản phẩm và thời gian dự kiến. BThander sẽ đề xuất phương án phù hợp.</p>
+            <p className="section-sub">Cho chúng tôi biết mục tiêu, loại sản phẩm và thời gian dự kiến. Brave Trust Hander sẽ đề xuất phương án phù hợp.</p>
             <div className="contact-note"><ChevronRight size={18} /> Phản hồi trong ngày làm việc.</div>
           </div>
         </Reveal>

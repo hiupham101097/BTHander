@@ -4,7 +4,7 @@ INSERT INTO projects (name, description, languages, configuration, price, curren
 VALUES
   (
     'SPACE BLAST',
-    'Game hành động không gian do BThander phát triển như một dự án cá nhân.',
+    'Game hành động không gian do Brave Trust Hander phát triển như một dự án cá nhân.',
     '["Game di động"]',
     '{"Loại":"Game","Mô hình":"Dự án cá nhân"}',
     0,
