@@ -10,21 +10,21 @@ export default function Products() {
   return (
     <section className="section" id="products">
       <div className="wrap">
-        <Reveal><SectionEyebrow label="Sản phẩm" /></Reveal>
-        <Reveal delay={60}><h2 className="section-title">Dùng thử trước, triển khai thật sau.</h2></Reveal>
+        <Reveal><SectionEyebrow label="Dịch vụ" /></Reveal>
+        <Reveal delay={60}><h2 className="section-title">Một đội ngũ cho sản phẩm số và bài toán kỹ thuật.</h2></Reveal>
         <Reveal delay={120}>
           <p className="section-sub">
-            Trải nghiệm công nghệ BThander miễn phí, hoặc trang bị phần cứng và dịch vụ đám mây cho hệ thống của bạn.
+            Chúng tôi nhận dự án theo từng giai đoạn — từ thiết kế, phát triển đến bàn giao và đồng hành vận hành.
           </p>
         </Reveal>
 
         <Reveal delay={160}>
           <div className="tab-row">
             <button className={`tab-btn ${prodTab === "trial" ? "active" : ""}`} onClick={() => setProdTab("trial")}>
-              Trải nghiệm miễn phí
+              Sản phẩm số
             </button>
             <button className={`tab-btn ${prodTab === "buy" ? "active" : ""}`} onClick={() => setProdTab("buy")}>
-              Sản phẩm bán
+              Kỹ thuật & freelance
             </button>
           </div>
         </Reveal>
@@ -41,7 +41,7 @@ export default function Products() {
                   <p className="prod-desc">{p.desc}</p>
                   <div className="prod-footer">
                     <span className="prod-perk">{p.perk}</span>
-                    <button className="prod-link">Dùng thử <ArrowUpRight size={14} /></button>
+                    <a className="prod-link" href="#contact">Trao đổi <ArrowUpRight size={14} /></a>
                   </div>
                 </div>
               </Reveal>
@@ -62,7 +62,7 @@ export default function Products() {
                   </ul>
                   <div className="prod-footer">
                     <span className="prod-price">{p.price}</span>
-                    <button className="prod-link">Mua ngay <ArrowUpRight size={14} /></button>
+                    <a className="prod-link" href="#contact">Nhận báo giá <ArrowUpRight size={14} /></a>
                   </div>
                 </div>
               </Reveal>

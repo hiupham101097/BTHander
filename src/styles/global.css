@@ -72,7 +72,7 @@ a { color: inherit; }
 .h1 .accent { background: var(--g-violet-pink); -webkit-background-clip: text; background-clip: text; color: transparent; }
 .lead { color: var(--ink-mid); font-size: 18px; line-height: 1.7; max-width: 560px; }
 .hero-actions { display: flex; flex-wrap: wrap; gap: 14px; justify-content: center; margin-top: 8px; }
-.btn-primary { background: var(--g-violet-pink); color: #fff; font-weight: 600; font-size: 15px; padding: 15px 26px; border: none; border-radius: 999px; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; transition: transform .2s, box-shadow .2s; }
+.btn-primary { background: var(--g-violet-pink); color: #fff; font-weight: 600; font-size: 15px; padding: 15px 26px; border: none; border-radius: 999px; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; transition: transform .2s, box-shadow .2s; text-decoration: none; }
 .btn-primary:hover { transform: translateY(-2px) scale(1.02); box-shadow: 0 12px 30px rgba(124,58,237,0.32); }
 .btn-ghost { border: 1.5px solid var(--line); color: var(--ink); background: #fff; font-size: 15px; font-weight: 500; padding: 15px 26px; border-radius: 999px; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; transition: border-color .2s, transform .2s; }
 .btn-ghost:hover { border-color: var(--violet); transform: translateY(-2px); }
@@ -146,7 +146,7 @@ a { color: inherit; }
 .prod-footer { display: flex; align-items: center; justify-content: space-between; border-top: 1px solid var(--line); padding-top: 16px; }
 .prod-price { color: var(--violet); font-weight: 800; font-size: 15px; }
 .prod-perk { color: var(--cyan); font-weight: 700; font-size: 12.5px; }
-.prod-link { display: flex; align-items: center; gap: 4px; color: var(--ink); font-size: 13px; font-weight: 600; background: none; border: none; cursor: pointer; }
+.prod-link { display: flex; align-items: center; gap: 4px; color: var(--ink); font-size: 13px; font-weight: 600; background: none; border: none; cursor: pointer; text-decoration: none; }
 .prod-link:hover { color: var(--violet); }
 
 /* ---------- TEAM ---------- */

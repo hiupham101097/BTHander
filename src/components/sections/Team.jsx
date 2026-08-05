@@ -8,10 +8,10 @@ export default function Team() {
     <section className="section" id="team">
       <div className="wrap">
         <Reveal><SectionEyebrow label="Đội ngũ" /></Reveal>
-        <Reveal delay={60}><h2 className="section-title">Kỹ sư trước, người kể chuyện sau.</h2></Reveal>
+        <Reveal delay={60}><h2 className="section-title">Hiểu công nghệ, sát nhu cầu triển khai.</h2></Reveal>
         <Reveal delay={120}>
           <p className="section-sub">
-            Đội ngũ sáng lập từng vận hành dây chuyền sản xuất và hạ tầng mạng trước khi xây BThander.
+            BThander quy tụ kỹ sư phần mềm, thiết kế sản phẩm và kỹ sư cơ khí để giải quyết trọn vẹn các bài toán thực tế.
           </p>
         </Reveal>
         <div className="team-grid">

@@ -5,9 +5,10 @@ import BrandLogo from "../ui/BrandLogo.jsx";
 
 const NAV_ITEMS = [
   { href: "#projects", label: "Dự án" },
-  { href: "#achievements", label: "Thành tựu" },
-  { href: "#products", label: "Sản phẩm" },
+  { href: "#achievements", label: "Năng lực" },
+  { href: "#products", label: "Dịch vụ" },
   { href: "#team", label: "Đội ngũ" },
+  { href: "#contact", label: "Liên hệ" },
 ];
 
 export default function Navbar() {

@@ -6,30 +6,29 @@ export default function Hero() {
   return (
     <header className="wrap hero">
       <Reveal>
-        <div className="kicker"><Sparkles size={14} /> Điện toán biên cho công nghiệp</div>
+        <div className="kicker"><Sparkles size={14} /> Công nghệ, thiết kế và chế tạo</div>
       </Reveal>
       <Reveal delay={80}>
         <h1 className="h1">
-          Đưa trí tuệ nhân tạo ra khỏi phòng lab,{" "}
-          <span className="accent">vào tận hiện trường.</span>
+          Biến ý tưởng thành sản phẩm số{ " " }
+          <span className="accent">và giải pháp kỹ thuật thực tế.</span>
         </h1>
       </Reveal>
       <Reveal delay={160}>
         <p className="lead">
-          BThander xây dựng phần cứng và nền tảng AI biên giúp nhà máy, lưới điện, cảng biển và nông trại
-          vận hành chính xác hơn — xử lý dữ liệu ngay tại chỗ, không phụ thuộc đường truyền.
+          BThander nhận phát triển ứng dụng di động, web app, landing page, dự án freelance và thiết kế bản vẽ chế tạo máy — từ ý tưởng ban đầu đến sản phẩm sẵn sàng vận hành.
         </p>
       </Reveal>
       <Reveal delay={240}>
         <div className="hero-actions">
-          <button className="btn-primary">Dùng thử sản phẩm <ChevronRight size={16} /></button>
-          <button className="btn-ghost">Xem dự án đã triển khai</button>
+          <a className="btn-primary" href="#contact">Nhận tư vấn <ChevronRight size={16} /></a>
+          <a className="btn-ghost" href="#projects">Xem dự án</a>
         </div>
       </Reveal>
       <Reveal delay={320} className="hero-visual">
         <div className="orbit orbit-1"><span className="orbit-node" /></div>
         <div className="orbit orbit-2"><span className="orbit-node" /></div>
-        <div className="hero-visual-label">3.500+ thiết bị đang hoạt động</div>
+        <div className="hero-visual-label">Digital products · Engineering design</div>
       </Reveal>
     </header>
   );

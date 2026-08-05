@@ -1,55 +1,30 @@
 import {
-  Radio, Ship, Sprout, ScanEye, Cloud, Boxes, Cpu, Wifi, ShieldCheck,
-  Rocket, Users, Trophy, Zap,
+  Code2, LayoutTemplate, MonitorSmartphone, PenTool, Smartphone,
+  Users, Wrench, Zap,
 } from "lucide-react";
 
 export const STATS = [
-  { icon: Rocket, value: "120+", label: "Dự án đã triển khai" },
-  { icon: Users, value: "3.500+", label: "Khách hàng doanh nghiệp" },
-  { icon: Trophy, value: "48", label: "Bằng sáng chế đã cấp" },
-  { icon: Zap, value: "99.98%", label: "Uptime hệ thống" },
+  { icon: Code2, value: "50+", label: "Sản phẩm số đã triển khai" },
+  { icon: Users, value: "30+", label: "Khách hàng và đối tác" },
+  { icon: Wrench, value: "15+", label: "Dự án thiết kế kỹ thuật" },
+  { icon: Zap, value: "Nhanh", label: "Quy trình làm việc linh hoạt" },
 ];
 
-export const PROJECT_CATEGORIES = ["Sản xuất", "Năng lượng", "Logistics", "Nông nghiệp"];
-
-export const PROJECTS = {
-  "Sản xuất": {
-    icon: ScanEye, name: "BTHANDER VISION", tag: "Thị giác máy trong sản xuất",
-    desc: "Giám sát dây chuyền lắp ráp linh kiện điện tử theo thời gian thực, phát hiện lỗi ở tốc độ 40 khung hình/giây.",
-    metric: "Giảm 32% tỉ lệ lỗi sản phẩm", grad: "var(--g-violet-pink)",
-  },
-  "Năng lượng": {
-    icon: Radio, name: "GRIDSENSE", tag: "Mạng cảm biến lưới điện",
-    desc: "Hệ thống cảm biến IoT phân tán cảnh báo sự cố quá tải và rò rỉ điện áp trên lưới trung thế.",
-    metric: "Triển khai tại 12 tỉnh thành", grad: "var(--g-cyan-violet)",
-  },
-  "Logistics": {
-    icon: Ship, name: "PORTFLOW", tag: "Tối ưu vận hành cảng biển",
-    desc: "Mô hình dự đoán luồng container giúp điều phối cầu cảng và giảm thời gian tàu chờ neo đậu.",
-    metric: "Giảm 18% thời gian chờ tàu", grad: "var(--g-amber-pink)",
-  },
-  "Nông nghiệp": {
-    icon: Sprout, name: "AGROPULSE", tag: "Canh tác chính xác",
-    desc: "Nền tảng phân tích ảnh vệ tinh kết hợp cảm biến đất, đưa ra khuyến nghị tưới tiêu theo từng lô đất.",
-    metric: "4.200 ha canh tác được theo dõi", grad: "var(--g-cyan-amber)",
-  },
-};
-
 export const TEAM = [
-  { name: "Ngô Minh Khôi", role: "Nhà sáng lập & CEO", init: "MK", grad: "var(--g-violet-pink)" },
-  { name: "Trần Bảo Anh", role: "Giám đốc Công nghệ", init: "BA", grad: "var(--g-cyan-violet)" },
-  { name: "Lê Thu Hà", role: "Trưởng phòng AI Research", init: "TH", grad: "var(--g-amber-pink)" },
-  { name: "Phạm Đức Long", role: "Trưởng phòng Phần cứng", init: "DL", grad: "var(--g-cyan-amber)" },
+  { name: "Ngô Minh Khôi", role: "Đồng sáng lập & Product Lead", init: "MK", grad: "var(--g-violet-pink)" },
+  { name: "Trần Bảo Anh", role: "Kỹ sư phần mềm", init: "BA", grad: "var(--g-cyan-violet)" },
+  { name: "Lê Thu Hà", role: "UI/UX Designer", init: "TH", grad: "var(--g-amber-pink)" },
+  { name: "Phạm Đức Long", role: "Kỹ sư thiết kế cơ khí", init: "DL", grad: "var(--g-cyan-amber)" },
 ];
 
 export const TRIAL_PRODUCTS = [
-  { icon: ScanEye, name: "BThander Vision SDK", desc: "Bộ công cụ nhận diện lỗi qua camera công nghiệp, tích hợp vào dây chuyền có sẵn trong vài giờ.", perk: "Miễn phí 14 ngày" },
-  { icon: Cloud, name: "BThander Cloud Sandbox", desc: "Môi trường huấn luyện và kiểm thử mô hình AI trên đám mây, không cần GPU riêng.", perk: "5 giờ tính toán / tháng" },
-  { icon: Boxes, name: "BThander Configurator AR", desc: "Dựng cấu hình thiết bị IoT trong thực tế tăng cường trước khi đặt hàng lắp đặt.", perk: "Trải nghiệm trên trình duyệt" },
+  { icon: Smartphone, name: "Phát triển ứng dụng di động", desc: "Thiết kế và lập trình ứng dụng iOS, Android hoặc đa nền tảng theo quy trình rõ ràng, dễ mở rộng.", perk: "Tư vấn giải pháp miễn phí" },
+  { icon: MonitorSmartphone, name: "Web app & hệ thống nội bộ", desc: "Xây dựng dashboard, hệ thống quản lý và web app phù hợp đúng quy trình vận hành của doanh nghiệp.", perk: "Khảo sát yêu cầu ban đầu" },
+  { icon: LayoutTemplate, name: "Landing page chuyển đổi", desc: "Thiết kế landing page nhanh, chuẩn responsive và tối ưu cho chiến dịch quảng cáo hoặc ra mắt sản phẩm.", perk: "Báo giá theo mục tiêu" },
 ];
 
 export const SALE_PRODUCTS = [
-  { icon: Cpu, name: "BThander Edge Module X2", desc: "Board điện toán biên hỗ trợ suy luận AI thị giác tại chỗ, không phụ thuộc kết nối cloud.", specs: ["16 TOPS suy luận AI", "4 cổng camera MIPI-CSI", "Chống bụi/nước IP54"], price: "18.900.000₫" },
-  { icon: Wifi, name: "BThander Sensor Hub", desc: "Bộ thu thập dữ liệu cảm biến công nghiệp, kết nối LoRaWAN tầm xa cho môi trường ngoài trời.", specs: ["Tầm phát 8km (line-of-sight)", "Pin dự phòng 6 tháng", "Tối đa 64 node/hub"], price: "6.400.000₫" },
-  { icon: ShieldCheck, name: "BThander Cloud Pro", desc: "Gói dịch vụ đám mây cho giám sát, lưu trữ và cảnh báo tự động trên toàn bộ hệ thống BThander.", specs: ["Lưu trữ 12 tháng dữ liệu", "SLA uptime 99.9%", "Hỗ trợ kỹ thuật 24/7"], price: "2.900.000₫ / tháng" },
+  { icon: Code2, name: "Dự án freelance theo yêu cầu", desc: "Nhận triển khai tính năng, tích hợp API, tối ưu giao diện hoặc hoàn thiện sản phẩm đang dang dở.", specs: ["Phạm vi và mốc bàn giao rõ ràng", "Cập nhật tiến độ thường xuyên", "Bàn giao mã nguồn đầy đủ"], price: "Liên hệ báo giá" },
+  { icon: PenTool, name: "Thiết kế bản vẽ chế tạo máy", desc: "Triển khai bản vẽ 2D/3D, cụm máy và đồ gá phục vụ gia công, lắp ráp và sản xuất.", specs: ["Bản vẽ kỹ thuật chi tiết", "File theo chuẩn sản xuất", "Hỗ trợ rà soát khả năng chế tạo"], price: "Liên hệ báo giá" },
+  { icon: Wrench, name: "Tư vấn giải pháp kỹ thuật", desc: "Kết nối tư duy phần mềm với kỹ thuật chế tạo để biến ý tưởng thành quy trình và sản phẩm có thể vận hành.", specs: ["Phân tích yêu cầu", "Đề xuất phương án", "Đồng hành triển khai"], price: "Theo phạm vi dự án" },
 ];
