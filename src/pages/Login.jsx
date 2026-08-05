@@ -2,13 +2,13 @@ import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import BrandLogo from "../components/ui/BrandLogo.jsx";
 
-const initialForm = { name: "", email: "", password: "" };
+const initialForm = { name: "", email: "", password: "", confirmPassword: "" };
 
 export default function Login() {
   const navigate = useNavigate();
   const [form, setForm] = useState(initialForm);
   const [setupRequired, setSetupRequired] = useState(false);
-  const [mode, setMode] = useState("login");
+  const [mode, setMode] = useState("login"); // "login" | "register"
   const [ready, setReady] = useState(false);
   const [error, setError] = useState("");
   const [submitting, setSubmitting] = useState(false);
@@ -39,13 +39,37 @@ export default function Login() {
   const updateField = (field) => (event) =>
     setForm((prev) => ({ ...prev, [field]: event.target.value }));
 
+  const switchMode = (nextMode) => {
+    setMode(nextMode);
+    setError("");
+    setForm(initialForm);
+  };
+
+  const isRegister = !setupRequired && mode === "register";
+  const isBootstrap = setupRequired;
+  const needsName = isBootstrap || isRegister;
+
   const submit = async (event) => {
     event.preventDefault();
     setError("");
+
+    if (needsName && form.password !== form.confirmPassword) {
+      setError("Mật khẩu xác nhận không khớp.");
+      return;
+    }
+
     setSubmitting(true);
     try {
-      const endpoint = setupRequired ? "/api/auth/bootstrap" : mode === "register" ? "/api/auth/register" : "/api/auth/login";
-      const payload = setupRequired || mode === "register" ? form : { email: form.email, password: form.password };
+      let endpoint = "/api/auth/login";
+      let payload = { email: form.email, password: form.password };
+
+      if (isBootstrap) {
+        endpoint = "/api/auth/register";
+        payload = { name: form.name, email: form.email, password: form.password };
+      } else if (isRegister) {
+        endpoint = "/api/auth/register";
+        payload = { name: form.name, email: form.email, password: form.password };
+      }
 
       const response = await fetch(endpoint, {
         method: "POST",
@@ -56,7 +80,7 @@ export default function Login() {
 
       const body = await response.json().catch(() => ({}));
       if (!response.ok) {
-        throw new Error(body.errors?.[0] || body.error || "Không thể đăng nhập");
+        throw new Error(body.errors?.[0] || body.error || "Không thể xử lý yêu cầu");
       }
       navigate("/");
     } catch (requestError) {
@@ -66,6 +90,24 @@ export default function Login() {
     }
   };
 
+  const title = isBootstrap
+    ? "Đăng ký tài khoản quản trị"
+    : isRegister
+    ? "Đăng ký tài khoản"
+    : "Đăng nhập";
+
+  const subtitle = isBootstrap
+    ? "Tài khoản đầu tiên sẽ được lưu vào database với quyền quản trị viên."
+    : isRegister
+    ? "Tạo tài khoản mới để bắt đầu sử dụng."
+    : "Đăng nhập để quản lý dự án và yêu cầu hỗ trợ.";
+
+  const submitLabel = isBootstrap
+    ? "Đăng ký tài khoản"
+    : isRegister
+    ? "Đăng ký"
+    : "Đăng nhập";
+
   return (
     <main className="auth-page">
       <section className="auth-card">
@@ -74,84 +116,106 @@ export default function Login() {
         </Link>
 
         <p className="auth-eyebrow">BThander Workspace</p>
-        <h1>{setupRequired ? "Tạo tài khoản quản trị" : mode === "register" ? "Đăng ký tài khoản" : "Đăng nhập"}</h1>
-        <p className="auth-subtitle">
-          {setupRequired
-            ? "Thiết lập quản trị viên đầu tiên cho hệ thống."
-            : mode === "register" ? "Tạo tài khoản để theo dõi và xử lý các yêu cầu hỗ trợ." : "Đăng nhập để quản lý dự án và yêu cầu hỗ trợ."}
-        </p>
+        <h1>{title}</h1>
+        <p className="auth-subtitle">{subtitle}</p>
 
         {!ready ? (
           <p className="auth-loading">Đang kiểm tra hệ thống...</p>
         ) : (
-          <form onSubmit={submit} className="auth-form" noValidate>
-            {(setupRequired || mode === "register") && (
+          <>
+            <form onSubmit={submit} className="auth-form" noValidate>
+              {needsName && (
+                <label>
+                  Họ và tên
+                  <input
+                    required
+                    autoComplete="name"
+                    value={form.name}
+                    onChange={updateField("name")}
+                    placeholder="Nguyễn Văn A"
+                  />
+                </label>
+              )}
+
               <label>
-                Họ và tên
+                Email
                 <input
                   required
-                  autoComplete="name"
-                  value={form.name}
-                  onChange={updateField("name")}
-                  placeholder="Nguyễn Văn A"
+                  type="email"
+                  autoComplete="email"
+                  value={form.email}
+                  onChange={updateField("email")}
+                  placeholder="ban@example.com"
                 />
               </label>
-            )}
 
-            <label>
-              Email
-              <input
-                required
-                type="email"
-                autoComplete="email"
-                value={form.email}
-                onChange={updateField("email")}
-                placeholder="ban@example.com"
-              />
-            </label>
+              <label>
+                Mật khẩu
+                <div className="password-field">
+                  <input
+                    required
+                    type={showPassword ? "text" : "password"}
+                    minLength={10}
+                    autoComplete={needsName ? "new-password" : "current-password"}
+                    value={form.password}
+                    onChange={updateField("password")}
+                    placeholder="••••••••••"
+                  />
+                  <button
+                    type="button"
+                    className="password-toggle"
+                    onClick={() => setShowPassword((prev) => !prev)}
+                    tabIndex={-1}
+                  >
+                    {showPassword ? "Ẩn" : "Hiện"}
+                  </button>
+                </div>
+              </label>
 
-            <label>
-              Mật khẩu
-              <div className="password-field">
-                <input
-                  required
-                  type={showPassword ? "text" : "password"}
-                  minLength={10}
-                  autoComplete={setupRequired || mode === "register" ? "new-password" : "current-password"}
-                  value={form.password}
-                  onChange={updateField("password")}
-                  placeholder="••••••••••"
-                />
-                <button
-                  type="button"
-                  className="password-toggle"
-                  onClick={() => setShowPassword((prev) => !prev)}
-                  tabIndex={-1}
-                >
-                  {showPassword ? "Ẩn" : "Hiện"}
-                </button>
-              </div>
-            </label>
+              {needsName && (
+                <label>
+                  Xác nhận mật khẩu
+                  <input
+                    required
+                    type={showPassword ? "text" : "password"}
+                    minLength={10}
+                    autoComplete="new-password"
+                    value={form.confirmPassword}
+                    onChange={updateField("confirmPassword")}
+                    placeholder="••••••••••"
+                  />
+                </label>
+              )}
 
-            {(setupRequired || mode === "register") && (
-              <small>Mật khẩu cần tối thiểu 10 ký tự.</small>
-            )}
+              {needsName && <small>Mật khẩu cần tối thiểu 10 ký tự.</small>}
 
-            {error && <p className="form-message form-error">{error}</p>}
+              {error && <p className="form-message form-error">{error}</p>}
 
-            <button className="btn-primary" disabled={submitting}>
-              {submitting
-                ? "Đang xử lý..."
-                : setupRequired || mode === "register"
-                ? "Tạo tài khoản"
-                : "Đăng nhập"}
-            </button>
-            {!setupRequired && (
-              <button className="auth-switch" type="button" onClick={() => { setMode((current) => current === "login" ? "register" : "login"); setError(""); }}>
-                {mode === "login" ? "Chưa có tài khoản? Đăng ký ngay" : "Đã có tài khoản? Đăng nhập"}
+              <button className="btn-primary" disabled={submitting}>
+                {submitting ? "Đang xử lý..." : submitLabel}
               </button>
+            </form>
+
+            {!isBootstrap && (
+              <p className="auth-switch">
+                {mode === "login" ? (
+                  <>
+                    Chưa có tài khoản?{" "}
+                    <button type="button" className="link-button" onClick={() => switchMode("register")}>
+                      Đăng ký ngay
+                    </button>
+                  </>
+                ) : (
+                  <>
+                    Đã có tài khoản?{" "}
+                    <button type="button" className="link-button" onClick={() => switchMode("login")}>
+                      Đăng nhập
+                    </button>
+                  </>
+                )}
+              </p>
             )}
-          </form>
+          </>
         )}
       </section>
     </main>
