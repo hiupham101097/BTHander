@@ -23,7 +23,7 @@ export default function Navbar() {
           ))}
         </div>
         <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-          <button className="nav-cta">Liên hệ tư vấn</button>
+          <Link to="/login" className="nav-cta">Đăng nhập</Link>
           <button className="nav-toggle" onClick={() => setNavOpen(!navOpen)}>
             {navOpen ? <X size={22} /> : <Menu size={22} />}
           </button>
