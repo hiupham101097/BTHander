@@ -169,28 +169,42 @@ export default function ProjectsManager() {
    * Image upload
    * ----------------------- */
 
-  const handleImageUpload = (index) => (event) => {
+  const handleImageUpload = (index) => async (event) => {
     const file = event.target.files?.[0];
-
     if (!file) return;
 
-    const reader = new FileReader();
-
-    reader.onloadend = () => {
-      setForm((currentForm) => ({
-        ...currentForm,
-        gallery: currentForm.gallery.map((item, itemIndex) =>
-          itemIndex === index
-            ? {
-              ...item,
-              image_url: reader.result,
-            }
-            : item,
-        ),
-      }));
-    };
-
-    reader.readAsDataURL(file);
+    try {
+      const data = new FormData();
+      data.append("file", file);
+      
+      const response = await fetch("/api/media", { 
+        method: "POST", 
+        credentials: "include", 
+        body: data 
+      });
+      
+      const body = await response.json();
+      
+      if (response.ok) {
+        setForm((currentForm) => ({
+          ...currentForm,
+          gallery: currentForm.gallery.map((item, itemIndex) =>
+            itemIndex === index
+              ? {
+                ...item,
+                image_url: body.data.url,
+              }
+              : item,
+          ),
+        }));
+      } else {
+        alert("Lỗi tải ảnh: " + (body.error || ""));
+      }
+    } catch (error) {
+      alert("Lỗi tải ảnh: " + error.message);
+    } finally {
+      event.target.value = "";
+    }
   };
 
   /* -------------------------
