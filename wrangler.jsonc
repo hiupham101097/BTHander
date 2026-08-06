@@ -13,5 +13,11 @@
       "database_id": "351a3f44-bb95-4748-b150-2025367aa148",
       "migrations_dir": "migrations"
     }
+  ],
+  "r2_buckets": [
+    {
+      "binding": "MEDIA",
+      "bucket_name": "bthander-media"
+    }
   ]
 }

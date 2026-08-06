@@ -71,6 +71,15 @@ function teamErrors(input, partial = false) {
   if ("status" in input && !["active", "inactive"].includes(input.status)) errors.push("status must be active or inactive");
   return errors;
 }
+function articleErrors(input, partial = false) {
+  const errors = [];
+  if ((!partial || "team_member_id" in input) && (!Number.isInteger(input.team_member_id) || input.team_member_id < 1)) errors.push("team_member_id is required");
+  if ((!partial || "title" in input) && (typeof input.title !== "string" || !input.title.trim())) errors.push("title is required");
+  if (("excerpt" in input) && (typeof input.excerpt !== "string" || input.excerpt.length > 500)) errors.push("excerpt must be a string up to 500 characters");
+  if ((!partial || "content" in input) && (typeof input.content !== "string" || !input.content.trim() || input.content.length > 10000)) errors.push("content is required");
+  if ("status" in input && !["draft", "published"].includes(input.status)) errors.push("status must be draft or published");
+  return errors;
+}
 async function currentAccount(request, env) {
   const token = cookieValue(request, "bthander_session") || request.headers.get("authorization")?.replace(/^Bearer\s+/i, "");
   if (!token) return null;
@@ -140,13 +149,22 @@ export async function onRequest({ request, env }) {
     const supportUpdate = method === "PATCH" && parts[1] === "support";
     const projectInterest = method === "POST" && parts[1] === "projects" && parts[3] === "interest";
     const projectAdmin = ["POST", "PATCH", "DELETE"].includes(method) && parts[1] === "projects" && !projectInterest;
-    const catalogAdmin = ["POST", "PATCH", "DELETE"].includes(method) && ["products", "team", "accounts"].includes(parts[1]);
+    const catalogAdmin = ["POST", "PATCH", "DELETE"].includes(method) && ["products", "team", "accounts", "articles"].includes(parts[1]);
     const accountsRead = method === "GET" && url.pathname === "/api/accounts";
     const account = (supportRead || supportUpdate || projectInterest || url.pathname === "/api/account-overview" || method === "POST" && url.pathname === "/api/support") ? await currentAccount(request, env) : null;
     if ((supportRead || supportUpdate || projectInterest || url.pathname === "/api/account-overview") && !account) return json({ error: "Unauthorized" }, 401);
     if (projectAdmin && !await requireRole(request, env, ["admin"])) return json({ error: "Unauthorized" }, 401);
     if (catalogAdmin && !await requireRole(request, env, ["admin"])) return json({ error: "Unauthorized" }, 401);
     if (accountsRead && !await requireRole(request, env, ["admin"])) return json({ error: "Unauthorized" }, 401);
+
+    if (method === "POST" && url.pathname === "/api/media") {
+      if (!await requireRole(request, env, ["admin"])) return json({ error: "Unauthorized" }, 401);
+      const form = await request.formData(), file = form.get("file");
+      if (!file || typeof file === "string" || !file.type?.startsWith("image/") || file.size > 10 * 1024 * 1024) return json({ error: "Upload an image up to 10 MB" }, 422);
+      const extension = file.type.split("/")[1]?.replace(/[^a-z0-9]/gi, "") || "jpg", key = `uploads/${randomHex(16)}.${extension}`;
+      await env.MEDIA.put(key, file.stream(), { httpMetadata: { contentType: file.type }, customMetadata: { uploadedAt: new Date().toISOString() } });
+      return json({ data: { key, url: `/media/${key}` } }, 201);
+    }
 
     if (method === "POST" && url.pathname === "/api/support") {
       const input = await request.json(), errors = supportErrors(input);
@@ -228,10 +246,15 @@ export async function onRequest({ request, env }) {
       const query = admin ? env.DB.prepare("SELECT * FROM team_members ORDER BY sort_order, id") : env.DB.prepare("SELECT * FROM team_members WHERE status='active' ORDER BY sort_order, id");
       return json({ data: (await query.all()).results.map(teamFromRow) });
     }
-    if (method === "GET" && parts[1] === "team" && parts[2]) {
+    if (method === "GET" && parts[1] === "team" && parts[2] && !parts[3]) {
       const admin = await requireRole(request, env, ["admin"]);
       const query = admin ? env.DB.prepare("SELECT * FROM team_members WHERE id=?").bind(Number(parts[2])) : env.DB.prepare("SELECT * FROM team_members WHERE id=? AND status='active'").bind(Number(parts[2]));
       const member = await query.first(); return member ? json({ data: teamFromRow(member) }) : json({ error: "Team member not found" }, 404);
+    }
+    if (method === "GET" && parts[1] === "team" && parts[2] && parts[3] === "articles") {
+      const admin = await requireRole(request, env, ["admin"]);
+      const query = admin ? env.DB.prepare("SELECT * FROM team_articles WHERE team_member_id=? ORDER BY id DESC").bind(Number(parts[2])) : env.DB.prepare("SELECT * FROM team_articles WHERE team_member_id=? AND status='published' ORDER BY id DESC").bind(Number(parts[2]));
+      return json({ data: (await query.all()).results });
     }
     if (method === "POST" && url.pathname === "/api/team") {
       const input = await request.json(), errors = teamErrors(input); if (errors.length) return json({ errors }, 422);
@@ -246,6 +269,21 @@ export async function onRequest({ request, env }) {
       const merged = { ...current, ...input };
       await env.DB.prepare("UPDATE team_members SET name=?,title=?,bio=?,avatar_url=?,contact_info=?,profile_intro=?,skills=?,experience=?,featured_projects=?,articles=?,sort_order=?,status=?,updated_at=CURRENT_TIMESTAMP WHERE id=?").bind(merged.name.trim(), merged.title.trim(), merged.bio?.trim() || null, merged.avatar_url?.trim() || null, merged.contact_info?.trim() || null, merged.profile_intro?.trim() || null, JSON.stringify(merged.skills || []), JSON.stringify(merged.experience || []), JSON.stringify(merged.featured_projects || []), JSON.stringify(merged.articles || []), merged.sort_order, merged.status, id).run();
       return json({ data: teamFromRow(await env.DB.prepare("SELECT * FROM team_members WHERE id=?").bind(id).first()) });
+    }
+    if (method === "GET" && parts[1] === "articles" && parts[2]) {
+      const admin = await requireRole(request, env, ["admin"]);
+      const query = admin ? env.DB.prepare("SELECT ta.*, tm.name AS member_name, tm.title AS member_title FROM team_articles ta JOIN team_members tm ON tm.id=ta.team_member_id WHERE ta.id=?").bind(Number(parts[2])) : env.DB.prepare("SELECT ta.*, tm.name AS member_name, tm.title AS member_title FROM team_articles ta JOIN team_members tm ON tm.id=ta.team_member_id WHERE ta.id=? AND ta.status='published'").bind(Number(parts[2]));
+      const article = await query.first(); return article ? json({ data: article }) : json({ error: "Article not found" }, 404);
+    }
+    if (method === "POST" && url.pathname === "/api/articles") {
+      const input = await request.json(), errors = articleErrors(input); if (errors.length) return json({ errors }, 422);
+      const result = await env.DB.prepare("INSERT INTO team_articles (team_member_id,title,excerpt,content,status) VALUES (?,?,?,?,?)").bind(input.team_member_id, input.title.trim(), input.excerpt?.trim() || null, input.content.trim(), input.status || "published").run();
+      return json({ data: await env.DB.prepare("SELECT * FROM team_articles WHERE id=?").bind(result.meta.last_row_id).first() }, 201);
+    }
+    if ((method === "PATCH" || method === "DELETE") && parts[1] === "articles" && parts[2]) {
+      const id = Number(parts[2]); if (method === "DELETE") { const result = await env.DB.prepare("DELETE FROM team_articles WHERE id=?").bind(id).run(); return result.meta.changes ? new Response(null, { status: 204 }) : json({ error: "Article not found" }, 404); }
+      const input = await request.json(), errors = articleErrors(input, true); if (errors.length || !Object.keys(input).length) return json({ errors: errors.length ? errors : ["At least one field is required"] }, 422); const current = await env.DB.prepare("SELECT * FROM team_articles WHERE id=?").bind(id).first(); if (!current) return json({ error: "Article not found" }, 404); const merged = { ...current, ...input };
+      await env.DB.prepare("UPDATE team_articles SET team_member_id=?,title=?,excerpt=?,content=?,status=?,updated_at=CURRENT_TIMESTAMP WHERE id=?").bind(merged.team_member_id, merged.title.trim(), merged.excerpt?.trim() || null, merged.content.trim(), merged.status || "published", id).run(); return json({ data: await env.DB.prepare("SELECT * FROM team_articles WHERE id=?").bind(id).first() });
     }
     if (method === "GET" && url.pathname === "/api/accounts") return json({ data: (await env.DB.prepare("SELECT id,name,email,role,created_at,updated_at FROM accounts ORDER BY id DESC").all()).results });
     if (method === "PATCH" && parts[1] === "accounts" && parts[2]) {

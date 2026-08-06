@@ -15,6 +15,7 @@ import UsersManager from "./pages/admin/UsersManager.jsx";
 import ContactsManager from "./pages/admin/ContactsManager.jsx";
 import ProjectDetail from "./pages/ProjectDetail.jsx";
 import TeamProfile from "./pages/TeamProfile.jsx";
+import { TeamArticleDetail, TeamArticles } from "./pages/TeamArticles.jsx";
 
 export default function App() {
   return (
@@ -24,6 +25,8 @@ export default function App() {
           <Route path="/" element={<Home />} />
           <Route path="/projects/:id" element={<ProjectDetail />} />
           <Route path="/team/:id" element={<TeamProfile />} />
+          <Route path="/team/:id/articles" element={<TeamArticles />} />
+          <Route path="/team/:id/articles/:articleId" element={<TeamArticleDetail />} />
         </Route>
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
