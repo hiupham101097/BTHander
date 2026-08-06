@@ -151,11 +151,13 @@ export async function onRequest({ request, env }) {
     const projectAdmin = ["POST", "PATCH", "DELETE"].includes(method) && parts[1] === "projects" && !projectInterest;
     const catalogAdmin = ["POST", "PATCH", "DELETE"].includes(method) && ["products", "team", "accounts", "articles"].includes(parts[1]);
     const accountsRead = method === "GET" && url.pathname === "/api/accounts";
+    const articlesRead = method === "GET" && url.pathname === "/api/articles";
     const account = (supportRead || supportUpdate || projectInterest || url.pathname === "/api/account-overview" || method === "POST" && url.pathname === "/api/support") ? await currentAccount(request, env) : null;
     if ((supportRead || supportUpdate || projectInterest || url.pathname === "/api/account-overview") && !account) return json({ error: "Unauthorized" }, 401);
     if (projectAdmin && !await requireRole(request, env, ["admin"])) return json({ error: "Unauthorized" }, 401);
     if (catalogAdmin && !await requireRole(request, env, ["admin"])) return json({ error: "Unauthorized" }, 401);
     if (accountsRead && !await requireRole(request, env, ["admin"])) return json({ error: "Unauthorized" }, 401);
+    if (articlesRead && !await requireRole(request, env, ["admin"])) return json({ error: "Unauthorized" }, 401);
 
     if (method === "POST" && url.pathname === "/api/media") {
       if (!await requireRole(request, env, ["admin"])) return json({ error: "Unauthorized" }, 401);
@@ -269,6 +271,10 @@ export async function onRequest({ request, env }) {
       const merged = { ...current, ...input };
       await env.DB.prepare("UPDATE team_members SET name=?,title=?,bio=?,avatar_url=?,contact_info=?,profile_intro=?,skills=?,experience=?,featured_projects=?,articles=?,sort_order=?,status=?,updated_at=CURRENT_TIMESTAMP WHERE id=?").bind(merged.name.trim(), merged.title.trim(), merged.bio?.trim() || null, merged.avatar_url?.trim() || null, merged.contact_info?.trim() || null, merged.profile_intro?.trim() || null, JSON.stringify(merged.skills || []), JSON.stringify(merged.experience || []), JSON.stringify(merged.featured_projects || []), JSON.stringify(merged.articles || []), merged.sort_order, merged.status, id).run();
       return json({ data: teamFromRow(await env.DB.prepare("SELECT * FROM team_members WHERE id=?").bind(id).first()) });
+    }
+    if (method === "GET" && url.pathname === "/api/articles") {
+      const rows = await env.DB.prepare("SELECT ta.*, tm.name AS member_name FROM team_articles ta JOIN team_members tm ON tm.id=ta.team_member_id ORDER BY ta.id DESC").all();
+      return json({ data: rows.results });
     }
     if (method === "GET" && parts[1] === "articles" && parts[2]) {
       const admin = await requireRole(request, env, ["admin"]);
