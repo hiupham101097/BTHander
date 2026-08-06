@@ -3,7 +3,7 @@ const json = (body, status = 200, headers = {}) => new Response(body === null ? 
   status,
   headers: { "content-type": "application/json; charset=utf-8", ...headers },
 });
-const projectFromRow = (row) => row && ({ ...row, languages: JSON.parse(row.languages), configuration: JSON.parse(row.configuration) });
+const projectFromRow = (row) => row && ({ ...row, languages: JSON.parse(row.languages), configuration: JSON.parse(row.configuration), gallery: JSON.parse(row.gallery || "[]"), roadmap: JSON.parse(row.roadmap || "[]") });
 const productFromRow = (row) => row && ({ ...row, specifications: JSON.parse(row.specifications) });
 const hex = (bytes) => [...new Uint8Array(bytes)].map((byte) => byte.toString(16).padStart(2, "0")).join("");
 const randomHex = (length = 32) => hex(crypto.getRandomValues(new Uint8Array(length)));
@@ -38,6 +38,10 @@ function projectErrors(input, partial = false) {
   if ((!partial || "languages" in input) && (!Array.isArray(input.languages) || !input.languages.length || input.languages.some((item) => typeof item !== "string" || !item.trim()))) errors.push("languages must be a non-empty array of strings");
   if ((!partial || "configuration" in input) && (!input.configuration || Array.isArray(input.configuration) || typeof input.configuration !== "object")) errors.push("configuration must be an object");
   if ("description" in input && (typeof input.description !== "string" || input.description.length > 1000)) errors.push("description must be a string up to 1000 characters");
+  if ("detail_tag" in input && (typeof input.detail_tag !== "string" || input.detail_tag.length > 200)) errors.push("detail_tag must be a string up to 200 characters");
+  if ("full_description" in input && (typeof input.full_description !== "string" || input.full_description.length > 5000)) errors.push("full_description must be a string up to 5000 characters");
+  if ("gallery" in input && (!Array.isArray(input.gallery) || input.gallery.some((item) => !item || typeof item.label !== "string" || !item.label.trim()))) errors.push("gallery must be an array of items with a label");
+  if ("roadmap" in input && (!Array.isArray(input.roadmap) || input.roadmap.some((item) => !item || typeof item.phase !== "string" || typeof item.title !== "string" || typeof item.desc !== "string" || !["done", "current", "upcoming"].includes(item.status)))) errors.push("roadmap items must include phase, title, desc and status");
   if ((!partial || "price" in input) && (typeof input.price !== "number" || !Number.isFinite(input.price) || input.price < 0)) errors.push("price must be a non-negative number");
   if ("currency" in input && (typeof input.currency !== "string" || !/^[A-Z]{3}$/.test(input.currency))) errors.push("currency must be a 3-letter uppercase code");
   return errors;
@@ -86,15 +90,15 @@ async function authRoutes(request, env, url) {
     if (errors.length) return json({ errors }, 422);
     const salt = randomHex(16), hash = await passwordHash(input.password, salt);
     const result = await env.DB.prepare("INSERT INTO accounts (name,email,password_hash,password_salt,role) VALUES (?,?,?,?, 'admin')").bind(input.name.trim(), input.email.trim().toLowerCase(), hash, salt).run();
-    return createSession(env, result.meta.last_row_id, 201);
+    return createSession(env, result.meta.last_row_id, 201, url.protocol === "https:");
   }
   if (method === "POST" && url.pathname === "/api/auth/register") {
     const input = await request.json(), errors = accountErrors(input);
     if (errors.length) return json({ errors }, 422);
     const salt = randomHex(16), hash = await passwordHash(input.password, salt);
     try {
-      const result = await env.DB.prepare("INSERT INTO accounts (name,email,password_hash,password_salt,role) VALUES (?,?,?,?, 'staff')").bind(input.name.trim(), input.email.trim().toLowerCase(), hash, salt).run();
-      return createSession(env, result.meta.last_row_id, 201);
+      const result = await env.DB.prepare("INSERT INTO accounts (name,email,password_hash,password_salt,role) VALUES (?,?,?,?, 'user')").bind(input.name.trim(), input.email.trim().toLowerCase(), hash, salt).run();
+      return createSession(env, result.meta.last_row_id, 201, url.protocol === "https:");
     } catch (error) {
       if (String(error).includes("UNIQUE")) return json({ error: "Email này đã được đăng ký" }, 409);
       throw error;
@@ -105,12 +109,12 @@ async function authRoutes(request, env, url) {
     if (typeof input.email !== "string" || typeof input.password !== "string") return json({ error: "email and password are required" }, 422);
     const account = await env.DB.prepare("SELECT * FROM accounts WHERE email=?").bind(input.email.trim().toLowerCase()).first();
     if (!account || await passwordHash(input.password, account.password_salt) !== account.password_hash) return json({ error: "Invalid email or password" }, 401);
-    return createSession(env, account.id);
+    return createSession(env, account.id, 200, url.protocol === "https:");
   }
   if (method === "POST" && url.pathname === "/api/auth/logout") {
     const token = cookieValue(request, "bthander_session");
     if (token) await env.DB.prepare("DELETE FROM sessions WHERE token_hash=?").bind(await tokenHash(token)).run();
-    return json({ ok: true }, 200, { "set-cookie": "bthander_session=; HttpOnly; Secure; SameSite=Lax; Path=/; Max-Age=0" });
+    return json({ ok: true }, 200, { "set-cookie": `bthander_session=; HttpOnly; ${url.protocol === "https:" ? "Secure; " : ""}SameSite=Lax; Path=/; Max-Age=0` });
   }
   if (method === "GET" && url.pathname === "/api/auth/me") {
     const account = await currentAccount(request, env);
@@ -118,22 +122,25 @@ async function authRoutes(request, env, url) {
   }
   return null;
 }
-async function createSession(env, accountId, status = 200) {
+async function createSession(env, accountId, status = 200, secure = true) {
   const token = randomHex(32);
-  await env.DB.prepare("INSERT INTO sessions (account_id,token_hash,expires_at) VALUES (?, ?, datetime('now', '+7 days'))").bind(accountId, await tokenHash(token)).run();
+  await env.DB.prepare("INSERT INTO sessions (account_id,token_hash,expires_at) VALUES (?, ?, datetime('now', '+1 day'))").bind(accountId, await tokenHash(token)).run();
   const account = await env.DB.prepare("SELECT id,name,email,role FROM accounts WHERE id=?").bind(accountId).first();
-  return json({ data: cleanAccount(account) }, status, { "set-cookie": `bthander_session=${token}; HttpOnly; Secure; SameSite=Lax; Path=/; Max-Age=604800` });
+  return json({ data: cleanAccount(account) }, status, { "set-cookie": `bthander_session=${token}; HttpOnly; ${secure ? "Secure; " : ""}SameSite=Lax; Path=/; Max-Age=86400` });
 }
 
 export async function onRequest({ request, env }) {
   const url = new URL(request.url), parts = url.pathname.split("/").filter(Boolean), method = request.method;
   try {
     if (url.pathname.startsWith("/api/auth/")) return await authRoutes(request, env, url) || json({ error: "Route not found" }, 404);
-    const supportAdmin = (method === "GET" || method === "PATCH") && parts[1] === "support";
-    const projectAdmin = ["POST", "PATCH", "DELETE"].includes(method) && parts[1] === "projects";
+    const supportRead = method === "GET" && url.pathname === "/api/support";
+    const supportUpdate = method === "PATCH" && parts[1] === "support";
+    const projectInterest = method === "POST" && parts[1] === "projects" && parts[3] === "interest";
+    const projectAdmin = ["POST", "PATCH", "DELETE"].includes(method) && parts[1] === "projects" && !projectInterest;
     const catalogAdmin = ["POST", "PATCH", "DELETE"].includes(method) && ["products", "team", "accounts"].includes(parts[1]);
     const accountsRead = method === "GET" && url.pathname === "/api/accounts";
-    if (supportAdmin && !await requireRole(request, env, ["admin", "staff"])) return json({ error: "Unauthorized" }, 401);
+    const account = (supportRead || supportUpdate || projectInterest || url.pathname === "/api/account-overview" || method === "POST" && url.pathname === "/api/support") ? await currentAccount(request, env) : null;
+    if ((supportRead || supportUpdate || projectInterest || url.pathname === "/api/account-overview") && !account) return json({ error: "Unauthorized" }, 401);
     if (projectAdmin && !await requireRole(request, env, ["admin"])) return json({ error: "Unauthorized" }, 401);
     if (catalogAdmin && !await requireRole(request, env, ["admin"])) return json({ error: "Unauthorized" }, 401);
     if (accountsRead && !await requireRole(request, env, ["admin"])) return json({ error: "Unauthorized" }, 401);
@@ -141,24 +148,44 @@ export async function onRequest({ request, env }) {
     if (method === "POST" && url.pathname === "/api/support") {
       const input = await request.json(), errors = supportErrors(input);
       if (errors.length) return json({ errors }, 422);
-      const result = await env.DB.prepare("INSERT INTO support_requests (name,email,phone,company,message) VALUES (?,?,?,?,?)").bind(input.name.trim(), input.email.trim().toLowerCase(), input.phone?.trim() || null, input.company?.trim() || null, input.message.trim()).run();
+      const result = await env.DB.prepare("INSERT INTO support_requests (name,email,phone,company,message,account_id) VALUES (?,?,?,?,?,?)").bind(input.name.trim(), input.email.trim().toLowerCase(), input.phone?.trim() || null, input.company?.trim() || null, input.message.trim(), account?.id || null).run();
       return json({ id: result.meta.last_row_id, message: "Support request received" }, 201);
     }
     if (method === "GET" && url.pathname === "/api/support") {
-      const status = url.searchParams.get("status"), query = status ? env.DB.prepare("SELECT * FROM support_requests WHERE status=? ORDER BY id DESC").bind(status) : env.DB.prepare("SELECT * FROM support_requests ORDER BY id DESC");
+      const status = url.searchParams.get("status"), own = account.role !== "admin";
+      const query = own ? (status ? env.DB.prepare("SELECT * FROM support_requests WHERE account_id=? AND status=? ORDER BY id DESC").bind(account.id, status) : env.DB.prepare("SELECT * FROM support_requests WHERE account_id=? ORDER BY id DESC").bind(account.id)) : (status ? env.DB.prepare("SELECT * FROM support_requests WHERE status=? ORDER BY id DESC").bind(status) : env.DB.prepare("SELECT * FROM support_requests ORDER BY id DESC"));
       return json({ data: (await query.all()).results });
     }
     if (method === "PATCH" && parts[1] === "support" && parts[2]) {
+      if (account.role !== "admin") return json({ error: "Forbidden" }, 403);
       const input = await request.json();
       if (!["new", "in_progress", "resolved"].includes(input.status)) return json({ error: "status must be new, in_progress, or resolved" }, 422);
       const result = await env.DB.prepare("UPDATE support_requests SET status=?,updated_at=CURRENT_TIMESTAMP WHERE id=?").bind(input.status, Number(parts[2])).run();
       return result.meta.changes ? json({ id: Number(parts[2]), status: input.status }) : json({ error: "Support request not found" }, 404);
     }
+    if (method === "GET" && url.pathname === "/api/account-overview") {
+      const own = account.role !== "admin";
+      const interests = own ? env.DB.prepare("SELECT pi.*, p.name AS project_name FROM project_interests pi JOIN projects p ON p.id=pi.project_id WHERE pi.account_id=? ORDER BY pi.created_at DESC").bind(account.id) : env.DB.prepare("SELECT pi.*, p.name AS project_name, a.name AS account_name, a.email AS account_email FROM project_interests pi JOIN projects p ON p.id=pi.project_id JOIN accounts a ON a.id=pi.account_id ORDER BY pi.created_at DESC");
+      const purchases = own ? env.DB.prepare("SELECT pp.*, p.name AS project_name FROM project_purchases pp JOIN projects p ON p.id=pp.project_id WHERE pp.account_id=? ORDER BY pp.created_at DESC").bind(account.id) : env.DB.prepare("SELECT pp.*, p.name AS project_name, a.name AS account_name, a.email AS account_email FROM project_purchases pp JOIN projects p ON p.id=pp.project_id JOIN accounts a ON a.id=pp.account_id ORDER BY pp.created_at DESC");
+      const consultations = own ? env.DB.prepare("SELECT * FROM support_requests WHERE account_id=? ORDER BY id DESC").bind(account.id) : env.DB.prepare("SELECT sr.*, a.name AS account_name, a.email AS account_email FROM support_requests sr LEFT JOIN accounts a ON a.id=sr.account_id ORDER BY sr.id DESC");
+      return json({ data: { profile: cleanAccount(account), interests: (await interests.all()).results, purchases: (await purchases.all()).results, consultations: (await consultations.all()).results } });
+    }
     if (method === "GET" && url.pathname === "/api/projects") return json({ data: (await env.DB.prepare("SELECT * FROM projects ORDER BY id DESC").all()).results.map(projectFromRow) });
+    if (method === "GET" && parts[1] === "projects" && parts[2]) {
+      const project = await env.DB.prepare("SELECT * FROM projects WHERE id=?").bind(Number(parts[2])).first();
+      return project ? json({ data: projectFromRow(project) }) : json({ error: "Project not found" }, 404);
+    }
+    if (projectInterest) {
+      const projectId = Number(parts[2]);
+      const project = await env.DB.prepare("SELECT id FROM projects WHERE id=?").bind(projectId).first();
+      if (!project) return json({ error: "Project not found" }, 404);
+      await env.DB.prepare("INSERT OR IGNORE INTO project_interests (account_id,project_id) VALUES (?,?)").bind(account.id, projectId).run();
+      return json({ data: { project_id: projectId } }, 201);
+    }
     if (method === "POST" && url.pathname === "/api/projects") {
       const input = await request.json(), errors = projectErrors(input);
       if (errors.length) return json({ errors }, 422);
-      const result = await env.DB.prepare("INSERT INTO projects (name,description,languages,configuration,price,currency) VALUES (?,?,?,?,?,?)").bind(input.name.trim(), input.description?.trim() || null, JSON.stringify(input.languages), JSON.stringify(input.configuration), input.price, input.currency || "VND").run();
+      const result = await env.DB.prepare("INSERT INTO projects (name,description,languages,configuration,price,currency,detail_tag,full_description,gallery,roadmap) VALUES (?,?,?,?,?,?,?,?,?,?)").bind(input.name.trim(), input.description?.trim() || null, JSON.stringify(input.languages), JSON.stringify(input.configuration), input.price, input.currency || "VND", input.detail_tag?.trim() || null, input.full_description?.trim() || null, JSON.stringify(input.gallery || []), JSON.stringify(input.roadmap || [])).run();
       return json({ data: projectFromRow(await env.DB.prepare("SELECT * FROM projects WHERE id=?").bind(result.meta.last_row_id).first()) }, 201);
     }
     if ((method === "PATCH" || method === "DELETE") && parts[1] === "projects" && parts[2]) {
@@ -169,7 +196,7 @@ export async function onRequest({ request, env }) {
       const current = await env.DB.prepare("SELECT * FROM projects WHERE id=?").bind(id).first();
       if (!current) return json({ error: "Project not found" }, 404);
       const merged = { ...projectFromRow(current), ...input };
-      await env.DB.prepare("UPDATE projects SET name=?,description=?,languages=?,configuration=?,price=?,currency=?,updated_at=CURRENT_TIMESTAMP WHERE id=?").bind(merged.name.trim(), merged.description?.trim() || null, JSON.stringify(merged.languages), JSON.stringify(merged.configuration), merged.price, merged.currency || "VND", id).run();
+      await env.DB.prepare("UPDATE projects SET name=?,description=?,languages=?,configuration=?,price=?,currency=?,detail_tag=?,full_description=?,gallery=?,roadmap=?,updated_at=CURRENT_TIMESTAMP WHERE id=?").bind(merged.name.trim(), merged.description?.trim() || null, JSON.stringify(merged.languages), JSON.stringify(merged.configuration), merged.price, merged.currency || "VND", merged.detail_tag?.trim() || null, merged.full_description?.trim() || null, JSON.stringify(merged.gallery || []), JSON.stringify(merged.roadmap || []), id).run();
       return json({ data: projectFromRow(await env.DB.prepare("SELECT * FROM projects WHERE id=?").bind(id).first()) });
     }
     if (method === "GET" && url.pathname === "/api/products") {
@@ -215,7 +242,7 @@ export async function onRequest({ request, env }) {
     if (method === "GET" && url.pathname === "/api/accounts") return json({ data: (await env.DB.prepare("SELECT id,name,email,role,created_at,updated_at FROM accounts ORDER BY id DESC").all()).results });
     if (method === "PATCH" && parts[1] === "accounts" && parts[2]) {
       const id = Number(parts[2]), input = await request.json();
-      if (!['admin', 'staff'].includes(input.role)) return json({ error: "role must be admin or staff" }, 422);
+      if (!['admin', 'user'].includes(input.role)) return json({ error: "role must be admin or user" }, 422);
       const actor = await requireRole(request, env, ["admin"]); if (actor.id === id && input.role !== 'admin') return json({ error: "You cannot remove your own administrator role" }, 422);
       const result = await env.DB.prepare("UPDATE accounts SET role=?,updated_at=CURRENT_TIMESTAMP WHERE id=?").bind(input.role, id).run();
       return result.meta.changes ? json({ data: await env.DB.prepare("SELECT id,name,email,role,created_at,updated_at FROM accounts WHERE id=?").bind(id).first() }) : json({ error: "Account not found" }, 404);

@@ -18,8 +18,9 @@ export function AuthProvider({ children }) {
     await fetch("/api/auth/logout", { method: "POST", credentials: "include" });
     setUser(null);
   };
+  const setSession = (account) => setUser(account);
   const isAdmin = user?.role === "admin";
-  return <AuthContext.Provider value={{ user, loading, isAdmin, logout }}>{children}</AuthContext.Provider>;
+  return <AuthContext.Provider value={{ user, loading, isAdmin, logout, setSession }}>{children}</AuthContext.Provider>;
 }
 
 export const useAuth = () => useContext(AuthContext);

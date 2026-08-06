@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { Menu, X } from "lucide-react";
 import BrandLogo from "../ui/BrandLogo.jsx";
+import { useAuth } from "../../context/AuthContext.jsx";
 
 const NAV_ITEMS = [
   { href: "#projects", label: "Dự án" },
@@ -13,6 +14,7 @@ const NAV_ITEMS = [
 
 export default function Navbar() {
   const [navOpen, setNavOpen] = useState(false);
+  const { user, isAdmin } = useAuth();
 
   return (
     <nav className="nav">
@@ -24,7 +26,7 @@ export default function Navbar() {
           ))}
         </div>
         <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-          <Link to="/login" className="nav-cta">Đăng nhập</Link>
+          <Link to={user ? (isAdmin ? "/admin" : "/account") : "/login"} className="nav-cta">{user ? "Tài khoản" : "Đăng nhập"}</Link>
           <button className="nav-toggle" onClick={() => setNavOpen(!navOpen)}>
             {navOpen ? <X size={22} /> : <Menu size={22} />}
           </button>

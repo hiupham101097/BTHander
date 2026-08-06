@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from "react";
-import { CheckCircle2, Code2, Database } from "lucide-react";
+import { ArrowRight, CheckCircle2, Code2, Database } from "lucide-react";
 import Reveal from "../ui/Reveal.jsx";
 import SectionEyebrow from "../ui/SectionEyebrow.jsx";
+import { useAuth } from "../../context/AuthContext.jsx";
+import { Link } from "react-router-dom";
 
 const apiBaseUrl = import.meta.env.VITE_API_BASE_URL || "";
 
@@ -12,6 +14,8 @@ function formatPrice(price, currency) {
 export default function Projects() {
   const [projects, setProjects] = useState([]);
   const [state, setState] = useState("loading");
+  const [interested, setInterested] = useState([]);
+  const { user } = useAuth();
  
   
   useEffect(() => {
@@ -27,6 +31,10 @@ export default function Projects() {
       });
     return () => controller.abort();
   }, []);
+  const markInterest = async (id) => {
+    const response = await fetch(`/api/projects/${id}/interest`, { method: "POST", credentials: "include" });
+    if (response.ok) setInterested((items) => [...items, id]);
+  };
 
   return (
     <section className="section" id="projects">
@@ -53,6 +61,8 @@ export default function Projects() {
                   ))}
                 </dl>
                 <div className="project-price"><CheckCircle2 size={16} /> {formatPrice(project.price, project.currency)}</div>
+                <Link className="proj-detail-link" to={`/projects/${project.id}`}>Xem chi tiết dự án <ArrowRight size={15} /></Link>
+                {user ? <button className="project-interest" disabled={interested.includes(project.id)} onClick={() => markInterest(project.id)}>{interested.includes(project.id) ? "Đã quan tâm" : "Quan tâm dự án"}</button> : <Link className="project-interest" to="/login">Đăng nhập để quan tâm</Link>}
               </article>
             </Reveal>
           ))}

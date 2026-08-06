@@ -1,11 +1,13 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import BrandLogo from "../components/ui/BrandLogo.jsx";
+import { useAuth } from "../context/AuthContext.jsx";
 
 const initialForm = { name: "", email: "", password: "", confirmPassword: "" };
 
 export default function Register() {
   const navigate = useNavigate();
+  const { setSession } = useAuth();
   const [form, setForm] = useState(initialForm);
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
@@ -20,7 +22,8 @@ export default function Register() {
       const response = await fetch("/api/auth/register", { method: "POST", credentials: "include", headers: { "content-type": "application/json" }, body: JSON.stringify({ name: form.name, email: form.email, password: form.password }) });
       const body = await response.json().catch(() => ({}));
       if (!response.ok) throw new Error(body.errors?.[0] || body.error || "Không thể đăng ký");
-      navigate("/admin/profile");
+      setSession(body.data);
+      navigate("/account", { replace: true });
     } catch (requestError) { setError(requestError.message); } finally { setSubmitting(false); }
   };
 

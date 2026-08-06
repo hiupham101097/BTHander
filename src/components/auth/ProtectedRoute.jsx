@@ -7,6 +7,6 @@ export default function ProtectedRoute({ children, adminOnly = false }) {
   const location = useLocation();
   if (loading) return <main className="admin-loading">Đang tải tài khoản…</main>;
   if (!user) return <Navigate to="/login" replace state={{ from: location }} />;
-  if (adminOnly && !isAdmin) return <Navigate to="/admin/profile" replace />;
+  if (adminOnly && !isAdmin) return <Navigate to="/account" replace />;
   return children;
 }

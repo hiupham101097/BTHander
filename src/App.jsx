@@ -13,6 +13,7 @@ import Profile from "./pages/admin/Profile.jsx";
 import CatalogManager from "./pages/admin/CatalogManager.jsx";
 import UsersManager from "./pages/admin/UsersManager.jsx";
 import ContactsManager from "./pages/admin/ContactsManager.jsx";
+import ProjectDetail from "./pages/ProjectDetail.jsx";
 
 export default function App() {
   return (
@@ -20,6 +21,7 @@ export default function App() {
       <Routes>
         <Route element={<MainLayout />}>
           <Route path="/" element={<Home />} />
+          <Route path="/projects/:id" element={<ProjectDetail />} />
         </Route>
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
@@ -31,6 +33,9 @@ export default function App() {
           <Route path="users" element={<ProtectedRoute adminOnly><UsersManager /></ProtectedRoute>} />
           <Route path="contacts" element={<ProtectedRoute adminOnly><ContactsManager /></ProtectedRoute>} />
           <Route path="profile" element={<Profile />} />
+        </Route>
+        <Route path="/account" element={<ProtectedRoute><AdminLayout /></ProtectedRoute>}>
+          <Route index element={<Profile />} />
         </Route>
       </Routes>
     </AuthProvider></BrowserRouter>
