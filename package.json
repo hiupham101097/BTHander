@@ -8,8 +8,9 @@
     "build": "vite build",
     "preview": "vite preview",
     "dev:api": "npx --yes wrangler@latest dev",
+    "migrate:remote": "npx --yes wrangler@latest d1 migrations apply app-db --remote",
     "lint": "eslint src --ext .js,.jsx",
-    "deploy:worker": "npm run build && npx --yes wrangler@latest deploy"
+    "deploy:worker": "npm run build && npm run migrate:remote && npx --yes wrangler@latest deploy"
   },
   "dependencies": {
     "lucide-react": "^0.383.0",
