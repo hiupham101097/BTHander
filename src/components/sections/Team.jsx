@@ -1,31 +1,10 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import Reveal from "../ui/Reveal.jsx";
 import SectionEyebrow from "../ui/SectionEyebrow.jsx";
-import { TEAM } from "../../constants/data.js";
 
 export default function Team() {
-  return (
-    <section className="section" id="team">
-      <div className="wrap">
-        <Reveal><SectionEyebrow label="Đội ngũ" /></Reveal>
-        <Reveal delay={60}><h2 className="section-title">Hiểu công nghệ, sát nhu cầu triển khai.</h2></Reveal>
-        <Reveal delay={120}>
-          <p className="section-sub">
-            Brave Trust Hander quy tụ kỹ sư phần mềm, thiết kế sản phẩm và kỹ sư cơ khí để giải quyết trọn vẹn các bài toán thực tế.
-          </p>
-        </Reveal>
-        <div className="team-grid">
-          {TEAM.map((t, i) => (
-            <Reveal delay={i * 80} key={t.name}>
-              <div className="team-card">
-                <div className="avatar" style={{ background: t.grad }}>{t.init}</div>
-                <div className="team-name">{t.name}</div>
-                <div className="team-role">{t.role}</div>
-              </div>
-            </Reveal>
-          ))}
-        </div>
-      </div>
-    </section>
-  );
+  const [members, setMembers] = useState([]);
+  useEffect(() => { fetch("/api/team").then((response) => response.ok ? response.json() : { data: [] }).then((body) => setMembers(body.data || [])).catch(() => setMembers([])); }, []);
+  return <section className="section" id="team"><div className="wrap"><Reveal><SectionEyebrow label="Đội ngũ" /></Reveal><Reveal delay={60}><h2 className="section-title">Hiểu công nghệ, sát nhu cầu triển khai.</h2></Reveal><Reveal delay={120}><p className="section-sub">Brave Trust Hander quy tụ những người làm sản phẩm và công nghệ để giải quyết các bài toán thực tế.</p></Reveal><div className="team-grid">{members.map((member, index) => <Reveal delay={index * 80} key={member.id}><Link className="team-card team-card-link" to={`/team/${member.id}`}><div className="avatar">{member.avatar_url ? <img src={member.avatar_url} alt={member.name} /> : member.name.slice(0, 1)}</div><div className="team-name">{member.name}</div><div className="team-role">{member.title}</div><span>Xem profile →</span></Link></Reveal>)}</div></div></section>;
 }

@@ -14,6 +14,7 @@ import CatalogManager from "./pages/admin/CatalogManager.jsx";
 import UsersManager from "./pages/admin/UsersManager.jsx";
 import ContactsManager from "./pages/admin/ContactsManager.jsx";
 import ProjectDetail from "./pages/ProjectDetail.jsx";
+import TeamProfile from "./pages/TeamProfile.jsx";
 
 export default function App() {
   return (
@@ -22,6 +23,7 @@ export default function App() {
         <Route element={<MainLayout />}>
           <Route path="/" element={<Home />} />
           <Route path="/projects/:id" element={<ProjectDetail />} />
+          <Route path="/team/:id" element={<TeamProfile />} />
         </Route>
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />

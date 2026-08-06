@@ -5,6 +5,7 @@ const json = (body, status = 200, headers = {}) => new Response(body === null ? 
 });
 const projectFromRow = (row) => row && ({ ...row, languages: JSON.parse(row.languages), configuration: JSON.parse(row.configuration), gallery: JSON.parse(row.gallery || "[]"), roadmap: JSON.parse(row.roadmap || "[]") });
 const productFromRow = (row) => row && ({ ...row, specifications: JSON.parse(row.specifications) });
+const teamFromRow = (row) => row && ({ ...row, skills: JSON.parse(row.skills || "[]"), experience: JSON.parse(row.experience || "[]"), featured_projects: JSON.parse(row.featured_projects || "[]"), articles: JSON.parse(row.articles || "[]") });
 const hex = (bytes) => [...new Uint8Array(bytes)].map((byte) => byte.toString(16).padStart(2, "0")).join("");
 const randomHex = (length = 32) => hex(crypto.getRandomValues(new Uint8Array(length)));
 
@@ -64,6 +65,8 @@ function teamErrors(input, partial = false) {
   if ("bio" in input && (typeof input.bio !== "string" || input.bio.length > 1000)) errors.push("bio must be a string up to 1000 characters");
   if ("avatar_url" in input && input.avatar_url !== null && typeof input.avatar_url !== "string") errors.push("avatar_url must be a string");
   if ("contact_info" in input && input.contact_info !== null && (typeof input.contact_info !== "string" || input.contact_info.length > 300)) errors.push("contact_info must be a string up to 300 characters");
+  if ("profile_intro" in input && (typeof input.profile_intro !== "string" || input.profile_intro.length > 5000)) errors.push("profile_intro must be a string up to 5000 characters");
+  for (const field of ["skills", "experience", "featured_projects", "articles"]) if (field in input && (!Array.isArray(input[field]) || input[field].some((item) => typeof item !== "string" || !item.trim()))) errors.push(`${field} must be an array of strings`);
   if ("sort_order" in input && (!Number.isInteger(input.sort_order) || input.sort_order < 0)) errors.push("sort_order must be a non-negative integer");
   if ("status" in input && !["active", "inactive"].includes(input.status)) errors.push("status must be active or inactive");
   return errors;
@@ -223,12 +226,17 @@ export async function onRequest({ request, env }) {
     if (method === "GET" && url.pathname === "/api/team") {
       const admin = await requireRole(request, env, ["admin"]);
       const query = admin ? env.DB.prepare("SELECT * FROM team_members ORDER BY sort_order, id") : env.DB.prepare("SELECT * FROM team_members WHERE status='active' ORDER BY sort_order, id");
-      return json({ data: (await query.all()).results });
+      return json({ data: (await query.all()).results.map(teamFromRow) });
+    }
+    if (method === "GET" && parts[1] === "team" && parts[2]) {
+      const admin = await requireRole(request, env, ["admin"]);
+      const query = admin ? env.DB.prepare("SELECT * FROM team_members WHERE id=?").bind(Number(parts[2])) : env.DB.prepare("SELECT * FROM team_members WHERE id=? AND status='active'").bind(Number(parts[2]));
+      const member = await query.first(); return member ? json({ data: teamFromRow(member) }) : json({ error: "Team member not found" }, 404);
     }
     if (method === "POST" && url.pathname === "/api/team") {
       const input = await request.json(), errors = teamErrors(input); if (errors.length) return json({ errors }, 422);
-      const result = await env.DB.prepare("INSERT INTO team_members (name,title,bio,avatar_url,contact_info,sort_order,status) VALUES (?,?,?,?,?,?,?)").bind(input.name.trim(), input.title.trim(), input.bio?.trim() || null, input.avatar_url?.trim() || null, input.contact_info?.trim() || null, input.sort_order || 0, input.status || "active").run();
-      return json({ data: await env.DB.prepare("SELECT * FROM team_members WHERE id=?").bind(result.meta.last_row_id).first() }, 201);
+      const result = await env.DB.prepare("INSERT INTO team_members (name,title,bio,avatar_url,contact_info,profile_intro,skills,experience,featured_projects,articles,sort_order,status) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)").bind(input.name.trim(), input.title.trim(), input.bio?.trim() || null, input.avatar_url?.trim() || null, input.contact_info?.trim() || null, input.profile_intro?.trim() || null, JSON.stringify(input.skills || []), JSON.stringify(input.experience || []), JSON.stringify(input.featured_projects || []), JSON.stringify(input.articles || []), input.sort_order || 0, input.status || "active").run();
+      return json({ data: teamFromRow(await env.DB.prepare("SELECT * FROM team_members WHERE id=?").bind(result.meta.last_row_id).first()) }, 201);
     }
     if ((method === "PATCH" || method === "DELETE") && parts[1] === "team" && parts[2]) {
       const id = Number(parts[2]);
@@ -236,8 +244,8 @@ export async function onRequest({ request, env }) {
       const input = await request.json(), errors = teamErrors(input, true); if (errors.length || !Object.keys(input).length) return json({ errors: errors.length ? errors : ["At least one field is required"] }, 422);
       const current = await env.DB.prepare("SELECT * FROM team_members WHERE id=?").bind(id).first(); if (!current) return json({ error: "Team member not found" }, 404);
       const merged = { ...current, ...input };
-      await env.DB.prepare("UPDATE team_members SET name=?,title=?,bio=?,avatar_url=?,contact_info=?,sort_order=?,status=?,updated_at=CURRENT_TIMESTAMP WHERE id=?").bind(merged.name.trim(), merged.title.trim(), merged.bio?.trim() || null, merged.avatar_url?.trim() || null, merged.contact_info?.trim() || null, merged.sort_order, merged.status, id).run();
-      return json({ data: await env.DB.prepare("SELECT * FROM team_members WHERE id=?").bind(id).first() });
+      await env.DB.prepare("UPDATE team_members SET name=?,title=?,bio=?,avatar_url=?,contact_info=?,profile_intro=?,skills=?,experience=?,featured_projects=?,articles=?,sort_order=?,status=?,updated_at=CURRENT_TIMESTAMP WHERE id=?").bind(merged.name.trim(), merged.title.trim(), merged.bio?.trim() || null, merged.avatar_url?.trim() || null, merged.contact_info?.trim() || null, merged.profile_intro?.trim() || null, JSON.stringify(merged.skills || []), JSON.stringify(merged.experience || []), JSON.stringify(merged.featured_projects || []), JSON.stringify(merged.articles || []), merged.sort_order, merged.status, id).run();
+      return json({ data: teamFromRow(await env.DB.prepare("SELECT * FROM team_members WHERE id=?").bind(id).first()) });
     }
     if (method === "GET" && url.pathname === "/api/accounts") return json({ data: (await env.DB.prepare("SELECT id,name,email,role,created_at,updated_at FROM accounts ORDER BY id DESC").all()).results });
     if (method === "PATCH" && parts[1] === "accounts" && parts[2]) {
