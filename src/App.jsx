@@ -17,10 +17,11 @@ import ProjectDetail from "./pages/ProjectDetail.jsx";
 import TeamProfile from "./pages/TeamProfile.jsx";
 import { TeamArticleDetail, TeamArticles } from "./pages/TeamArticles.jsx";
 import ArticlesManager from "./pages/admin/ArticlesManager.jsx";
+import ScrollToTop from "./components/ScrollToTop.jsx";
 
 export default function App() {
   return (
-    <BrowserRouter><AuthProvider>
+    <BrowserRouter><AuthProvider><ScrollToTop />
       <Routes>
         <Route element={<MainLayout />}>
           <Route path="/" element={<Home />} />
