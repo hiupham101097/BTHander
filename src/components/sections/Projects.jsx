@@ -3,7 +3,7 @@ import { ArrowRight, CheckCircle2, Code2, Database } from "lucide-react";
 import Reveal from "../ui/Reveal.jsx";
 import SectionEyebrow from "../ui/SectionEyebrow.jsx";
 import { useAuth } from "../../context/AuthContext.jsx";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 const apiBaseUrl = import.meta.env.VITE_API_BASE_URL || "";
 
@@ -16,6 +16,7 @@ export default function Projects() {
   const [state, setState] = useState("loading");
   const [interested, setInterested] = useState([]);
   const { user } = useAuth();
+  const navigate = useNavigate();
  
   
   useEffect(() => {
@@ -50,7 +51,7 @@ export default function Projects() {
         <div className="core-project-grid">
           {projects.map((project) => (
             <Reveal key={project.id} delay={160}>
-              <article className="core-project-card">
+              <article className="core-project-card core-project-card-link" role="link" tabIndex={0} onClick={() => navigate(`/projects/${project.id}`)} onKeyDown={(event) => { if (event.key === "Enter" || event.key === " ") navigate(`/projects/${project.id}`); }}>
                 <div className="core-project-icon"><Database size={24} /></div>
                 <h3>{project.name}</h3>
                 <div className="project-languages"><Code2 size={15} /> {project.languages.join(" · ")}</div>
@@ -61,8 +62,8 @@ export default function Projects() {
                   ))}
                 </dl>
                 <div className="project-price"><CheckCircle2 size={16} /> {formatPrice(project.price, project.currency)}</div>
-                <Link className="proj-detail-link" to={`/projects/${project.id}`}>Xem chi tiết dự án <ArrowRight size={15} /></Link>
-                {user ? <button className="project-interest" disabled={interested.includes(project.id)} onClick={() => markInterest(project.id)}>{interested.includes(project.id) ? "Đã quan tâm" : "Quan tâm dự án"}</button> : <Link className="project-interest" to="/login">Đăng nhập để quan tâm</Link>}
+                <Link className="proj-detail-link" to={`/projects/${project.id}`} onClick={(event) => event.stopPropagation()}>Xem chi tiết dự án <ArrowRight size={15} /></Link>
+                {user ? <button className="project-interest" disabled={interested.includes(project.id)} onClick={(event) => { event.stopPropagation(); markInterest(project.id); }}>{interested.includes(project.id) ? "Đã quan tâm" : "Quan tâm dự án"}</button> : <Link className="project-interest" to="/login" onClick={(event) => event.stopPropagation()}>Đăng nhập để quan tâm</Link>}
               </article>
             </Reveal>
           ))}
