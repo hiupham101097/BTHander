@@ -1,46 +1,7 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
-import { Menu, X } from "lucide-react";
+import { Link, useNavigate } from "react-router-dom";
+import { ChevronDown, LogOut, Menu, Settings, UserCircle, X } from "lucide-react";
 import BrandLogo from "../ui/BrandLogo.jsx";
 import { useAuth } from "../../context/AuthContext.jsx";
-
-const NAV_ITEMS = [
-  { href: "#projects", label: "Dự án" },
-  { href: "#achievements", label: "Năng lực" },
-  { href: "#products", label: "Dịch vụ" },
-  { href: "#team", label: "Đội ngũ" },
-  { href: "#contact", label: "Liên hệ" },
-];
-
-export default function Navbar() {
-  const [navOpen, setNavOpen] = useState(false);
-  const { user, isAdmin } = useAuth();
-
-  return (
-    <nav className="nav">
-      <div className="wrap nav-inner">
-        <Link to="/" className="brand-link"><BrandLogo /></Link>
-        <div className="nav-links">
-          {NAV_ITEMS.map((item) => (
-            <a key={item.href} href={item.href}>{item.label}</a>
-          ))}
-        </div>
-        <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-          <Link to={user ? (isAdmin ? "/admin" : "/account") : "/login"} className="nav-cta">{user ? "Tài khoản" : "Đăng nhập"}</Link>
-          <button className="nav-toggle" onClick={() => setNavOpen(!navOpen)}>
-            {navOpen ? <X size={22} /> : <Menu size={22} />}
-          </button>
-        </div>
-      </div>
-      {navOpen && (
-        <div className="mobile-menu">
-          {NAV_ITEMS.map((item) => (
-            <a key={item.href} href={item.href} onClick={() => setNavOpen(false)}>
-              {item.label}
-            </a>
-          ))}
-        </div>
-      )}
-    </nav>
-  );
-}
+const NAV_ITEMS = [{ href: "#projects", label: "Dự án" }, { href: "#achievements", label: "Năng lực" }, { href: "#products", label: "Dịch vụ" }, { href: "#team", label: "Đội ngũ" }, { href: "#contact", label: "Liên hệ" }];
+export default function Navbar() { const [navOpen, setNavOpen] = useState(false), [menuOpen, setMenuOpen] = useState(false); const { user, isAdmin, logout } = useAuth(); const navigate = useNavigate(); const accountPath = isAdmin ? "/admin/profile" : "/account"; const signOut = async () => { await logout(); setMenuOpen(false); navigate("/", { replace: true }); }; return <nav className="nav"><div className="wrap nav-inner"><Link to="/" className="brand-link"><BrandLogo /></Link><div className="nav-links">{NAV_ITEMS.map((item) => <a key={item.href} href={item.href}>{item.label}</a>)}</div><div className="nav-actions">{user ? <div className="profile-menu"><button className="profile-trigger" onClick={() => setMenuOpen((value) => !value)} aria-expanded={menuOpen}><UserCircle size={22} /><span>{user.name}</span><ChevronDown size={15} /></button>{menuOpen && <div className="profile-dropdown"><Link to={accountPath} onClick={() => setMenuOpen(false)}><UserCircle size={16} />Hồ sơ cá nhân</Link><Link to={accountPath} onClick={() => setMenuOpen(false)}><Settings size={16} />Cài đặt</Link><button onClick={signOut}><LogOut size={16} />Đăng xuất</button></div>}</div> : <Link to="/login" className="nav-cta">Đăng nhập</Link>}<button className="nav-toggle" onClick={() => setNavOpen(!navOpen)}>{navOpen ? <X size={22} /> : <Menu size={22} />}</button></div></div>{navOpen && <div className="mobile-menu">{NAV_ITEMS.map((item) => <a key={item.href} href={item.href} onClick={() => setNavOpen(false)}>{item.label}</a>)}</div>}</nav>; }
