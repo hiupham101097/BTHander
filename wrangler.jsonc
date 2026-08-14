@@ -16,8 +16,8 @@
   ],
   "r2_buckets": [
     {
-      "binding": "PROJECT_IMAGES",
-      "bucket_name": "bthander-project-images"
+      "binding": "MEDIA",
+      "bucket_name": "bthander-media"
     }
   ]
 }

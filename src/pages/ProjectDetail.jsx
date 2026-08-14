@@ -1,43 +1,259 @@
 import React, { useEffect, useState } from "react";
-import { ArrowLeft, Code2 } from "lucide-react";
 import { Link, useParams } from "react-router-dom";
+import {
+  ArrowLeft,
+  CheckCircle2,
+  Circle,
+  CircleDot,
+  Code2,
+  Database,
+  Settings2,
+} from "lucide-react";
 
-const apiBaseUrl = import.meta.env.VITE_API_BASE_URL || "";
+const gradients = [
+  "linear-gradient(135deg,#7c3aed,#ec4899)",
+  "linear-gradient(135deg,#0891b2,#7c3aed)",
+  "linear-gradient(135deg,#ea580c,#ec4899)",
+];
+
+const statusIcon = {
+  done: CheckCircle2,
+  current: CircleDot,
+  upcoming: Circle,
+};
 
 export default function ProjectDetail() {
   const { id } = useParams();
+
   const [project, setProject] = useState(null);
   const [state, setState] = useState("loading");
 
   useEffect(() => {
-    const controller = new AbortController();
-    fetch(`${apiBaseUrl}/api/projects/${id}`, { signal: controller.signal })
-      .then(async (response) => {
-        if (!response.ok) throw new Error("Không tìm thấy dự án");
-        return response.json();
-      })
-      .then((body) => { setProject(body.data); setState("ready"); })
-      .catch((error) => { if (error.name !== "AbortError") setState("error"); });
-    return () => controller.abort();
+    loadProject();
   }, [id]);
 
-  if (state === "loading") return <main className="project-detail-page wrap"><p className="api-state">Đang tải dự án...</p></main>;
-  if (state === "error") return <main className="project-detail-page wrap"><Link to="/#projects"><ArrowLeft size={17} /> Quay lại</Link><p className="api-state api-state-error">Không tìm thấy dự án.</p></main>;
+  async function loadProject() {
+    try {
+      setState("loading");
 
-  return <main className="project-detail-page wrap">
-    <Link className="project-detail-back" to="/#projects"><ArrowLeft size={17} /> Quay lại danh sách</Link>
-    <header className="project-detail-header">
-      <h1>{project.name}</h1>
-      <div className="project-languages"><Code2 size={16} /> {project.languages.join(" · ")}</div>
-      {project.description && <p>{project.description}</p>}
-    </header>
-    {project.images?.length > 0 ? <div className="project-gallery">
-      {project.images.map((photo) => <button type="button" key={photo.id} className="project-gallery-item" onClick={() => window.open(photo.url, "_blank", "noopener,noreferrer")}>
-        <img src={photo.url} alt={`${project.name} - ${photo.file_name}`} loading="lazy" />
-      </button>)}
-    </div> : <p className="api-state">Dự án chưa có hình ảnh.</p>}
-    <section className="project-detail-config"><h2>Thông tin dự án</h2><dl className="project-config">
-      {Object.entries(project.configuration || {}).map(([key, value]) => <div key={key}><dt>{key}</dt><dd>{String(value)}</dd></div>)}
-    </dl></section>
-  </main>;
+      const response = await fetch(`/api/projects/${id}`);
+      const body = await response.json();
+
+      if (!response.ok) {
+        throw new Error(body.error);
+      }
+
+      setProject(body.data);
+    } catch (e) {
+      setState("error");
+    } finally {
+      setState("ready");
+    }
+  }
+
+  if (state === "loading") {
+    return (
+      <div className="wrap detail-state">
+        Đang tải dự án...
+      </div>
+    );
+  }
+
+  if (!project) {
+    return (
+      <div className="wrap detail-state">
+        <h2 className="section-title">
+          Không tìm thấy dự án
+        </h2>
+
+        <p className="section-sub">
+          Dự án này có thể đã bị xoá hoặc đường dẫn không chính xác.
+        </p>
+
+        <Link
+          to="/#projects"
+          className="btn-ghost"
+        >
+          Quay lại trang chủ
+        </Link>
+      </div>
+    );
+  }
+
+  const gradient =
+    gradients[Number(project.id) % gradients.length];
+
+  const gallery = project.gallery || [];
+  const roadmap = project.roadmap || [];
+
+  const price = new Intl.NumberFormat("vi-VN", {
+    style: "currency",
+    currency: project.currency || "VND",
+    maximumFractionDigits: 0,
+  }).format(project.price);
+
+  return (
+    <div>
+      {/* Back */}
+      <div className="wrap detail-back-wrap">
+        <Link
+          to="/#projects"
+          className="detail-back"
+        >
+          <ArrowLeft size={15} />
+          Quay lại danh sách dự án
+        </Link>
+      </div>
+
+      {/* Hero */}
+      <header
+        className="detail-hero"
+        style={{ background: gradient }}
+      >
+        <div className="wrap detail-hero-inner">
+          <div className="detail-hero-icon">
+            <Database size={40} />
+          </div>
+
+          <span className="detail-category-badge">
+            {project.languages?.join(" · ") || "Dự án"}
+          </span>
+
+          <h1 className="detail-hero-title">
+            {project.name}
+          </h1>
+
+          <p className="detail-hero-tag">
+            {project.detail_tag ||
+              "Giải pháp được xây dựng theo mục tiêu và phạm vi thực tế."}
+          </p>
+        </div>
+      </header>
+
+      {/* Description */}
+      <section className="section detail-section">
+        <div className="wrap detail-desc-grid">
+          <div>
+            <div className="eyebrow">
+              Giới thiệu dự án
+            </div>
+
+            <p className="detail-desc-text">
+              {project.full_description ||
+                project.description ||
+                "Thông tin mô tả cho dự án này đang được cập nhật."}
+            </p>
+          </div>
+
+          <div className="proj-metric detail-metric">
+            <CheckCircle2 size={16} />
+            {price}
+          </div>
+        </div>
+      </section>
+
+      {/* Gallery */}
+      {gallery.length > 0 && (
+        <section className="section detail-section">
+          <div className="wrap">
+            <div className="eyebrow">
+              Hình ảnh sản phẩm
+            </div>
+
+            <h2 className="section-title">
+              Một vài lát cắt từ hệ thống thực tế.
+            </h2>
+
+            <div className="gallery-grid">
+              {gallery.map((item, index) => (
+                <div
+                  key={`${item.label}-${index}`}
+                  className="gallery-card"
+                  style={{ background: gradient }}
+                >
+                  {item.image_url && (
+                    <img
+                      src={item.image_url}
+                      alt={item.label}
+                      className="gallery-card-image"
+                    />
+                  )}
+
+                  <div className="gallery-card-icon">
+                    <Code2 size={30} />
+                  </div>
+
+                  <div className="gallery-card-label">
+                    {item.label}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* Roadmap */}
+      {roadmap.length > 0 && (
+        <section className="section detail-section">
+          <div className="wrap">
+            <div className="eyebrow">
+              Lộ trình phát triển
+            </div>
+
+            <h2 className="section-title">
+              Từ thử nghiệm đến triển khai diện rộng.
+            </h2>
+
+            <div className="timeline">
+              {roadmap.map((step, index) => {
+                const StatusIcon =
+                  statusIcon[step.status] || Circle;
+
+                return (
+                  <div
+                    key={`${step.phase}-${index}`}
+                    className={`timeline-item status-${step.status}`}
+                  >
+                    <div className="timeline-marker">
+                      <StatusIcon size={18} />
+
+                      {index < roadmap.length - 1 && (
+                        <span className="timeline-line" />
+                      )}
+                    </div>
+
+                    <div className="timeline-content">
+                      <div
+                        className="timeline-visual"
+                        style={{
+                          background: gradient,
+                        }}
+                      >
+                        <Settings2 size={22} />
+                      </div>
+
+                      <div className="timeline-text">
+                        <div className="timeline-phase">
+                          {step.phase}
+                        </div>
+
+                        <div className="timeline-title">
+                          {step.title}
+                        </div>
+
+                        <p className="timeline-desc">
+                          {step.desc}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        </section>
+      )}
+    </div>
+  );
 }
