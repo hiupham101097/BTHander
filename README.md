@@ -95,18 +95,18 @@ Thêm route mới chỉ cần 2 bước:
   — chỉnh sửa trực tiếp file này để thay bằng thông tin thật.
 - Icon: `lucide-react`. Font: Sora (tiêu đề) + Inter (nội dung) qua Google Fonts.
 
-## Cloudflare Pages — Deploy
+## Cloudflare Workers — Deploy
 
-Hướng dẫn nhanh để deploy site lên Cloudflare Pages bằng GitHub Actions.
+Hướng dẫn nhanh để deploy site và API lên Cloudflare Workers bằng GitHub Actions.
 
-- Tạo một Cloudflare Pages project tên `aurix-landing` trong dashboard Cloudflare.
-- Tạo một API token (Permissions: *Pages:Edit* hoặc *All Pages*), và lấy `Account ID` từ dashboard.
+- Tạo Worker theo cấu hình trong `wrangler.jsonc`.
+- Tạo một API token có quyền *Workers Scripts:Edit* và *D1:Edit*, sau đó lấy `Account ID` từ dashboard.
 - Thêm 2 secret trong repository GitHub: `CF_PAGES_API_TOKEN` và `CF_ACCOUNT_ID`.
 
 Workflow CI nằm ở `.github/workflows/deploy-pages.yml` và sẽ:
 
 - Chạy `npm ci` rồi `npm run build`.
-- Đẩy thư mục `dist` lên Cloudflare Pages.
+- Chạy D1 migrations, sau đó đẩy Worker và thư mục `dist` cùng lúc.
 
 Khi cần deploy thủ công từ máy local, bạn vẫn có thể build và preview:
 
@@ -115,4 +115,4 @@ npm run build
 npm run preview
 ```
 
-Để deploy Pages từ máy local, chạy `npm run build` rồi `npm run deploy:pages`. Lệnh này dùng phiên đăng nhập Wrangler hiện có và đẩy thư mục `dist` lên project `aurix-landing`.
+Để deploy từ máy local, chạy `npm run deploy:worker`. Lệnh này build giao diện, áp dụng D1 migrations và deploy Worker. Sau lần deploy đầu tiên, gán tên miền của site vào Worker thay vì Cloudflare Pages để request `/api/*` đi tới backend.

@@ -1,9 +1,11 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import BrandLogo from "../components/ui/BrandLogo.jsx";
+import { useAuth } from "../context/AuthContext.jsx";
 
 export default function Login() {
   const navigate = useNavigate();
+  const { setSession } = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -16,7 +18,8 @@ export default function Login() {
       const response = await fetch("/api/auth/login", { method: "POST", credentials: "include", headers: { "content-type": "application/json" }, body: JSON.stringify({ email, password }) });
       const body = await response.json().catch(() => ({}));
       if (!response.ok) throw new Error(body.error || "Không thể đăng nhập");
-      navigate("/admin");
+      setSession(body.data);
+      navigate(body.data.role === "admin" ? "/admin" : "/account", { replace: true });
     } catch (requestError) { setError(requestError.message); } finally { setSubmitting(false); }
   };
 

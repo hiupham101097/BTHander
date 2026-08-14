@@ -18,10 +18,11 @@ export function AuthProvider({ children }) {
     await fetch("/api/auth/logout", { method: "POST", credentials: "include" });
     setUser(null);
   };
+  const setSession = (account) => setUser(account);
   const isAdmin = user?.role === "admin";
   const isStaff = user?.role === "staff";
   const isUser = user?.role === "user";
-  return <AuthContext.Provider value={{ user, loading, isAdmin, isStaff, isUser, logout }}>{children}</AuthContext.Provider>;
+  return <AuthContext.Provider value={{ user, loading, isAdmin, isStaff, isUser, logout, setSession }}>{children}</AuthContext.Provider>;
 }
 
 export const useAuth = () => useContext(AuthContext);

@@ -17,15 +17,22 @@ import ContactsManager from "./pages/admin/ContactsManager.jsx";
 import BlogManager from "./pages/admin/BlogManager.jsx";
 import ProjectDetail from "./pages/ProjectDetail.jsx";
 import MemberDetail from "./pages/MemberDetail.jsx";
+import TeamProfile from "./pages/TeamProfile.jsx";
+import { TeamArticleDetail, TeamArticles } from "./pages/TeamArticles.jsx";
+import ArticlesManager from "./pages/admin/ArticlesManager.jsx";
+import ScrollToTop from "./components/ScrollToTop.jsx";
 
 export default function App() {
   return (
-    <BrowserRouter><AuthProvider>
+    <BrowserRouter><AuthProvider><ScrollToTop />
       <Routes>
         <Route element={<MainLayout />}>
           <Route path="/" element={<Home />} />
           <Route path="/projects/:id" element={<ProjectDetail />} />
           <Route path="/team/:id" element={<MemberDetail />} />
+          <Route path="/team/:id/profile" element={<TeamProfile />} />
+          <Route path="/team/:id/articles" element={<TeamArticles />} />
+          <Route path="/team/:id/articles/:articleId" element={<TeamArticleDetail />} />
         </Route>
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
@@ -35,9 +42,13 @@ export default function App() {
           <Route path="projects" element={<ProtectedRoute allowedRoles={['admin']}><ProjectsManager /></ProtectedRoute>} />
           <Route path="products" element={<ProtectedRoute allowedRoles={['admin']}><CatalogManager kind="products" /></ProtectedRoute>} />
           <Route path="team" element={<ProtectedRoute allowedRoles={['admin']}><CatalogManager kind="team" /></ProtectedRoute>} />
+          <Route path="articles" element={<ProtectedRoute allowedRoles={['admin']}><ArticlesManager /></ProtectedRoute>} />
           <Route path="users" element={<ProtectedRoute allowedRoles={['admin']}><UsersManager /></ProtectedRoute>} />
           <Route path="contacts" element={<ProtectedRoute allowedRoles={['admin']}><ContactsManager /></ProtectedRoute>} />
           <Route path="profile" element={<Profile />} />
+        </Route>
+        <Route path="/account" element={<ProtectedRoute><AdminLayout /></ProtectedRoute>}>
+          <Route index element={<Profile />} />
         </Route>
       </Routes>
     </AuthProvider></BrowserRouter>
