@@ -5,6 +5,7 @@ import Home from "./pages/Home.jsx";
 import Login from "./pages/Login.jsx";
 import Register from "./pages/Register.jsx";
 import { AuthProvider } from "./context/AuthContext.jsx";
+
 import ProtectedRoute from "./components/auth/ProtectedRoute.jsx";
 import AdminLayout from "./layouts/AdminLayout.jsx";
 import Dashboard from "./pages/admin/Dashboard.jsx";
@@ -13,6 +14,9 @@ import Profile from "./pages/admin/Profile.jsx";
 import CatalogManager from "./pages/admin/CatalogManager.jsx";
 import UsersManager from "./pages/admin/UsersManager.jsx";
 import ContactsManager from "./pages/admin/ContactsManager.jsx";
+import BlogManager from "./pages/admin/BlogManager.jsx";
+import ProjectDetail from "./pages/ProjectDetail.jsx";
+import MemberDetail from "./pages/MemberDetail.jsx";
 
 export default function App() {
   return (
@@ -20,16 +24,19 @@ export default function App() {
       <Routes>
         <Route element={<MainLayout />}>
           <Route path="/" element={<Home />} />
+          <Route path="/projects/:id" element={<ProjectDetail />} />
+          <Route path="/team/:id" element={<MemberDetail />} />
         </Route>
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/admin" element={<ProtectedRoute><AdminLayout /></ProtectedRoute>}>
-          <Route index element={<ProtectedRoute adminOnly><Dashboard /></ProtectedRoute>} />
-          <Route path="projects" element={<ProtectedRoute adminOnly><ProjectsManager /></ProtectedRoute>} />
-          <Route path="products" element={<ProtectedRoute adminOnly><CatalogManager kind="products" /></ProtectedRoute>} />
-          <Route path="team" element={<ProtectedRoute adminOnly><CatalogManager kind="team" /></ProtectedRoute>} />
-          <Route path="users" element={<ProtectedRoute adminOnly><UsersManager /></ProtectedRoute>} />
-          <Route path="contacts" element={<ProtectedRoute adminOnly><ContactsManager /></ProtectedRoute>} />
+          <Route index element={<ProtectedRoute allowedRoles={['admin']}><Dashboard /></ProtectedRoute>} />
+          <Route path="blogs" element={<ProtectedRoute allowedRoles={['admin', 'staff']}><BlogManager /></ProtectedRoute>} />
+          <Route path="projects" element={<ProtectedRoute allowedRoles={['admin']}><ProjectsManager /></ProtectedRoute>} />
+          <Route path="products" element={<ProtectedRoute allowedRoles={['admin']}><CatalogManager kind="products" /></ProtectedRoute>} />
+          <Route path="team" element={<ProtectedRoute allowedRoles={['admin']}><CatalogManager kind="team" /></ProtectedRoute>} />
+          <Route path="users" element={<ProtectedRoute allowedRoles={['admin']}><UsersManager /></ProtectedRoute>} />
+          <Route path="contacts" element={<ProtectedRoute allowedRoles={['admin']}><ContactsManager /></ProtectedRoute>} />
           <Route path="profile" element={<Profile />} />
         </Route>
       </Routes>

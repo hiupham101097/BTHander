@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { CheckCircle2, Code2, Database } from "lucide-react";
 import Reveal from "../ui/Reveal.jsx";
 import SectionEyebrow from "../ui/SectionEyebrow.jsx";
+import { Link } from "react-router-dom";
 
 const apiBaseUrl = import.meta.env.VITE_API_BASE_URL || "";
 
@@ -53,6 +54,7 @@ export default function Projects() {
                   ))}
                 </dl>
                 <div className="project-price"><CheckCircle2 size={16} /> {formatPrice(project.price, project.currency)}</div>
+                <Link className="project-detail-link" to={`/projects/${project.id}`}>Xem chi tiết</Link>
               </article>
             </Reveal>
           ))}
