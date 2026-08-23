@@ -333,7 +333,7 @@ async function createSession(env, accountId, status = 200, secure = true) {
   return json({ data: cleanAccount(account) }, status, { "set-cookie": `bthander_session=${token}; HttpOnly; ${secure ? "Secure; " : ""}SameSite=Lax; Path=/; Max-Age=86400` });
 }
 
-export async function onRequest({ request, env }) {
+export async function onRequest({ request, env, ctx }) {
   const url = new URL(request.url), parts = url.pathname.split("/").filter(Boolean), method = request.method;
   try {
     if (url.pathname.startsWith("/api/auth/")) return await authRoutes(request, env, url) || json({ error: "Route not found" }, 404);
@@ -364,6 +364,43 @@ export async function onRequest({ request, env }) {
       const input = await request.json(), errors = supportErrors(input);
       if (errors.length) return json({ errors }, 422);
       const result = await env.DB.prepare("INSERT INTO support_requests (name,email,phone,company,message,account_id) VALUES (?,?,?,?,?,?)").bind(input.name.trim(), input.email.trim().toLowerCase(), input.phone?.trim() || null, input.company?.trim() || null, input.message.trim(), account?.id || null).run();
+      
+      /* Lấy danh sách email của admin và staff */
+      const staffQuery = await env.DB.prepare("SELECT email FROM accounts WHERE role IN ('admin', 'staff')").all();
+      const staffEmails = staffQuery.results.map(row => row.email);
+      
+      if (staffEmails.length > 0) {
+        const html = `
+          <div style="font-family: sans-serif; line-height: 1.5; color: #333;">
+            <h2>Yêu cầu liên hệ mới</h2>
+            <p><strong>Tên khách hàng:</strong> ${input.name}</p>
+            <p><strong>Email:</strong> ${input.email}</p>
+            <p><strong>Số điện thoại:</strong> ${input.phone || "Không có"}</p>
+            <p><strong>Công ty:</strong> ${input.company || "Không có"}</p>
+            <p><strong>Nội dung:</strong></p>
+            <blockquote style="border-left: 4px solid #ccc; padding-left: 10px; color: #555;">
+              ${input.message.replace(/\n/g, "<br>")}
+            </blockquote>
+          </div>
+        `;
+        
+        const emailPromises = staffEmails.map(email => 
+          sendEmail(env, {
+            to: email,
+            subject: `[BTHander] Liên hệ mới từ ${input.name}`,
+            html: html
+          }).catch(err => console.error("Failed to send support email to", email, ":", err))
+        );
+        
+        const sendAllPromise = Promise.all(emailPromises);
+        
+        if (ctx && ctx.waitUntil) {
+          ctx.waitUntil(sendAllPromise);
+        } else {
+          await sendAllPromise;
+        }
+      }
+
       return json({ id: result.meta.last_row_id, message: "Support request received" }, 201);
     }
     if (method === "GET" && url.pathname === "/api/support") {
