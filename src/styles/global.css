@@ -33,7 +33,7 @@ a {
 }
 
 /* ---------- DESIGN TOKENS ---------- */
-.root {
+:root {
   --bg-base: #FAFAF9;
   --bg-panel: #FFFFFF;
   --line: #E7E5E1;
