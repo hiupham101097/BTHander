@@ -141,6 +141,10 @@ function productErrors(input, partial = false) {
 }
 function teamErrors(input, partial = false) {
   const errors = [];
+  if (!partial) {
+    if (typeof input.email !== "string" || !/^\S+@\S+\.\S+$/.test(input.email)) errors.push("email không hợp lệ");
+    if (typeof input.password !== "string" || input.password.length < 10) errors.push("mật khẩu phải có ít nhất 10 ký tự");
+  }
   if ((!partial || "name" in input) && (typeof input.name !== "string" || !input.name.trim())) errors.push("name is required");
   if ((!partial || "title" in input) && (typeof input.title !== "string" || !input.title.trim())) errors.push("title is required");
   if ("bio" in input && (typeof input.bio !== "string" || input.bio.length > 1000)) errors.push("bio must be a string up to 1000 characters");
@@ -489,7 +493,18 @@ export async function onRequest({ request, env, ctx }) {
     }
     if (method === "POST" && url.pathname === "/api/team") {
       const input = await request.json(), errors = teamErrors(input); if (errors.length) return json({ errors }, 422);
-      const result = await env.DB.prepare("INSERT INTO team_members (name,title,bio,avatar_url,contact_info,profile_intro,skills,experience,featured_projects,articles,sort_order,status) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)").bind(input.name.trim(), input.title.trim(), input.bio?.trim() || null, input.avatar_url?.trim() || null, input.contact_info?.trim() || null, input.profile_intro?.trim() || null, JSON.stringify(input.skills || []), JSON.stringify(input.experience || []), JSON.stringify(input.featured_projects || []), JSON.stringify(input.articles || []), input.sort_order || 0, input.status || "active").run();
+      
+      const salt = randomHex(16), hash = await passwordHash(input.password, salt);
+      let accountId;
+      try {
+        const accResult = await env.DB.prepare("INSERT INTO accounts (name,email,password_hash,password_salt,role) VALUES (?,?,?,?, 'staff')").bind(input.name.trim(), input.email.trim().toLowerCase(), hash, salt).run();
+        accountId = accResult.meta.last_row_id;
+      } catch (error) {
+        if (String(error).includes("UNIQUE")) return json({ error: "Email này đã được sử dụng cho tài khoản khác." }, 409);
+        throw error;
+      }
+
+      const result = await env.DB.prepare("INSERT INTO team_members (name,title,bio,avatar_url,contact_info,profile_intro,skills,experience,featured_projects,articles,sort_order,status,account_id) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)").bind(input.name.trim(), input.title.trim(), input.bio?.trim() || null, input.avatar_url?.trim() || null, input.contact_info?.trim() || null, input.profile_intro?.trim() || null, JSON.stringify(input.skills || []), JSON.stringify(input.experience || []), JSON.stringify(input.featured_projects || []), JSON.stringify(input.articles || []), input.sort_order || 0, input.status || "active", accountId).run();
       return json({ data: teamFromRow(await env.DB.prepare("SELECT * FROM team_members WHERE id=?").bind(result.meta.last_row_id).first()) }, 201);
     }
     if ((method === "PATCH" || method === "DELETE") && parts[1] === "team" && parts[2]) {
