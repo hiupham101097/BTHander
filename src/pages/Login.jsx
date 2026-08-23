@@ -31,8 +31,11 @@ export default function Login() {
     <form onSubmit={submit} className="auth-form">
       <label>Email<input required type="email" autoComplete="email" value={email} onChange={(event) => setEmail(event.target.value)} placeholder="ban@example.com" /></label>
       <label>Mật khẩu<div className="password-field"><input required type={showPassword ? "text" : "password"} autoComplete="current-password" value={password} onChange={(event) => setPassword(event.target.value)} placeholder="••••••••••" /><button className="password-toggle" type="button" onClick={() => setShowPassword((value) => !value)}>{showPassword ? "Ẩn" : "Hiện"}</button></div></label>
-      {error && <p className="form-message form-error">{error}</p>}
-      <button className="btn-primary" disabled={submitting}>{submitting ? "Đang xử lý..." : "Đăng nhập"}</button>
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: 4 }}>
+        <p className="form-message form-error" style={{ margin: 0, padding: 0, background: "transparent", border: "none" }}>{error}</p>
+        <Link to="/forgot-password" style={{ fontSize: 13, color: "var(--accent)", fontWeight: 600, textDecoration: "none" }}>Quên mật khẩu?</Link>
+      </div>
+      <button className="btn-primary" disabled={submitting} style={{ marginTop: 12 }}>{submitting ? "Đang xử lý..." : "Đăng nhập"}</button>
     </form>
     <p className="auth-switch">Chưa có tài khoản? <Link className="auth-link" to="/register">Đăng ký ngay</Link></p>
   </section></main>;

@@ -4,6 +4,7 @@ import MainLayout from "./layouts/MainLayout.jsx";
 import Home from "./pages/Home.jsx";
 import Login from "./pages/Login.jsx";
 import Register from "./pages/Register.jsx";
+import ForgotPassword from "./pages/ForgotPassword.jsx";
 import { AuthProvider } from "./context/AuthContext.jsx";
 
 import ProtectedRoute from "./components/auth/ProtectedRoute.jsx";
@@ -43,6 +44,7 @@ export default function App() {
           {/* ── Auth ── */}
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
+          <Route path="/forgot-password" element={<ForgotPassword />} />
 
           {/* ── Admin panel (admin + staff) ── */}
           <Route

@@ -3890,8 +3890,317 @@ a {
 }
 
 /* =====================================================
-   RESPONSIVE – Mobile Admin
+   FORGOT PASSWORD – Step bar + OTP boxes + Strength
    ===================================================== */
+
+/* Step progress bar */
+.fp-card {
+  max-width: 440px;
+}
+
+.fp-steps {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0;
+  margin: 0 0 28px;
+}
+
+.fp-step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+  font-size: 11px;
+  font-weight: 600;
+  color: #94a3b8;
+  min-width: 80px;
+}
+
+.fp-step-active {
+  color: var(--accent);
+}
+
+.fp-step-done {
+  color: #22c55e;
+}
+
+.fp-step-dot {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: 2px solid #e2e8f0;
+  background: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: 800;
+  color: #94a3b8;
+  transition: all 0.2s;
+}
+
+.fp-step-active .fp-step-dot {
+  border-color: var(--accent);
+  background: var(--accent);
+  color: #fff;
+}
+
+.fp-step-done .fp-step-dot {
+  border-color: #22c55e;
+  background: #22c55e;
+  color: #fff;
+}
+
+.fp-step-line {
+  flex: 1;
+  height: 2px;
+  background: #e2e8f0;
+  margin-bottom: 22px;
+  transition: background 0.3s;
+}
+
+.fp-step-line-done {
+  background: #22c55e;
+}
+
+/* Auth icon */
+.auth-icon-wrap {
+  width: 56px;
+  height: 56px;
+  border-radius: 16px;
+  background: linear-gradient(135deg, #eaf1ee, #d1fae5);
+  color: var(--accent);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 16px;
+  box-shadow: 0 4px 16px rgba(30,95,78,0.15);
+}
+
+.fp-icon-otp {
+  background: linear-gradient(135deg, #dbeafe, #ede9fe);
+  color: #4f46e5;
+  box-shadow: 0 4px 16px rgba(79,70,229,0.15);
+}
+
+.fp-icon-key {
+  background: linear-gradient(135deg, #fef9c3, #fed7aa);
+  color: #d97706;
+  box-shadow: 0 4px 16px rgba(217,119,6,0.15);
+}
+
+.fp-icon-success {
+  background: linear-gradient(135deg, #dcfce7, #bbf7d0);
+  color: #16a34a;
+  box-shadow: 0 4px 16px rgba(22,163,74,0.2);
+}
+
+/* OTP input boxes */
+.otp-boxes {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  margin: 4px 0 8px;
+}
+
+.otp-box {
+  width: 50px;
+  height: 60px;
+  border: 2px solid #e2e8f0;
+  border-radius: 10px;
+  text-align: center;
+  font-size: 24px;
+  font-weight: 800;
+  font-family: 'Space Grotesk', monospace;
+  color: #0f172a;
+  background: #f8fafc;
+  outline: none;
+  transition: border-color 0.15s, box-shadow 0.15s, background 0.15s;
+  caret-color: transparent;
+}
+
+.otp-box:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(30,95,78,0.12);
+  background: #fff;
+}
+
+.otp-box:not(:placeholder-shown) {
+  background: #fff;
+  border-color: #94a3b8;
+}
+
+/* Resend */
+.fp-resend {
+  text-align: center;
+  margin-top: 8px;
+}
+
+.fp-resend-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: none;
+  border: none;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--accent);
+  cursor: pointer;
+  padding: 6px 10px;
+  border-radius: 8px;
+  transition: background 0.15s, opacity 0.15s;
+}
+
+.fp-resend-btn:hover:not(:disabled) {
+  background: #eaf1ee;
+}
+
+.fp-resend-btn:disabled {
+  color: #94a3b8;
+  cursor: default;
+}
+
+/* Password strength */
+.fp-strength {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.fp-strength-bar {
+  display: flex;
+  gap: 4px;
+  flex: 1;
+}
+
+.fp-strength-seg {
+  height: 4px;
+  flex: 1;
+  border-radius: 4px;
+  transition: background 0.25s;
+}
+
+/* Success message (green) */
+.form-success {
+  color: #16a34a;
+  background: #dcfce7;
+  border: 1px solid #bbf7d0;
+  border-radius: 8px;
+  padding: 10px 14px;
+  font-size: 13px;
+}
+
+/* =====================================================
+   DEVICE MOCKUPS (Project Detail)
+   ===================================================== */
+.device-mockup-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 40px 20px;
+  perspective: 1000px;
+}
+
+/* Phone Mockup */
+.device-phone {
+  position: relative;
+  width: 300px;
+  height: 600px;
+  border: 14px solid #0f172a;
+  border-radius: 40px;
+  background: #0f172a;
+  box-shadow: 0 20px 40px rgba(0,0,0,0.3), inset 0 0 0 2px #334155;
+  overflow: hidden;
+  margin: 0 auto;
+}
+.device-phone::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 120px;
+  height: 25px;
+  background: #0f172a;
+  border-bottom-left-radius: 16px;
+  border-bottom-right-radius: 16px;
+  z-index: 10;
+}
+.device-phone img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 24px;
+  display: block;
+}
+
+/* Browser Mockup */
+.device-browser {
+  position: relative;
+  width: 100%;
+  max-width: 900px;
+  background: #fff;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 20px 40px rgba(0,0,0,0.15), 0 0 0 1px #e2e8f0;
+  margin: 0 auto;
+}
+.device-browser-header {
+  height: 40px;
+  background: #f8fafc;
+  border-bottom: 1px solid #e2e8f0;
+  display: flex;
+  align-items: center;
+  padding: 0 16px;
+  gap: 8px;
+}
+.device-browser-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+}
+.device-browser-dot.red { background: #ef4444; }
+.device-browser-dot.yellow { background: #f59e0b; }
+.device-browser-dot.green { background: #22c55e; }
+
+.device-browser img {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+/* Modern Project Detail classes */
+.proj-blocks {
+  margin-top: 24px;
+}
+.proj-block-text {
+  font-size: 16px;
+  line-height: 1.7;
+  color: #334155;
+  margin-bottom: 16px;
+}
+.proj-block-heading {
+  font-size: 22px;
+  font-weight: 700;
+  color: #0f172a;
+  margin: 32px 0 16px;
+}
+.proj-block-image {
+  margin: 24px 0;
+  text-align: center;
+}
+.proj-block-image img {
+  max-width: 100%;
+  border-radius: 12px;
+}
+.proj-block-image-caption {
+  font-size: 13px;
+  color: #64748b;
+  margin-top: 8px;
+}
 
 @media (max-width: 700px) {
   .admin-sidebar {

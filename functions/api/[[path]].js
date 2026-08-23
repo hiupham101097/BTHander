@@ -9,6 +9,86 @@ const teamFromRow = (row) => row && ({ ...row, skills: JSON.parse(row.skills || 
 const hex = (bytes) => [...new Uint8Array(bytes)].map((byte) => byte.toString(16).padStart(2, "0")).join("");
 const randomHex = (length = 32) => hex(crypto.getRandomValues(new Uint8Array(length)));
 
+/* ── Email sender (Resend API or MailChannels) ─────────────────────────
+ *  Requires env variables:
+ *    RESEND_API_KEY  – if using Resend (recommended, resend.com free tier)
+ *    MAIL_FROM       – sender address (e.g. noreply@yourdomain.com)
+ *  Falls back to MailChannels if RESEND_API_KEY not set.
+ * ─────────────────────────────────────────────────────────────────── */
+async function sendEmail(env, { to, subject, html }) {
+  const from = env.MAIL_FROM || "noreply@bthander.com";
+
+  /* ── Resend API ── */
+  if (env.RESEND_API_KEY) {
+    const res = await fetch("https://api.resend.com/emails", {
+      method: "POST",
+      headers: {
+        "Authorization": `Bearer ${env.RESEND_API_KEY}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ from, to, subject, html }),
+    });
+    if (!res.ok) {
+      const err = await res.text();
+      throw new Error("Email send failed: " + err);
+    }
+    return;
+  }
+
+  /* ── MailChannels (Cloudflare native, no API key needed) ── */
+  const res = await fetch("https://api.mailchannels.net/tx/v1/send", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      personalizations: [{ to: [{ email: to }] }],
+      from: { email: from, name: "BTHander" },
+      subject,
+      content: [{ type: "text/html", value: html }],
+    }),
+  });
+  if (!res.ok && res.status !== 202) {
+    throw new Error("Email send failed via MailChannels");
+  }
+}
+
+/* ── Generate 6-digit OTP ── */
+function generateOtp() {
+  const digits = crypto.getRandomValues(new Uint8Array(6));
+  return Array.from(digits).map((d) => d % 10).join("");
+}
+
+/* ── OTP email HTML template ── */
+function otpEmailHtml(otp, name) {
+  return `<!DOCTYPE html>
+<html lang="vi">
+<head><meta charset="UTF-8"><title>Đặt lại mật khẩu BTHander</title></head>
+<body style="margin:0;padding:0;background:#f1f5f9;font-family:'Helvetica Neue',Arial,sans-serif">
+  <table width="100%" cellpadding="0" cellspacing="0"><tr><td align="center" style="padding:40px 16px">
+    <table width="520" cellpadding="0" cellspacing="0" style="background:#fff;border-radius:16px;overflow:hidden;box-shadow:0 4px 24px rgba(0,0,0,.08)">
+      <tr><td style="background:linear-gradient(135deg,#0f172a,#1e5f4e);padding:32px 40px;text-align:center">
+        <div style="color:#fff;font-size:22px;font-weight:800;letter-spacing:-0.03em">BTHander</div>
+        <div style="color:rgba(255,255,255,.6);font-size:13px;margin-top:4px">Brave Trust Hander</div>
+      </td></tr>
+      <tr><td style="padding:40px">
+        <p style="margin:0 0 8px;font-size:16px;color:#0f172a">Xin chào<strong>${name ? " " + name : ""}</strong>,</p>
+        <p style="margin:0 0 28px;font-size:14px;color:#64748b;line-height:1.6">Chúng tôi nhận được yêu cầu đặt lại mật khẩu cho tài khoản của bạn. Sử dụng mã OTP bên dưới — mã có hiệu lực trong <strong>10 phút</strong>.</p>
+        <div style="text-align:center;margin:0 0 28px">
+          <div style="display:inline-block;background:#f1f5f9;border:2px dashed #1e5f4e;border-radius:12px;padding:20px 40px">
+            <div style="font-size:42px;font-weight:900;letter-spacing:0.18em;color:#0f172a;font-family:monospace">${otp}</div>
+            <div style="font-size:12px;color:#94a3b8;margin-top:6px">Mã OTP – hiệu lực 10 phút</div>
+          </div>
+        </div>
+        <p style="margin:0 0 8px;font-size:13px;color:#94a3b8">Nếu bạn không yêu cầu đặt lại mật khẩu, hãy bỏ qua email này. Tài khoản của bạn vẫn an toàn.</p>
+      </td></tr>
+      <tr><td style="background:#f8fafc;padding:20px 40px;text-align:center;border-top:1px solid #e2e8f0">
+        <div style="font-size:12px;color:#94a3b8">© ${new Date().getFullYear()} BTHander · Brave Trust Hander</div>
+      </td></tr>
+    </table>
+  </td></tr></table>
+</body>
+</html>`;
+}
+
 async function passwordHash(password, salt) {
   const key = await crypto.subtle.importKey("raw", encoder.encode(password), "PBKDF2", false, ["deriveBits"]);
   const bits = await crypto.subtle.deriveBits({ name: "PBKDF2", salt: encoder.encode(salt), iterations: 100000, hash: "SHA-256" }, key, 256);
@@ -36,11 +116,12 @@ function accountErrors(input) {
 function projectErrors(input, partial = false) {
   const errors = [];
   if ((!partial || "name" in input) && (typeof input.name !== "string" || !input.name.trim())) errors.push("name is required");
+  if ((!partial || "category" in input) && !["web", "mobile", "software"].includes(input.category)) errors.push("category must be web, mobile or software");
   if ((!partial || "languages" in input) && (!Array.isArray(input.languages) || !input.languages.length || input.languages.some((item) => typeof item !== "string" || !item.trim()))) errors.push("languages must be a non-empty array of strings");
   if ((!partial || "configuration" in input) && (!input.configuration || Array.isArray(input.configuration) || typeof input.configuration !== "object")) errors.push("configuration must be an object");
   if ("description" in input && (typeof input.description !== "string" || input.description.length > 1000)) errors.push("description must be a string up to 1000 characters");
   if ("detail_tag" in input && (typeof input.detail_tag !== "string" || input.detail_tag.length > 200)) errors.push("detail_tag must be a string up to 200 characters");
-  if ("full_description" in input && (typeof input.full_description !== "string" || input.full_description.length > 5000)) errors.push("full_description must be a string up to 5000 characters");
+  if ("full_description" in input && (typeof input.full_description !== "string" || input.full_description.length > 50000)) errors.push("full_description must be a string up to 50000 characters");
   if ("gallery" in input && (!Array.isArray(input.gallery) || input.gallery.some((item) => !item || typeof item.label !== "string" || !item.label.trim()))) errors.push("gallery must be an array of items with a label");
   if ("roadmap" in input && (!Array.isArray(input.roadmap) || input.roadmap.some((item) => !item || typeof item.phase !== "string" || typeof item.title !== "string" || typeof item.desc !== "string" || !["done", "current", "upcoming"].includes(item.status)))) errors.push("roadmap items must include phase, title, desc and status");
   if ((!partial || "price" in input) && (typeof input.price !== "number" || !Number.isFinite(input.price) || input.price < 0)) errors.push("price must be a non-negative number");
@@ -132,6 +213,117 @@ async function authRoutes(request, env, url) {
     const account = await currentAccount(request, env);
     return account ? json({ data: cleanAccount(account) }) : json({ error: "Unauthorized" }, 401);
   }
+
+  /* ── Forgot Password: send OTP ── */
+  if (method === "POST" && url.pathname === "/api/auth/forgot-password") {
+    const input = await request.json();
+    if (typeof input.email !== "string" || !/^\S+@\S+\.\S+$/.test(input.email.trim())) {
+      return json({ error: "Email không hợp lệ" }, 422);
+    }
+    const email = input.email.trim().toLowerCase();
+    const account = await env.DB.prepare("SELECT id, name FROM accounts WHERE email=?").bind(email).first();
+
+    /* Always return success to prevent email enumeration */
+    if (!account) return json({ message: "Nếu email tồn tại, mã OTP đã được gửi" });
+
+    /* Rate limit: max 3 OTPs per email in last 15 minutes */
+    const recentCount = await env.DB.prepare(
+      "SELECT COUNT(*) AS cnt FROM password_reset_otps WHERE email=? AND created_at > datetime('now','-15 minutes')"
+    ).bind(email).first();
+    if (recentCount && Number(recentCount.cnt) >= 3) {
+      return json({ error: "Bạn đã yêu cầu quá nhiều lần. Vui lòng thử lại sau 15 phút." }, 429);
+    }
+
+    /* Invalidate old OTPs for this email */
+    await env.DB.prepare("UPDATE password_reset_otps SET used=1 WHERE email=? AND used=0").bind(email).run();
+
+    /* Generate OTP */
+    const otp = generateOtp();
+    const otpHashValue = hex(await crypto.subtle.digest("SHA-256", encoder.encode(otp + email)));
+    await env.DB.prepare(
+      "INSERT INTO password_reset_otps (email, otp_hash, expires_at) VALUES (?, ?, datetime('now', '+10 minutes'))"
+    ).bind(email, otpHashValue).run();
+
+    /* Send email */
+    try {
+      await sendEmail(env, {
+        to: email,
+        subject: "[BTHander] Mã OTP đặt lại mật khẩu",
+        html: otpEmailHtml(otp, account.name),
+      });
+    } catch (emailError) {
+      console.error("Email send error:", emailError);
+      /* In dev/test: return OTP in response so it can be used without email */
+      if (env.DEV_MODE === "true") {
+        return json({ message: "[DEV] OTP đã tạo (không gửi email)", otp });
+      }
+      return json({ error: "Không thể gửi email. Vui lòng thử lại sau." }, 500);
+    }
+
+    return json({ message: "Nếu email tồn tại, mã OTP đã được gửi" });
+  }
+
+  /* ── Verify OTP ── */
+  if (method === "POST" && url.pathname === "/api/auth/verify-otp") {
+    const input = await request.json();
+    if (typeof input.email !== "string" || typeof input.otp !== "string") {
+      return json({ error: "email và otp là bắt buộc" }, 422);
+    }
+    const email = input.email.trim().toLowerCase();
+    const otp = input.otp.trim();
+    const otpHashValue = hex(await crypto.subtle.digest("SHA-256", encoder.encode(otp + email)));
+
+    const record = await env.DB.prepare(
+      "SELECT id FROM password_reset_otps WHERE email=? AND otp_hash=? AND used=0 AND expires_at > CURRENT_TIMESTAMP ORDER BY id DESC LIMIT 1"
+    ).bind(email, otpHashValue).first();
+
+    if (!record) return json({ error: "Mã OTP không hợp lệ hoặc đã hết hạn" }, 400);
+
+    /* Issue a short-lived reset token (mark OTP as used) */
+    const resetToken = randomHex(32);
+    const resetTokenHash = hex(await crypto.subtle.digest("SHA-256", encoder.encode(resetToken)));
+    await env.DB.prepare("UPDATE password_reset_otps SET used=1, otp_hash=? WHERE id=?").bind(resetTokenHash, record.id).run();
+
+    return json({ resetToken, message: "OTP xác nhận thành công" });
+  }
+
+  /* ── Reset Password ── */
+  if (method === "POST" && url.pathname === "/api/auth/reset-password") {
+    const input = await request.json();
+    if (typeof input.email !== "string" || typeof input.resetToken !== "string" || typeof input.newPassword !== "string") {
+      return json({ error: "email, resetToken và newPassword là bắt buộc" }, 422);
+    }
+    if (input.newPassword.length < 10) {
+      return json({ error: "Mật khẩu phải có ít nhất 10 ký tự" }, 422);
+    }
+    const email = input.email.trim().toLowerCase();
+    const resetTokenHash = hex(await crypto.subtle.digest("SHA-256", encoder.encode(input.resetToken)));
+
+    /* Find valid reset token (stored in otp_hash after verify-otp step) */
+    const record = await env.DB.prepare(
+      "SELECT id FROM password_reset_otps WHERE email=? AND otp_hash=? AND used=1 AND expires_at > datetime('now','-10 minutes') ORDER BY id DESC LIMIT 1"
+    ).bind(email, resetTokenHash).first();
+
+    if (!record) return json({ error: "Phiên đặt lại mật khẩu không hợp lệ hoặc đã hết hạn" }, 400);
+
+    const account = await env.DB.prepare("SELECT id FROM accounts WHERE email=?").bind(email).first();
+    if (!account) return json({ error: "Tài khoản không tồn tại" }, 404);
+
+    const newSalt = randomHex(16);
+    const newHash = await passwordHash(input.newPassword, newSalt);
+    await env.DB.prepare(
+      "UPDATE accounts SET password_hash=?, password_salt=?, updated_at=CURRENT_TIMESTAMP WHERE id=?"
+    ).bind(newHash, newSalt, account.id).run();
+
+    /* Invalidate all reset tokens for this email */
+    await env.DB.prepare("DELETE FROM password_reset_otps WHERE email=?").bind(email).run();
+
+    /* Revoke all existing sessions */
+    await env.DB.prepare("DELETE FROM sessions WHERE account_id=?").bind(account.id).run();
+
+    return json({ message: "Đặt lại mật khẩu thành công. Vui lòng đăng nhập lại." });
+  }
+
   return null;
 }
 async function createSession(env, accountId, status = 200, secure = true) {
@@ -208,7 +400,7 @@ export async function onRequest({ request, env }) {
     if (method === "POST" && url.pathname === "/api/projects") {
       const input = await request.json(), errors = projectErrors(input);
       if (errors.length) return json({ errors }, 422);
-      const result = await env.DB.prepare("INSERT INTO projects (name,description,languages,configuration,price,currency,detail_tag,full_description,gallery,roadmap) VALUES (?,?,?,?,?,?,?,?,?,?)").bind(input.name.trim(), input.description?.trim() || null, JSON.stringify(input.languages), JSON.stringify(input.configuration), input.price, input.currency || "VND", input.detail_tag?.trim() || null, input.full_description?.trim() || null, JSON.stringify(input.gallery || []), JSON.stringify(input.roadmap || [])).run();
+      const result = await env.DB.prepare("INSERT INTO projects (name,category,description,languages,configuration,price,currency,detail_tag,full_description,gallery,roadmap) VALUES (?,?,?,?,?,?,?,?,?,?,?)").bind(input.name.trim(), input.category || 'web', input.description?.trim() || null, JSON.stringify(input.languages), JSON.stringify(input.configuration), input.price, input.currency || "VND", input.detail_tag?.trim() || null, input.full_description?.trim() || null, JSON.stringify(input.gallery || []), JSON.stringify(input.roadmap || [])).run();
       return json({ data: projectFromRow(await env.DB.prepare("SELECT * FROM projects WHERE id=?").bind(result.meta.last_row_id).first()) }, 201);
     }
     if ((method === "PATCH" || method === "DELETE") && parts[1] === "projects" && parts[2]) {
@@ -219,7 +411,7 @@ export async function onRequest({ request, env }) {
       const current = await env.DB.prepare("SELECT * FROM projects WHERE id=?").bind(id).first();
       if (!current) return json({ error: "Project not found" }, 404);
       const merged = { ...projectFromRow(current), ...input };
-      await env.DB.prepare("UPDATE projects SET name=?,description=?,languages=?,configuration=?,price=?,currency=?,detail_tag=?,full_description=?,gallery=?,roadmap=?,updated_at=CURRENT_TIMESTAMP WHERE id=?").bind(merged.name.trim(), merged.description?.trim() || null, JSON.stringify(merged.languages), JSON.stringify(merged.configuration), merged.price, merged.currency || "VND", merged.detail_tag?.trim() || null, merged.full_description?.trim() || null, JSON.stringify(merged.gallery || []), JSON.stringify(merged.roadmap || []), id).run();
+      await env.DB.prepare("UPDATE projects SET name=?,category=?,description=?,languages=?,configuration=?,price=?,currency=?,detail_tag=?,full_description=?,gallery=?,roadmap=?,updated_at=CURRENT_TIMESTAMP WHERE id=?").bind(merged.name.trim(), merged.category || 'web', merged.description?.trim() || null, JSON.stringify(merged.languages), JSON.stringify(merged.configuration), merged.price, merged.currency || "VND", merged.detail_tag?.trim() || null, merged.full_description?.trim() || null, JSON.stringify(merged.gallery || []), JSON.stringify(merged.roadmap || []), id).run();
       return json({ data: projectFromRow(await env.DB.prepare("SELECT * FROM projects WHERE id=?").bind(id).first()) });
     }
     if (method === "GET" && url.pathname === "/api/products") {
@@ -294,11 +486,20 @@ export async function onRequest({ request, env }) {
     if (method === "GET" && url.pathname === "/api/accounts") return json({ data: (await env.DB.prepare("SELECT id,name,email,role,created_at,updated_at FROM accounts ORDER BY id DESC").all()).results });
     if (method === "PATCH" && parts[1] === "accounts" && parts[2]) {
       const id = Number(parts[2]), input = await request.json();
-      if (!['admin', 'user'].includes(input.role)) return json({ error: "role must be admin or user" }, 422);
-      const actor = await requireRole(request, env, ["admin"]); if (actor.id === id && input.role !== 'admin') return json({ error: "You cannot remove your own administrator role" }, 422);
+      if (!['admin', 'staff', 'user'].includes(input.role)) return json({ error: "role must be admin, staff or user" }, 422);
+      const actor = await requireRole(request, env, ["admin"]); if (!actor) return json({ error: "Unauthorized" }, 401);
+      if (actor.id === id && input.role !== 'admin') return json({ error: "You cannot remove your own administrator role" }, 422);
       const result = await env.DB.prepare("UPDATE accounts SET role=?,updated_at=CURRENT_TIMESTAMP WHERE id=?").bind(input.role, id).run();
       return result.meta.changes ? json({ data: await env.DB.prepare("SELECT id,name,email,role,created_at,updated_at FROM accounts WHERE id=?").bind(id).first() }) : json({ error: "Account not found" }, 404);
     }
+    /* ── Team: get my linked member profile ── */
+    if (method === "GET" && url.pathname === "/api/team/me") {
+      const account = await currentAccount(request, env);
+      if (!account) return json({ error: "Unauthorized" }, 401);
+      const member = await env.DB.prepare("SELECT * FROM team_members WHERE account_id=?").bind(account.id).first();
+      return member ? json({ data: teamFromRow(member) }) : json({ error: "No linked team profile" }, 404);
+    }
+
     return json({ error: "Route not found" }, 404);
   } catch (error) { return json({ error: error instanceof Error ? error.message : "Bad request" }, 400); }
 }
