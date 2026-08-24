@@ -1,5 +1,5 @@
 import React from "react";
-import { Bot, ChevronRight, Gamepad2, Sparkles, Wrench } from "lucide-react";
+import { ChevronRight, Gamepad2, MonitorSmartphone, Smartphone, Sparkles, Wrench } from "lucide-react";
 import Reveal from "../ui/Reveal.jsx";
 
 export default function Hero() {
@@ -7,12 +7,12 @@ export default function Hero() {
     <header className="hero-shell">
       <div className="wrap hero">
         <div className="hero-copy">
-          <Reveal><div className="kicker"><Sparkles size={14} /> Công nghệ · Game · AI · Chế tạo</div></Reveal>
+          <Reveal><div className="kicker"><Sparkles size={14} /> Mobile · Website · Game · Chế tạo</div></Reveal>
           <Reveal delay={80}>
             <h1 className="h1">Từ ý tưởng táo bạo đến <span className="accent">sản phẩm thật.</span></h1>
           </Reveal>
           <Reveal delay={160}>
-            <p className="lead">Chúng tôi kết hợp phần mềm, trí tuệ nhân tạo và kỹ thuật chế tạo để tạo nên những trải nghiệm số khác biệt và giải pháp có thể vận hành ngoài đời thực.</p>
+            <p className="lead">Chúng tôi lập trình Mobile, website, landing page, game và thiết kế máy; đồng thời kết hợp AI như một công cụ hỗ trợ để tăng tốc nghiên cứu, sáng tạo và triển khai.</p>
           </Reveal>
           <Reveal delay={240}>
             <div className="hero-actions">
@@ -22,14 +22,15 @@ export default function Hero() {
           </Reveal>
           <Reveal delay={300}>
             <div className="hero-capabilities" aria-label="Lĩnh vực chuyên môn">
-              <span><Gamepad2 size={16} /> Game & Web</span>
-              <span><Bot size={16} /> AI Solutions</span>
+              <span><Smartphone size={16} /> Mobile App</span>
+              <span><MonitorSmartphone size={16} /> Website</span>
+              <span><Gamepad2 size={16} /> Game</span>
               <span><Wrench size={16} /> Machine Design</span>
             </div>
           </Reveal>
         </div>
         <Reveal delay={140} className="hero-visual">
-          <img src="/images/hero-tech-lab.png" alt="Cánh tay robot kết hợp AI, game và kỹ thuật chế tạo" />
+          <img src="/images/hero-tech-lab.png" alt="Công nghệ phần mềm, game và kỹ thuật chế tạo máy" />
           <div className="hero-scanline" />
           <div className="hero-energy-core" aria-hidden="true"><i /><i /><i /></div>
           <div className="data-stream data-stream-a" aria-hidden="true"><b /><b /><b /></div>

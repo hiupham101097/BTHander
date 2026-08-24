@@ -4522,3 +4522,28 @@ a {
   .projects-section .project-cover { height: 220px; }
   .free-apps-head { align-items: flex-start; flex-direction: column; }
 }
+
+/* ---------- ADMIN CATALOG TABS ---------- */
+.admin-toolbar-note { margin: 6px 0 0; color: var(--ink-mid); font-size: 12px; }
+.catalog-tabs { display: flex; gap: 10px; margin: 22px 0 18px; }
+.catalog-tabs button { min-width: 190px; display: flex; align-items: center; gap: 11px; padding: 13px 16px; color: var(--ink-mid); background: #fff; border: 1px solid var(--line); border-radius: 10px; cursor: pointer; text-align: left; transition: border-color .2s, color .2s, box-shadow .2s; }
+.catalog-tabs button > span { display: flex; flex-direction: column; gap: 2px; font-weight: 700; }
+.catalog-tabs button small { color: #999; font-size: 10px; font-weight: 500; }
+.catalog-tabs button.active { color: #fff; background: #171a24; border-color: #171a24; box-shadow: 0 10px 25px rgba(20,24,39,.16); }
+.catalog-tabs button.active small { color: rgba(255,255,255,.56); }
+.catalog-empty { padding: 34px; color: var(--ink-mid); text-align: center; font-size: 13px; }
+@media (max-width: 580px) { .catalog-tabs { display: grid; grid-template-columns: 1fr 1fr; }.catalog-tabs button { min-width: 0; }.admin-toolbar { align-items: flex-start; gap: 14px; flex-direction: column; } }
+
+/* ---------- FOUR CORE CAPABILITIES ---------- */
+.tech-showcase .tech-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.tech-showcase .tech-grid .reveal:first-child { grid-column: auto; }
+.tech-showcase .tech-card,
+.tech-showcase .tech-card-content { min-height: 390px; }
+.tech-card-mobile img { object-position: center; }
+.tech-card-web img { object-position: center 46%; }
+.ai-support-note { max-width: 720px; margin: 24px 0 0 auto; padding-left: 18px; color: rgba(255,255,255,.48); border-left: 2px solid rgba(92,216,255,.55); font-size: 12px; line-height: 1.65; }
+@media (max-width: 700px) {
+  .tech-showcase .tech-grid { grid-template-columns: 1fr; }
+  .tech-showcase .tech-card,
+  .tech-showcase .tech-card-content { min-height: 370px; }
+}
