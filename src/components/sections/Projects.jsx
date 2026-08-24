@@ -18,6 +18,7 @@ export default function Projects() {
   const [interested, setInterested] = useState([]);
   const { user } = useAuth();
   const navigate = useNavigate();
+  const visibleProjects = projects.filter((project) => !project.name?.toLocaleLowerCase("vi").includes("ứng dụng miễn phí"));
 
   useEffect(() => {
     const controller = new AbortController();
@@ -49,7 +50,7 @@ export default function Projects() {
         {state === "ready" && projects.length === 0 && <p className="api-state">Dự án đang được cập nhật.</p>}
 
         <div className="core-project-grid">
-          {projects.map((project, index) => {
+          {visibleProjects.map((project, index) => {
             const visual = project.gallery?.[0]?.image_url || fallbackVisuals[index % fallbackVisuals.length];
             return (
               <Reveal key={project.id} delay={100 + index * 70}>
