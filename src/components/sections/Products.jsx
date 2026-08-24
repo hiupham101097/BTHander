@@ -4,7 +4,11 @@ import Reveal from "../ui/Reveal.jsx";
 import SectionEyebrow from "../ui/SectionEyebrow.jsx";
 import { SALE_PRODUCTS } from "../../constants/data.js";
 
-const serviceVisuals = ["/images/game-development.png", "/images/hero-tech-lab.png", "/images/ai-machine-engineering.png"];
+const serviceVisuals = [
+  "/images/service-freelance-software.png",
+  "/images/service-machine-cad.png",
+  "/images/service-technical-consulting.png",
+];
 
 export default function Products() {
   return (
@@ -22,7 +26,7 @@ export default function Products() {
           {SALE_PRODUCTS.map((p, i) => (
             <Reveal delay={i * 80} key={p.name}>
               <article className="prod-card">
-                <div className="service-visual"><img src={serviceVisuals[i]} alt="" /><span>0{i + 1}</span><div className="prod-icon"><p.icon size={21} /></div></div>
+                <div className="service-visual"><img src={serviceVisuals[i]} alt={`Minh họa ${p.name}`} /><span>0{i + 1}</span><div className="prod-icon"><p.icon size={21} /></div></div>
                 <div className="service-card-content">
                   <div className="prod-name">{p.name}</div>
                   <p className="prod-desc">{p.desc}</p>
