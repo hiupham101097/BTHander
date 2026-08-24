@@ -119,7 +119,7 @@ function projectErrors(input, partial = false) {
   if ((!partial || "category" in input) && !["web", "mobile", "software"].includes(input.category)) errors.push("category must be web, mobile or software");
   if ((!partial || "languages" in input) && (!Array.isArray(input.languages) || !input.languages.length || input.languages.some((item) => typeof item !== "string" || !item.trim()))) errors.push("languages must be a non-empty array of strings");
   if ((!partial || "configuration" in input) && (!input.configuration || Array.isArray(input.configuration) || typeof input.configuration !== "object")) errors.push("configuration must be an object");
-  if ("description" in input && (typeof input.description !== "string" || input.description.length > 1000)) errors.push("description must be a string up to 1000 characters");
+  if ("description" in input && input.description != null && (typeof input.description !== "string" || input.description.length > 1000)) errors.push("description must be a string up to 1000 characters");
   if ("detail_tag" in input && (typeof input.detail_tag !== "string" || input.detail_tag.length > 200)) errors.push("detail_tag must be a string up to 200 characters");
   if ("full_description" in input && (typeof input.full_description !== "string" || input.full_description.length > 50000)) errors.push("full_description must be a string up to 50000 characters");
   if ("gallery" in input && (!Array.isArray(input.gallery) || input.gallery.some((item) => !item || typeof item.label !== "string" || !item.label.trim()))) errors.push("gallery must be an array of items with a label");
@@ -131,7 +131,10 @@ function projectErrors(input, partial = false) {
 function productErrors(input, partial = false) {
   const errors = [];
   if ((!partial || "name" in input) && (typeof input.name !== "string" || !input.name.trim())) errors.push("name is required");
-  if ("description" in input && (typeof input.description !== "string" || input.description.length > 1000)) errors.push("description must be a string up to 1000 characters");
+  if ("description" in input && input.description != null && (typeof input.description !== "string" || input.description.length > 1000)) errors.push("description must be a string up to 1000 characters");
+  if ("content" in input && input.content != null && (typeof input.content !== "string" || input.content.length > 50000)) errors.push("content must be a string up to 50000 characters");
+  if ("image_url" in input && input.image_url != null && typeof input.image_url !== "string") errors.push("image_url must be a string");
+  if ("app_url" in input && input.app_url != null && typeof input.app_url !== "string") errors.push("app_url must be a string");
   if ((!partial || "product_type" in input) && !["trial", "sale"].includes(input.product_type)) errors.push("product_type must be trial or sale");
   if ((!partial || "price" in input) && (typeof input.price !== "number" || !Number.isFinite(input.price) || input.price < 0)) errors.push("price must be a non-negative number");
   if ("currency" in input && (typeof input.currency !== "string" || !/^[A-Z]{3}$/.test(input.currency))) errors.push("currency must be a 3-letter uppercase code");
@@ -463,7 +466,7 @@ export async function onRequest({ request, env, ctx }) {
     if (method === "POST" && url.pathname === "/api/products") {
       const input = await request.json(), errors = productErrors(input);
       if (errors.length) return json({ errors }, 422);
-      const result = await env.DB.prepare("INSERT INTO products (name,description,product_type,price,currency,specifications,status) VALUES (?,?,?,?,?,?,?)").bind(input.name.trim(), input.description?.trim() || null, input.product_type, input.price, input.currency || "VND", JSON.stringify(input.specifications), input.status || "published").run();
+      const result = await env.DB.prepare("INSERT INTO products (name,description,product_type,price,currency,specifications,status,image_url,content,app_url) VALUES (?,?,?,?,?,?,?,?,?,?)").bind(input.name.trim(), input.description?.trim() || null, input.product_type, input.price, input.currency || "VND", JSON.stringify(input.specifications), input.status || "published", input.image_url?.trim() || null, input.content?.trim() || null, input.app_url?.trim() || null).run();
       return json({ data: productFromRow(await env.DB.prepare("SELECT * FROM products WHERE id=?").bind(result.meta.last_row_id).first()) }, 201);
     }
     if ((method === "PATCH" || method === "DELETE") && parts[1] === "products" && parts[2]) {
@@ -473,7 +476,7 @@ export async function onRequest({ request, env, ctx }) {
       if (errors.length || !Object.keys(input).length) return json({ errors: errors.length ? errors : ["At least one field is required"] }, 422);
       const current = await env.DB.prepare("SELECT * FROM products WHERE id=?").bind(id).first(); if (!current) return json({ error: "Product not found" }, 404);
       const merged = { ...productFromRow(current), ...input };
-      await env.DB.prepare("UPDATE products SET name=?,description=?,product_type=?,price=?,currency=?,specifications=?,status=?,updated_at=CURRENT_TIMESTAMP WHERE id=?").bind(merged.name.trim(), merged.description?.trim() || null, merged.product_type, merged.price, merged.currency || "VND", JSON.stringify(merged.specifications), merged.status || "published", id).run();
+      await env.DB.prepare("UPDATE products SET name=?,description=?,product_type=?,price=?,currency=?,specifications=?,status=?,image_url=?,content=?,app_url=?,updated_at=CURRENT_TIMESTAMP WHERE id=?").bind(merged.name.trim(), merged.description?.trim() || null, merged.product_type, merged.price, merged.currency || "VND", JSON.stringify(merged.specifications), merged.status || "published", merged.image_url?.trim() || null, merged.content?.trim() || null, merged.app_url?.trim() || null, id).run();
       return json({ data: productFromRow(await env.DB.prepare("SELECT * FROM products WHERE id=?").bind(id).first()) });
     }
     if (method === "GET" && url.pathname === "/api/team") {

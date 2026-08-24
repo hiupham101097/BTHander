@@ -6,8 +6,6 @@ import { useAuth } from "../../context/AuthContext.jsx";
 import { Link, useNavigate } from "react-router-dom";
 
 const apiBaseUrl = import.meta.env.VITE_API_BASE_URL || "";
-const fallbackVisuals = ["/images/hero-tech-lab.png", "/images/game-development.png", "/images/ai-machine-engineering.png"];
-
 function formatPrice(price, currency) {
   return new Intl.NumberFormat("vi-VN", { style: "currency", currency: currency || "VND", maximumFractionDigits: 0 }).format(price);
 }
@@ -47,16 +45,16 @@ export default function Projects() {
 
         {state === "loading" && <div className="project-loading"><span /><span /><span /></div>}
         {state === "error" && <p className="api-state api-state-error">Chưa thể tải dự án. Vui lòng thử lại sau.</p>}
-        {state === "ready" && projects.length === 0 && <p className="api-state">Dự án đang được cập nhật.</p>}
+        {state === "ready" && visibleProjects.length === 0 && <p className="api-state">Dự án đang được cập nhật.</p>}
 
         <div className="core-project-grid">
           {visibleProjects.map((project, index) => {
-            const visual = project.gallery?.[0]?.image_url || fallbackVisuals[index % fallbackVisuals.length];
+            const visual = project.gallery?.[0]?.image_url;
             return (
               <Reveal key={project.id} delay={100 + index * 70}>
                 <article className="core-project-card core-project-card-link" role="link" tabIndex={0} onClick={() => navigate(`/projects/${project.id}`)} onKeyDown={(event) => { if (event.key === "Enter" || event.key === " ") navigate(`/projects/${project.id}`); }}>
                   <div className="project-cover">
-                    <img src={visual} alt="" />
+                    {visual ? <img src={visual} alt={`Ảnh bìa dự án ${project.name}`} /> : <div className="project-cover-empty"><Layers3 size={34} /><span>Chưa có ảnh bìa</span></div>}
                     <div className="project-cover-overlay" />
                     <span className="project-number">0{index + 1}</span>
                     <span className="project-status"><i /> LIVE PROJECT</span>
