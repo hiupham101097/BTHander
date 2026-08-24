@@ -124,6 +124,13 @@ a {
   flex: 0 0 auto;
 }
 
+.brand-mark-image {
+  display: block;
+  object-fit: contain;
+  transform: scale(1.38);
+  filter: drop-shadow(0 0 7px rgba(20, 116, 255, .32));
+}
+
 .brand-mark rect {
   fill: var(--ink);
 }
