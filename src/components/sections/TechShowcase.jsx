@@ -13,7 +13,7 @@ export default function TechShowcase() {
   return (
     <section className="tech-showcase" aria-label="Năng lực công nghệ">
       <div className="wrap">
-        <Reveal><div className="tech-intro"><span>01 / NĂNG LỰC CỐT LÕI</span><p>Bốn lĩnh vực. Một tư duy tạo sản phẩm.</p></div></Reveal>
+        <Reveal><div className="tech-intro"><h2>Bốn năng lực.<br />Một quy trình tạo sản phẩm.</h2><p>Từ mã nguồn đến bản vẽ chế tạo, mọi đầu ra đều hướng tới khả năng vận hành thực tế.</p></div></Reveal>
         <div className="tech-grid">
           {showcase.map((item, index) => (
             <Reveal key={item.title} delay={index * 80}>
@@ -30,7 +30,7 @@ export default function TechShowcase() {
             </Reveal>
           ))}
         </div>
-        <Reveal delay={260}><p className="ai-support-note">AI được kết hợp như một công cụ hỗ trợ nghiên cứu, sáng tạo và tăng tốc quy trình — không phải dịch vụ xây dựng mô hình AI.</p></Reveal>
+        <Reveal delay={260}><p className="ai-support-note">AI hỗ trợ nghiên cứu, sáng tạo và tăng tốc quy trình. BThander không cung cấp dịch vụ xây dựng mô hình AI.</p></Reveal>
       </div>
     </section>
   );

@@ -25,7 +25,6 @@ export default function Login() {
 
   return <main className="auth-page"><section className="auth-card">
     <Link className="brand-link" to="/"><BrandLogo /></Link>
-    <p className="auth-eyebrow">BThander · Brave Trust Hander</p>
     <h1>Đăng nhập</h1>
     <p className="auth-subtitle">Đăng nhập để sử dụng các tính năng dành cho người dùng.</p>
     <form onSubmit={submit} className="auth-form">
@@ -33,7 +32,7 @@ export default function Login() {
       <label>Mật khẩu<div className="password-field"><input required type={showPassword ? "text" : "password"} autoComplete="current-password" value={password} onChange={(event) => setPassword(event.target.value)} placeholder="••••••••••" /><button className="password-toggle" type="button" onClick={() => setShowPassword((value) => !value)}>{showPassword ? "Ẩn" : "Hiện"}</button></div></label>
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: 4 }}>
         <p className="form-message form-error" style={{ margin: 0, padding: 0, background: "transparent", border: "none" }}>{error}</p>
-        <Link to="/forgot-password" style={{ fontSize: 13, color: "var(--accent)", fontWeight: 600, textDecoration: "none" }}>Quên mật khẩu?</Link>
+        <Link className="auth-link" to="/forgot-password" style={{ fontSize: 13, fontWeight: 600, textDecoration: "none" }}>Quên mật khẩu?</Link>
       </div>
       <button className="btn-primary" disabled={submitting} style={{ marginTop: 12 }}>{submitting ? "Đang xử lý..." : "Đăng nhập"}</button>
     </form>

@@ -29,11 +29,10 @@ export default function Register() {
 
   return <main className="auth-page"><section className="auth-card">
     <Link className="brand-link" to="/"><BrandLogo /></Link>
-    <p className="auth-eyebrow">BThander · Brave Trust Hander</p>
     <h1>Đăng ký người dùng</h1>
     <p className="auth-subtitle">Tạo tài khoản người dùng để bắt đầu sử dụng.</p>
     <form onSubmit={submit} className="auth-form">
-      <label>Họ và tên<input required autoComplete="name" value={form.name} onChange={update("name")} placeholder="Nguyễn Văn A" /></label>
+      <label>Họ và tên<input required autoComplete="name" value={form.name} onChange={update("name")} placeholder="Lê Minh Anh" /></label>
       <label>Email<input required type="email" autoComplete="email" value={form.email} onChange={update("email")} placeholder="ban@example.com" /></label>
       <label>Mật khẩu<div className="password-field"><input required minLength="10" type={showPassword ? "text" : "password"} autoComplete="new-password" value={form.password} onChange={update("password")} placeholder="••••••••••" /><button className="password-toggle" type="button" onClick={() => setShowPassword((value) => !value)}>{showPassword ? "Ẩn" : "Hiện"}</button></div></label>
       <label>Xác nhận mật khẩu<input required minLength="10" type={showPassword ? "text" : "password"} autoComplete="new-password" value={form.confirmPassword} onChange={update("confirmPassword")} placeholder="••••••••••" /></label>

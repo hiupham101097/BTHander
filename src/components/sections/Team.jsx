@@ -35,12 +35,9 @@ export default function Team() {
       <div className="wrap team-wrap">
         <div className="team-heading">
           <Reveal>
-            <div className="team-kicker"><span>Đội ngũ BTH</span><span>{String(members.length).padStart(2, "0")} thành viên</span></div>
+            <h2 className="team-title">Những người biến ý tưởng thành sản phẩm.</h2>
           </Reveal>
-          <Reveal delay={60}>
-            <h2 className="team-title">Những người biến<br />ý tưởng thành <em>sản phẩm.</em></h2>
-          </Reveal>
-          <Reveal delay={110}>
+          <Reveal delay={70}>
             <p className="team-intro">Một đội ngũ đa chuyên môn, cùng theo đuổi một mục tiêu: tạo ra những giải pháp số rõ ràng, hữu ích và có thể vận hành trong thực tế.</p>
           </Reveal>
         </div>

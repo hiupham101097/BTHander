@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { ChevronRight, Send } from "lucide-react";
 import Reveal from "../ui/Reveal.jsx";
-import SectionEyebrow from "../ui/SectionEyebrow.jsx";
 
 const apiBaseUrl = import.meta.env.VITE_API_BASE_URL || "";
 const initialForm = { name: "", email: "", phone: "", company: "", message: "" };
@@ -37,7 +36,6 @@ export default function Contact() {
       <div className="wrap contact-layout">
         <Reveal>
           <div className="contact-copy">
-            <SectionEyebrow label="Liên hệ" />
             <h2 className="section-title">Cùng bắt đầu dự án của bạn.</h2>
             <p className="section-sub">Cho chúng tôi biết mục tiêu, loại sản phẩm và thời gian dự kiến. Brave Trust Hander sẽ đề xuất phương án phù hợp.</p>
             <div className="contact-note"><ChevronRight size={18} /> Phản hồi trong ngày làm việc.</div>

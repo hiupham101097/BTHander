@@ -200,6 +200,7 @@ function StepOtp({ email, devOtp, onNext }) {
               ref={(el) => (inputRefs.current[idx] = el)}
               className="otp-box"
               type="text"
+              aria-label={`Chữ số OTP ${idx + 1}`}
               inputMode="numeric"
               maxLength={1}
               value={digit}
@@ -300,7 +301,7 @@ function StepNewPassword({ email, resetToken, onDone }) {
               placeholder="Tối thiểu 10 ký tự"
               autoComplete="new-password"
             />
-            <button type="button" className="password-toggle" onClick={() => setShowPass((v) => !v)}>
+            <button type="button" className="password-toggle" aria-label={showPass ? "Ẩn mật khẩu mới" : "Hiện mật khẩu mới"} onClick={() => setShowPass((v) => !v)}>
               {showPass ? <EyeOff size={15} /> : <Eye size={15} />}
             </button>
           </div>
@@ -334,7 +335,7 @@ function StepNewPassword({ email, resetToken, onDone }) {
               placeholder="Nhập lại mật khẩu"
               autoComplete="new-password"
             />
-            <button type="button" className="password-toggle" onClick={() => setShowConfirm((v) => !v)}>
+            <button type="button" className="password-toggle" aria-label={showConfirm ? "Ẩn mật khẩu xác nhận" : "Hiện mật khẩu xác nhận"} onClick={() => setShowConfirm((v) => !v)}>
               {showConfirm ? <EyeOff size={15} /> : <Eye size={15} />}
             </button>
           </div>
@@ -396,7 +397,6 @@ export default function ForgotPassword() {
         <Link className="brand-link" to="/">
           <BrandLogo />
         </Link>
-        <p className="auth-eyebrow">BTHander · Brave Trust Hander</p>
 
         <StepBar step={step} />
 

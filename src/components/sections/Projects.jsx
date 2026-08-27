@@ -1,9 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { ArrowUpRight, Check, Code2, Layers3 } from "lucide-react";
 import Reveal from "../ui/Reveal.jsx";
-import SectionEyebrow from "../ui/SectionEyebrow.jsx";
 import { useAuth } from "../../context/AuthContext.jsx";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 
 const apiBaseUrl = import.meta.env.VITE_API_BASE_URL || "";
 function formatPrice(price, currency) {
@@ -15,7 +14,6 @@ export default function Projects() {
   const [state, setState] = useState("loading");
   const [interested, setInterested] = useState([]);
   const { user } = useAuth();
-  const navigate = useNavigate();
   const visibleProjects = projects.filter((project) => !project.name?.toLocaleLowerCase("vi").includes("ứng dụng miễn phí"));
 
   useEffect(() => {
@@ -35,12 +33,9 @@ export default function Projects() {
   return (
     <section className="section projects-section" id="projects">
       <div className="wrap">
-        <div className="section-heading-row">
-          <div>
-            <Reveal><SectionEyebrow label="Dự án nổi bật" /></Reveal>
-            <Reveal delay={60}><h2 className="section-title">Sản phẩm thật. Giá trị có thể đo lường.</h2></Reveal>
-          </div>
-          <Reveal delay={100}><p className="section-sub">Mỗi dự án là một bài toán riêng — được thiết kế, kiểm chứng và bàn giao với tiêu chuẩn rõ ràng.</p></Reveal>
+        <div className="projects-heading">
+          <Reveal><h2 className="section-title">Sản phẩm thật.<br />Năng lực nhìn thấy được.</h2></Reveal>
+          <Reveal delay={70}><p className="section-sub">Mỗi dự án được thiết kế, kiểm chứng và bàn giao với phạm vi rõ ràng.</p></Reveal>
         </div>
 
         {state === "loading" && <div className="project-loading"><span /><span /><span /></div>}
@@ -52,17 +47,15 @@ export default function Projects() {
             const visual = project.gallery?.[0]?.image_url;
             return (
               <Reveal key={project.id} delay={100 + index * 70}>
-                <article className="core-project-card core-project-card-link" role="link" tabIndex={0} onClick={() => navigate(`/projects/${project.id}`)} onKeyDown={(event) => { if (event.key === "Enter" || event.key === " ") navigate(`/projects/${project.id}`); }}>
+                <article className="core-project-card">
                   <div className="project-cover">
                     {visual ? <img src={visual} alt={`Ảnh bìa dự án ${project.name}`} /> : <div className="project-cover-empty"><Layers3 size={34} /><span>Chưa có ảnh bìa</span></div>}
                     <div className="project-cover-overlay" />
-                    <span className="project-number">0{index + 1}</span>
-                    <span className="project-status"><i /> LIVE PROJECT</span>
                     <Link className="project-open" to={`/projects/${project.id}`} onClick={(event) => event.stopPropagation()} aria-label={`Xem ${project.name}`}><ArrowUpRight size={20} /></Link>
                   </div>
                   <div className="project-card-body">
-                    <div className="project-card-title"><div><span>CASE STUDY</span><h3>{project.name}</h3></div><Layers3 size={22} /></div>
-                    <div className="project-languages"><Code2 size={14} /> {(project.languages || []).join(" · ")}</div>
+                    <div className="project-card-title"><div><h3>{project.name}</h3></div><Layers3 size={22} /></div>
+                    <div className="project-languages"><Code2 size={14} /> {(project.languages || []).join(", ")}</div>
                     {project.description && <p className="project-description">{project.description}</p>}
                     <div className="project-meta-row">
                       <div><small>NGÂN SÁCH</small><strong>{formatPrice(project.price, project.currency)}</strong></div>

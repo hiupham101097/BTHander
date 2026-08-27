@@ -1,7 +1,72 @@
-import React, { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import { ChevronDown, LogOut, Menu, Settings, UserCircle, X } from "lucide-react";
+import React, { useEffect, useState } from "react";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import { ArrowUpRight, ChevronDown, LogOut, Menu, Settings, UserCircle, X } from "lucide-react";
 import BrandLogo from "../ui/BrandLogo.jsx";
 import { useAuth } from "../../context/AuthContext.jsx";
-const NAV_ITEMS = [{ href: "#projects", label: "Dự án" }, { href: "#achievements", label: "Năng lực" }, { href: "#products", label: "Dịch vụ" }, { href: "#team", label: "Đội ngũ" }, { href: "#contact", label: "Liên hệ" }];
-export default function Navbar() { const [navOpen, setNavOpen] = useState(false), [menuOpen, setMenuOpen] = useState(false); const { user, isAdmin, logout } = useAuth(); const navigate = useNavigate(); const accountPath = isAdmin ? "/admin/profile" : "/account"; const signOut = async () => { await logout(); setMenuOpen(false); navigate("/", { replace: true }); }; return <nav className="nav"><div className="wrap nav-inner"><Link to="/" className="brand-link"><BrandLogo /></Link><div className="nav-links">{NAV_ITEMS.map((item) => <a key={item.href} href={item.href}>{item.label}</a>)}</div><div className="nav-actions">{user ? <div className="profile-menu"><button className="profile-trigger" onClick={() => setMenuOpen((value) => !value)} aria-expanded={menuOpen}><UserCircle size={22} /><span>{user.name}</span><ChevronDown size={15} /></button>{menuOpen && <div className="profile-dropdown"><Link to={accountPath} onClick={() => setMenuOpen(false)}><UserCircle size={16} />Hồ sơ cá nhân</Link><Link to={accountPath} onClick={() => setMenuOpen(false)}><Settings size={16} />Cài đặt</Link><button onClick={signOut}><LogOut size={16} />Đăng xuất</button></div>}</div> : <div style={{ display: "flex", gap: "8px", alignItems: "center" }}><Link to="/register" className="btn-ghost" style={{ padding: "8px 16px", fontSize: "14px" }}>Đăng ký</Link><Link to="/login" className="btn-primary" style={{ padding: "8px 16px", fontSize: "14px" }}>Đăng nhập</Link></div>}<button className="nav-toggle" onClick={() => setNavOpen(!navOpen)}>{navOpen ? <X size={22} /> : <Menu size={22} />}</button></div></div>{navOpen && <div className="mobile-menu">{NAV_ITEMS.map((item) => <a key={item.href} href={item.href} onClick={() => setNavOpen(false)}>{item.label}</a>)}</div>}</nav>; }
+const NAV_ITEMS = [
+  { href: "#projects", label: "Dự án" },
+  { href: "#achievements", label: "Năng lực" },
+  { href: "#products", label: "Dịch vụ" },
+  { href: "#team", label: "Đội ngũ" },
+];
+
+export default function Navbar() {
+  const [navOpen, setNavOpen] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
+  const { user, isAdmin, logout } = useAuth();
+  const navigate = useNavigate();
+  const location = useLocation();
+  const accountPath = isAdmin ? "/admin/profile" : "/account";
+
+  useEffect(() => {
+    setNavOpen(false);
+    setMenuOpen(false);
+  }, [location.pathname]);
+
+  const signOut = async () => {
+    await logout();
+    navigate("/", { replace: true });
+  };
+
+  return (
+    <nav className="nav" aria-label="Điều hướng chính">
+      <div className="wrap nav-inner">
+        <Link to="/" className="brand-link" aria-label="BThander, về trang chủ"><BrandLogo /></Link>
+        <div className="nav-links">
+          {NAV_ITEMS.map((item) => <a key={item.href} href={`/${item.href}`}>{item.label}</a>)}
+        </div>
+        <div className="nav-actions">
+          {user ? (
+            <div className="profile-menu">
+              <button className="profile-trigger" onClick={() => setMenuOpen((value) => !value)} aria-expanded={menuOpen}>
+                <UserCircle size={19} /><span>{user.name}</span><ChevronDown size={14} />
+              </button>
+              {menuOpen && (
+                <div className="profile-dropdown">
+                  <Link to={accountPath}><UserCircle size={16} />Hồ sơ cá nhân</Link>
+                  <Link to={accountPath}><Settings size={16} />Cài đặt</Link>
+                  <button onClick={signOut}><LogOut size={16} />Đăng xuất</button>
+                </div>
+              )}
+            </div>
+          ) : (
+            <div className="nav-auth">
+              <Link to="/login" className="nav-login">Đăng nhập</Link>
+              <a href="/#contact" className="nav-cta">Bắt đầu dự án <ArrowUpRight size={15} /></a>
+            </div>
+          )}
+          <button className="nav-toggle" onClick={() => setNavOpen((value) => !value)} aria-expanded={navOpen} aria-label={navOpen ? "Đóng menu" : "Mở menu"}>
+            {navOpen ? <X size={21} /> : <Menu size={21} />}
+          </button>
+        </div>
+      </div>
+      {navOpen && (
+        <div className="mobile-menu">
+          {NAV_ITEMS.map((item) => <a key={item.href} href={`/${item.href}`} onClick={() => setNavOpen(false)}>{item.label}</a>)}
+          {!user && <Link to="/login">Đăng nhập</Link>}
+          <a className="mobile-menu-cta" href="/#contact" onClick={() => setNavOpen(false)}>Bắt đầu dự án <ArrowUpRight size={16} /></a>
+        </div>
+      )}
+    </nav>
+  );
+}

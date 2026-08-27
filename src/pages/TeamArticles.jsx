@@ -80,8 +80,6 @@ export function TeamArticles() {
         <ArrowLeft size={15} /> Quay lại profile
       </Link>
 
-      <p className="eyebrow" style={{ marginTop: 32 }}>Góc chia sẻ kinh nghiệm</p>
-
       {member && (
         <div style={{ display: "flex", alignItems: "center", gap: 14, marginBottom: 12, marginTop: 8 }}>
           <div style={{ width: 48, height: 48, borderRadius: "50%", overflow: "hidden", background: "var(--accent-soft)", display: "flex", alignItems: "center", justifyContent: "center", color: "var(--accent)", flexShrink: 0 }}>

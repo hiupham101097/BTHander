@@ -5,11 +5,7 @@ import Footer from "../components/layout/Footer.jsx";
 
 export default function MainLayout() {
   return (
-    <div className="root">
-      <div className="blob blob-1" />
-      <div className="blob blob-2" />
-      <div className="blob blob-3" />
-
+    <div className="root public-shell">
       <Navbar />
       <main>
         <Outlet />

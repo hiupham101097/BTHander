@@ -1,5 +1,5 @@
 import React from "react";
-import { Github, Linkedin, Twitter } from "lucide-react";
+import { ArrowUpRight, Github, Linkedin } from "lucide-react";
 import BrandLogo from "../ui/BrandLogo.jsx";
 
 export default function Footer() {
@@ -7,15 +7,16 @@ export default function Footer() {
     <footer className="footer">
       <div className="wrap footer-inner">
         <div className="footer-brand">
-          <BrandLogo compact />
-          <span>© {new Date().getFullYear()} BThander · Brave Trust Hander — phần mềm và thiết kế kỹ thuật.</span>
+          <BrandLogo />
+          <p>Phần mềm và thiết kế kỹ thuật, được xây dựng để vận hành trong thực tế.</p>
         </div>
+        <div className="footer-links"><a href="/#projects">Dự án</a><a href="/#products">Dịch vụ</a><a href="/#team">Đội ngũ</a><a href="/#contact">Liên hệ <ArrowUpRight size={14} /></a></div>
         <div className="footer-social">
-          <a href="#"><Github size={18} /></a>
-          <a href="#"><Linkedin size={18} /></a>
-          <a href="#"><Twitter size={18} /></a>
+          <a href="https://github.com" target="_blank" rel="noreferrer" aria-label="GitHub"><Github size={18} /></a>
+          <a href="https://linkedin.com" target="_blank" rel="noreferrer" aria-label="LinkedIn"><Linkedin size={18} /></a>
         </div>
       </div>
+      <div className="wrap footer-bottom"><span>© {new Date().getFullYear()} BThander</span><span>Brave Trust Hander</span></div>
     </footer>
   );
 }

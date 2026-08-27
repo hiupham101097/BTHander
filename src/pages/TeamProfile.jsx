@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import {
   ArrowLeft,
   BriefcaseBusiness,
-  Code2,
   FileText,
   Mail,
   MapPin,
@@ -12,16 +11,6 @@ import {
   ChevronRight,
 } from "lucide-react";
 import { Link, useParams } from "react-router-dom";
-
-/* ── Parse blocks or legacy text ── */
-function parseBlocks(raw) {
-  if (!raw) return [];
-  try {
-    const parsed = JSON.parse(raw);
-    if (Array.isArray(parsed)) return parsed;
-  } catch { /* legacy */ }
-  return [{ type: "text", content: raw }];
-}
 
 /* ── Article mini card ── */
 function ArticleCard({ article, memberId }) {
@@ -111,7 +100,6 @@ export default function TeamProfile() {
           )}
         </div>
         <div className="member-profile-identity">
-          <div className="member-kicker">THÀNH VIÊN BTHANDER</div>
           <h1 className="member-profile-name">{member.name}</h1>
           <div className="member-profile-title">{member.title}</div>
           <div className="member-profile-actions">
