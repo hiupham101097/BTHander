@@ -44,7 +44,7 @@
 }
 
 .public-shell .section {
-  padding: clamp(92px, 11vw, 152px) 0;
+  padding: clamp(72px, 8vw, 112px) 0;
 }
 
 .public-shell .section-title {
@@ -319,7 +319,7 @@
 
 .public-shell .hero-visual {
   position: relative;
-  min-height: min(68vh, 720px);
+  min-height: min(58vh, 580px);
   overflow: hidden;
   border: 1px solid var(--lab-line);
   border-radius: 16px;
@@ -338,7 +338,7 @@
 .public-shell .hero-visual img {
   width: 100%;
   height: 100%;
-  min-height: min(68vh, 720px);
+  min-height: min(58vh, 580px);
   object-fit: cover;
   object-position: 66% center;
   filter: saturate(0.78) contrast(1.04);
@@ -375,7 +375,7 @@
 
 /* Capabilities */
 .public-shell .tech-showcase {
-  padding: clamp(96px, 12vw, 160px) 0;
+  padding: clamp(76px, 9vw, 120px) 0;
   color: var(--lab-text);
   background: var(--lab-bg-raised);
 }
@@ -384,8 +384,8 @@
   display: grid;
   grid-template-columns: minmax(0, 1.15fr) minmax(280px, 0.55fr);
   align-items: end;
-  gap: 48px;
-  margin-bottom: 52px;
+  gap: 36px;
+  margin-bottom: 38px;
 }
 
 .public-shell .tech-intro h2 {
@@ -415,12 +415,12 @@
 
 .public-shell .tech-showcase .tech-card,
 .public-shell .tech-showcase .tech-card-content {
-  min-height: 420px;
+  min-height: 320px;
 }
 
 .public-shell .tech-showcase .tech-grid .reveal:nth-child(3) .tech-card,
 .public-shell .tech-showcase .tech-grid .reveal:nth-child(3) .tech-card-content {
-  min-height: 500px;
+  min-height: 380px;
 }
 
 .public-shell .tech-card {
@@ -441,7 +441,7 @@
 }
 
 .public-shell .tech-card-content {
-  padding: clamp(24px, 3vw, 38px);
+  padding: clamp(22px, 2.4vw, 30px);
 }
 
 .public-shell .tech-card-top {
@@ -498,13 +498,13 @@
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: 0;
-  padding: 64px 0;
+  padding: 44px 0;
   border-top: 1px solid var(--lab-line);
   border-bottom: 1px solid var(--lab-line);
 }
 
 .public-shell .stat-cell {
-  min-height: 128px;
+  min-height: 104px;
   justify-content: center;
   padding: 8px clamp(18px, 3vw, 38px);
   background: transparent;
@@ -545,7 +545,7 @@
 
 .public-shell .projects-heading {
   display: block;
-  margin-bottom: 52px;
+  margin-bottom: 38px;
 }
 
 .public-shell .projects-section .core-project-grid {
@@ -585,12 +585,12 @@
 
 .public-shell .projects-section .project-cover,
 .public-shell .projects-section .core-project-grid > .reveal:first-child .project-cover {
-  height: clamp(260px, 31vw, 420px);
+  height: clamp(220px, 24vw, 320px);
   background: #0b111a;
 }
 
 .public-shell .projects-section .core-project-grid > .reveal:nth-child(2) .project-cover {
-  height: clamp(260px, 25vw, 360px);
+  height: clamp(220px, 22vw, 300px);
 }
 
 .public-shell .project-cover-overlay {
@@ -605,7 +605,7 @@
 }
 
 .public-shell .project-card-body {
-  padding: clamp(24px, 3vw, 34px);
+  padding: clamp(20px, 2.4vw, 26px);
 }
 
 .public-shell .projects-section .core-project-card h3 {
@@ -667,7 +667,7 @@
 
 .public-shell .free-apps-head {
   align-items: end;
-  margin-bottom: 42px;
+  margin-bottom: 32px;
 }
 
 .public-shell .free-apps-head .eyebrow {
@@ -707,7 +707,7 @@
 
 .public-shell .free-app-card {
   --app-color: var(--lab-accent);
-  min-height: 410px;
+  min-height: 338px;
   color: var(--lab-text);
   background: var(--lab-panel);
   border: 1px solid var(--lab-line);
@@ -778,8 +778,8 @@
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(260px, 0.38fr);
   align-items: end;
-  gap: 56px;
-  margin-bottom: 52px;
+  gap: 36px;
+  margin-bottom: 38px;
 }
 
 .public-shell .services-side-copy p {
@@ -822,7 +822,7 @@
 }
 
 .public-shell .service-visual {
-  height: clamp(210px, 28vw, 360px);
+  height: clamp(180px, 22vw, 280px);
 }
 
 .public-shell .service-visual::after {
@@ -838,7 +838,7 @@
 }
 
 .public-shell .service-card-content {
-  padding: 22px 28px 28px;
+  padding: 18px 24px 24px;
 }
 
 .public-shell .services-section .prod-name {
@@ -882,8 +882,8 @@
   display: grid;
   grid-template-columns: minmax(0, 1.3fr) minmax(260px, 0.55fr);
   align-items: end;
-  gap: 56px;
-  margin-bottom: 56px;
+  gap: 36px;
+  margin-bottom: 40px;
 }
 
 .public-shell .team-title {
@@ -899,7 +899,7 @@
 }
 
 .public-shell .team-section .team-grid {
-  gap: 36px 18px;
+  gap: 28px 16px;
 }
 
 .public-shell .team-portrait {
@@ -960,7 +960,7 @@
 }
 
 .public-shell .contact-form {
-  padding: clamp(28px, 4vw, 48px);
+  padding: clamp(24px, 3vw, 36px);
   background: var(--lab-panel);
   border: 1px solid var(--lab-line);
   border-radius: 16px;
@@ -1185,7 +1185,7 @@
 
 .public-shell .detail-gallery-list {
   display: grid;
-  gap: 72px;
+  gap: 48px;
 }
 
 .public-shell .device-mockup-wrapper {
@@ -1316,7 +1316,7 @@
 
 .public-shell .member-info-card,
 .public-shell .member-section-v2 {
-  padding: clamp(22px, 3vw, 32px);
+  padding: clamp(20px, 2.4vw, 28px);
 }
 
 .public-shell .exp-dot {
@@ -1412,7 +1412,7 @@
 
 /* Footer */
 .public-shell .footer {
-  padding: 70px 0 28px;
+  padding: 56px 0 24px;
   color: var(--lab-text);
   background: #070a10;
   border-top: 1px solid var(--lab-line);
@@ -1422,8 +1422,8 @@
   display: grid;
   grid-template-columns: 1.3fr 0.7fr auto;
   align-items: start;
-  gap: 48px;
-  padding-bottom: 58px;
+  gap: 36px;
+  padding-bottom: 44px;
 }
 
 .public-shell .footer-brand {
@@ -1528,7 +1528,7 @@
   grid-row: 1;
   width: min(100%, 520px);
   margin-left: auto;
-  padding: clamp(30px, 4vw, 48px);
+  padding: clamp(28px, 3vw, 40px);
   color: var(--lab-text);
   background: rgba(14, 19, 28, 0.96);
   border: 1px solid var(--lab-line);
@@ -1644,7 +1644,7 @@
   }
 
   .public-shell .team-card-reveal {
-    grid-column: span 6;
+    grid-column: span 4;
   }
 
   .public-shell .team-card-reveal:nth-child(4n + 2),
@@ -1707,7 +1707,7 @@
 
   .public-shell .hero-visual,
   .public-shell .hero-visual img {
-    min-height: 500px;
+    min-height: 420px;
   }
 
   .public-shell .tech-intro,
@@ -1749,18 +1749,26 @@
 
   .public-shell .projects-section .core-project-grid > .reveal,
   .public-shell .projects-section .core-project-grid > .reveal:first-child,
-  .public-shell .projects-section .core-project-grid > .reveal:nth-child(2),
+  .public-shell .projects-section .core-project-grid > .reveal:nth-child(2) {
+    grid-column: 1 / -1;
+  }
+
   .public-shell .free-apps-grid > .reveal,
   .public-shell .free-apps-grid > .reveal:nth-child(4n + 1),
   .public-shell .services-section .prod-grid > .reveal:first-child,
   .public-shell .services-section .prod-grid > .reveal:nth-child(2),
   .public-shell .services-section .prod-grid > .reveal:nth-child(3) {
-    grid-column: 1 / -1;
+    grid-column: auto;
   }
 
   .public-shell .services-section .prod-grid,
   .public-shell .free-apps-grid {
     grid-template-columns: repeat(2, 1fr);
+  }
+
+  .public-shell .team-card-reveal,
+  .public-shell .team-grid-loading .team-skeleton {
+    grid-column: span 6;
   }
 
   .public-shell .footer-inner {
@@ -1793,7 +1801,7 @@
   }
 
   .public-shell .section {
-    padding: 88px 0;
+    padding: 68px 0;
   }
 
   .public-shell .nav,
@@ -1840,7 +1848,7 @@
 
   .public-shell .hero-visual,
   .public-shell .hero-visual img {
-    min-height: 360px;
+    min-height: 300px;
   }
 
   .public-shell .hero-visual-meta {
@@ -1872,7 +1880,7 @@
   .public-shell .tech-showcase .tech-card-content,
   .public-shell .tech-showcase .tech-grid .reveal:nth-child(3) .tech-card,
   .public-shell .tech-showcase .tech-grid .reveal:nth-child(3) .tech-card-content {
-    min-height: 390px;
+    min-height: 300px;
   }
 
   .public-shell .stats-grid {
@@ -1902,7 +1910,7 @@
   .public-shell .projects-section .project-cover,
   .public-shell .projects-section .core-project-grid > .reveal:first-child .project-cover,
   .public-shell .projects-section .core-project-grid > .reveal:nth-child(2) .project-cover {
-    height: 240px;
+    height: 210px;
   }
 
   .public-shell .free-apps-head {

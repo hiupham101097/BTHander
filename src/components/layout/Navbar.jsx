@@ -5,7 +5,7 @@ import BrandLogo from "../ui/BrandLogo.jsx";
 import { useAuth } from "../../context/AuthContext.jsx";
 const NAV_ITEMS = [
   { href: "#projects", label: "Dự án" },
-  { href: "#achievements", label: "Năng lực" },
+  { href: "#capabilities", label: "Năng lực" },
   { href: "#products", label: "Dịch vụ" },
   { href: "#team", label: "Đội ngũ" },
 ];

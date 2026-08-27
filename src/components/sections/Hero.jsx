@@ -5,10 +5,13 @@ import Reveal from "../ui/Reveal.jsx";
 export default function Hero() {
   return (
     <header className="hero-shell">
+      <Reveal delay={80} className="hero-visual">
+        <img src="/images/hero-tech-lab.png" alt="Công nghệ phần mềm, game và kỹ thuật chế tạo máy" />
+      </Reveal>
       <div className="wrap hero">
         <div className="hero-copy">
           <Reveal>
-            <h1 className="h1">Biến ý tưởng kỹ thuật thành <span className="accent">sản phẩm thật.</span></h1>
+            <h1 className="h1">Biến ý tưởng kỹ thuật thành sản phẩm thật.</h1>
           </Reveal>
           <Reveal delay={90}>
             <p className="lead">Phần mềm, game và thiết kế máy được xây dựng bởi một đội ngũ, từ nghiên cứu đến bàn giao.</p>
@@ -20,9 +23,6 @@ export default function Hero() {
             </div>
           </Reveal>
         </div>
-        <Reveal delay={140} className="hero-visual">
-          <img src="/images/hero-tech-lab.png" alt="Công nghệ phần mềm, game và kỹ thuật chế tạo máy" />
-        </Reveal>
       </div>
     </header>
   );

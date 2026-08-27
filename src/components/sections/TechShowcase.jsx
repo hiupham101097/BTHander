@@ -11,21 +11,18 @@ const showcase = [
 
 export default function TechShowcase() {
   return (
-    <section className="tech-showcase" aria-label="Năng lực công nghệ">
+    <section className="tech-showcase" id="capabilities" aria-label="Năng lực công nghệ">
       <div className="wrap">
-        <Reveal><div className="tech-intro"><h2>Bốn năng lực.<br />Một quy trình tạo sản phẩm.</h2><p>Từ mã nguồn đến bản vẽ chế tạo, mọi đầu ra đều hướng tới khả năng vận hành thực tế.</p></div></Reveal>
-        <div className="tech-grid">
+        <Reveal><div className="tech-intro"><h2>Năng lực đa ngành.<br />Một chuẩn triển khai.</h2><p>Từ mã nguồn đến bản vẽ chế tạo, mọi đầu ra đều hướng tới khả năng vận hành thực tế.</p></div></Reveal>
+        <div className="tech-index">
           {showcase.map((item, index) => (
             <Reveal key={item.title} delay={index * 80}>
-              <article className={`tech-card ${item.className}`}>
-                <img src={item.image} alt="" />
-                <div className="tech-card-shade" />
-                <div className="tech-motion" aria-hidden="true"><span className="tech-orbit tech-orbit-one" /><span className="tech-orbit tech-orbit-two" /><span className="tech-pulse" /></div>
-                <div className="tech-card-content">
-                  <div className="tech-card-top"><item.icon size={18} /><span>{item.tag}</span></div>
-                  <div><h2>{item.title}</h2><p>{item.description}</p></div>
-                  <a href="#contact" aria-label={`Trao đổi về ${item.title}`}>Trao đổi ngay <ArrowUpRight size={16} /></a>
-                </div>
+              <article className="tech-row">
+                <div className="tech-row-icon"><item.icon size={21} /></div>
+                <div className="tech-row-title"><h3>{item.title}</h3><span>{item.tag}</span></div>
+                <p>{item.description}</p>
+                <div className="tech-row-preview" aria-hidden="true"><img src={item.image} alt="" /></div>
+                <a href="#contact" aria-label={`Trao đổi về ${item.title}`}><ArrowUpRight size={19} /></a>
               </article>
             </Reveal>
           ))}
