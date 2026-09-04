@@ -1,5 +1,5 @@
 import React from "react";
-import { ArrowUpRight, Github, Linkedin, Mail, MapPin, ShieldCheck, Terminal } from "lucide-react";
+import { ArrowUpRight, Facebook, Github, Linkedin, Mail, MapPin, ShieldCheck, Terminal } from "lucide-react";
 import BrandLogo from "../ui/BrandLogo.jsx";
 
 export default function Footer() {
@@ -53,6 +53,9 @@ export default function Footer() {
             <span>contact@bthander.com</span>
           </div>
           <div className="footer-social-row">
+            <a href="https://www.facebook.com/profile.php?id=61587912490570" target="_blank" rel="noreferrer" aria-label="Facebook" className="footer-social-btn">
+              <Facebook size={17} />
+            </a>
             <a href="https://github.com" target="_blank" rel="noreferrer" aria-label="GitHub" className="footer-social-btn">
               <Github size={17} />
             </a>
