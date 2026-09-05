@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300..800;1,300..800&display=swap');
 
 /* ---------- RESET ---------- */
 * {
@@ -22,9 +22,10 @@ body {
 body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  font-family: 'Plus Jakarta Sans', sans-serif;
 }
 
-button {
+button, input, textarea, select {
   font-family: inherit;
 }
 
@@ -72,14 +73,14 @@ a {
 
   background: var(--bg-base);
   color: var(--ink);
-  font-family: 'Manrope', sans-serif;
+  font-family: 'Plus Jakarta Sans', sans-serif;
   min-height: 100vh;
   overflow-x: clip;
   position: relative;
 }
 
 .sora {
-  font-family: 'Space Grotesk', sans-serif;
+  font-family: 'Plus Jakarta Sans', sans-serif;
 }
 
 .wrap {
@@ -174,7 +175,7 @@ a {
 }
 
 .brand-name {
-  font: 700 20px/1 'Space Grotesk', sans-serif;
+  font: 700 20px/1 'Plus Jakarta Sans', sans-serif;
   letter-spacing: -0.06em;
   color: var(--ink);
 }
@@ -472,7 +473,7 @@ a {
 }
 
 .h1 {
-  font-family: 'Space Grotesk', sans-serif;
+  font-family: 'Plus Jakarta Sans', sans-serif;
   font-weight: 800;
   font-size: clamp(42px, 5vw, 68px);
   line-height: 1.04;
@@ -667,7 +668,7 @@ a {
   left: 30px;
   z-index: 3;
   color: #fff;
-  font-family: 'Space Grotesk', sans-serif;
+  font-family: 'Plus Jakarta Sans', sans-serif;
   font-weight: 700;
   font-size: 11px;
   letter-spacing: .16em;
@@ -722,7 +723,7 @@ a {
 }
 
 .tech-intro h2 {
-  font-family: 'Space Grotesk', sans-serif;
+  font-family: 'Plus Jakarta Sans', sans-serif;
   font-weight: 800;
   font-size: clamp(28px, 4vw, 44px);
   letter-spacing: -0.04em;
@@ -868,7 +869,7 @@ a {
 }
 
 .tech-card-tag {
-  font: 700 10px 'Space Grotesk', monospace;
+  font: 700 10px 'Plus Jakarta Sans', sans-serif;
   letter-spacing: 0.14em;
   color: var(--neon);
   background: var(--neon-dim);
@@ -878,7 +879,7 @@ a {
 }
 
 .tech-card-bottom h3 {
-  font: 700 22px/1.25 'Space Grotesk', sans-serif;
+  font: 700 22px/1.25 'Plus Jakarta Sans', sans-serif;
   letter-spacing: -0.02em;
   color: var(--ink);
   margin: 0 0 8px;
@@ -1019,7 +1020,7 @@ a {
 }
 
 .stat-value {
-  font-family: 'Space Grotesk', sans-serif;
+  font-family: 'Plus Jakarta Sans', sans-serif;
   font-size: 30px;
   font-weight: 800;
   color: var(--ink);
@@ -1056,7 +1057,7 @@ a {
 }
 
 .section-title {
-  font-family: 'Space Grotesk', sans-serif;
+  font-family: 'Plus Jakarta Sans', sans-serif;
   font-weight: 800;
   font-size: clamp(28px, 3.8vw, 44px);
   letter-spacing: -0.04em;
@@ -1154,7 +1155,7 @@ a {
 }
 
 .proj-name {
-  font-family: 'Space Grotesk', sans-serif;
+  font-family: 'Plus Jakarta Sans', sans-serif;
   font-weight: 700;
   font-size: 22px;
   margin-bottom: 6px;
@@ -1316,7 +1317,7 @@ a {
 }
 
 .core-project-card h3 {
-  font: 700 18px/1.3 'Space Grotesk', sans-serif;
+  font: 700 18px/1.3 'Plus Jakarta Sans', sans-serif;
   margin: 0 0 8px;
   color: var(--ink);
 }
@@ -1560,7 +1561,7 @@ a {
 }
 
 .prod-name {
-  font-family: 'Space Grotesk', sans-serif;
+  font-family: 'Plus Jakarta Sans', sans-serif;
   font-weight: 700;
   font-size: 16.5px;
   margin-bottom: 10px;
@@ -1702,7 +1703,7 @@ a {
 }
 
 .team-title {
-  font-family: 'Space Grotesk', sans-serif;
+  font-family: 'Plus Jakarta Sans', sans-serif;
   font-weight: 800;
   font-size: clamp(28px, 3.8vw, 44px);
   letter-spacing: -0.04em;
@@ -1773,7 +1774,7 @@ a {
   display: flex;
   align-items: center;
   justify-content: center;
-  font-family: 'Space Grotesk', sans-serif;
+  font-family: 'Plus Jakarta Sans', sans-serif;
   font-weight: 800;
   font-size: 36px;
   color: var(--neon);
@@ -1784,7 +1785,7 @@ a {
   position: absolute;
   top: 10px;
   left: 12px;
-  font-family: 'Space Grotesk', sans-serif;
+  font-family: 'Plus Jakarta Sans', sans-serif;
   font-size: 11px;
   font-weight: 700;
   color: rgba(255, 255, 255, 0.6);
@@ -1818,7 +1819,7 @@ a {
 }
 
 .team-name {
-  font-family: 'Space Grotesk', sans-serif;
+  font-family: 'Plus Jakarta Sans', sans-serif;
   font-weight: 700;
   font-size: 15px;
   margin: 0 0 4px;
@@ -1923,7 +1924,7 @@ a {
 }
 
 .cta-title {
-  font-family: 'Space Grotesk', sans-serif;
+  font-family: 'Plus Jakarta Sans', sans-serif;
   font-weight: 700;
   font-size: clamp(24px, 3.4vw, 32px);
   margin-bottom: 14px;
@@ -2110,7 +2111,7 @@ a {
 .auth-card h1 {
   margin: 14px 0 8px;
   color: var(--ink);
-  font: 800 28px/1.2 'Space Grotesk', sans-serif;
+  font: 800 28px/1.2 'Plus Jakarta Sans', sans-serif;
   letter-spacing: -.03em;
 }
 
@@ -2163,7 +2164,7 @@ a {
   border: 0;
   background: transparent;
   color: var(--ink-mid);
-  font: 700 13px 'Manrope', sans-serif;
+  font: 700 13px 'Plus Jakarta Sans', sans-serif;
   cursor: pointer;
   padding: 4px;
 }
@@ -2204,7 +2205,7 @@ a {
   border: 0;
   color: var(--neon);
   background: transparent;
-  font: 700 12px 'Manrope', sans-serif;
+  font: 700 12px 'Plus Jakarta Sans', sans-serif;
   cursor: pointer;
   padding: 6px;
 }
@@ -2273,7 +2274,7 @@ a {
 }
 
 .footer-col-title {
-  font-family: 'Space Grotesk', sans-serif;
+  font-family: 'Plus Jakarta Sans', sans-serif;
   font-weight: 700;
   font-size: 13px;
   letter-spacing: 0.08em;
@@ -2373,7 +2374,7 @@ a {
   display: grid;
   place-items: center;
   color: var(--ink-mid);
-  font: 600 15px 'Manrope', sans-serif;
+  font: 600 15px 'Plus Jakarta Sans', sans-serif;
 }
 
 .admin-shell {
@@ -3370,7 +3371,7 @@ a {
 }
 
 .detail-hero-title {
-  font-family: "Space Grotesk", sans-serif;
+  font-family: 'Plus Jakarta Sans', sans-serif;
   font-weight: 800;
   font-size: clamp(28px, 4vw, 42px);
   color: #fff;
@@ -3876,7 +3877,7 @@ a {
 }
 
 .admin-card-value {
-  font-family: 'Space Grotesk', sans-serif;
+  font-family: 'Plus Jakarta Sans', sans-serif;
   font-size: 30px;
   font-weight: 800;
   color: #0f172a;
@@ -4481,7 +4482,7 @@ a {
 }
 
 .article-title-big {
-  font-family: 'Space Grotesk', sans-serif;
+  font-family: 'Plus Jakarta Sans', sans-serif;
   font-weight: 800;
   font-size: clamp(28px, 4.5vw, 52px);
   line-height: 1.1;
@@ -4515,7 +4516,7 @@ a {
 }
 
 .article-block-heading {
-  font-family: 'Space Grotesk', sans-serif;
+  font-family: 'Plus Jakarta Sans', sans-serif;
   font-weight: 700;
   font-size: 24px;
   color: #0f172a;
@@ -4649,7 +4650,7 @@ a {
   align-items: center;
   justify-content: center;
   color: var(--accent);
-  font-family: 'Space Grotesk', sans-serif;
+  font-family: 'Plus Jakarta Sans', sans-serif;
   font-size: 36px;
   font-weight: 800;
   overflow: hidden;
@@ -4677,7 +4678,7 @@ a {
 }
 
 .member-profile-name {
-  font-family: 'Space Grotesk', sans-serif;
+  font-family: 'Plus Jakarta Sans', sans-serif;
   font-weight: 800;
   font-size: clamp(24px, 3.5vw, 36px);
   color: var(--ink);
@@ -4794,7 +4795,7 @@ a {
 .member-section-v2-title {
   font-size: 16px;
   font-weight: 800;
-  font-family: 'Space Grotesk', sans-serif;
+  font-family: 'Plus Jakarta Sans', sans-serif;
   color: var(--ink);
   margin: 0 0 18px;
   display: flex;
@@ -5047,7 +5048,7 @@ a {
 }
 
 .stats-card-value {
-  font-family: 'Space Grotesk', sans-serif;
+  font-family: 'Plus Jakarta Sans', sans-serif;
   font-size: 28px;
   font-weight: 800;
   color: #0f172a;
@@ -5245,7 +5246,7 @@ a {
   text-align: center;
   font-size: 24px;
   font-weight: 800;
-  font-family: 'Space Grotesk', monospace;
+  font-family: 'Plus Jakarta Sans', sans-serif;
   color: #0f172a;
   background: #f8fafc;
   outline: none;
@@ -5564,7 +5565,7 @@ a {
 }
 
 .free-apps-count strong {
-  font: 800 24px/1 'Space Grotesk', sans-serif;
+  font: 800 24px/1 'Plus Jakarta Sans', sans-serif;
   color: var(--neon);
 }
 
@@ -5663,7 +5664,7 @@ a {
 
 .free-app-copy h3 {
   margin: 0 0 8px;
-  font: 700 17px/1.3 'Space Grotesk', sans-serif;
+  font: 700 17px/1.3 'Plus Jakarta Sans', sans-serif;
   color: var(--ink);
 }
 
@@ -5812,7 +5813,7 @@ a {
 }
 
 .detail-category-meta {
-  font-family: 'Space Grotesk', monospace;
+  font-family: 'Plus Jakarta Sans', sans-serif;
   font-size: 12px;
   font-weight: 700;
   color: var(--neon);
@@ -5826,7 +5827,7 @@ a {
 }
 
 .detail-hero-title {
-  font-family: 'Space Grotesk', sans-serif;
+  font-family: 'Plus Jakarta Sans', sans-serif;
   font-weight: 800;
   font-size: clamp(30px, 4.5vw, 48px);
   color: var(--ink);
@@ -5866,7 +5867,7 @@ a {
 }
 
 .proj-block-heading {
-  font-family: 'Space Grotesk', sans-serif;
+  font-family: 'Plus Jakarta Sans', sans-serif;
   font-weight: 700;
   font-size: 22px;
   color: var(--ink);
@@ -5905,7 +5906,7 @@ a {
   border-radius: 14px;
   padding: 24px;
   color: var(--neon);
-  font-family: 'Space Grotesk', sans-serif;
+  font-family: 'Plus Jakarta Sans', sans-serif;
   font-size: 20px;
   font-weight: 800;
   display: flex;
@@ -6052,7 +6053,7 @@ a {
 
 .member-section-v2-title {
   color: var(--ink);
-  font-family: 'Space Grotesk', sans-serif;
+  font-family: 'Plus Jakarta Sans', sans-serif;
   font-weight: 700;
   font-size: 17px;
   display: flex;
@@ -6085,7 +6086,7 @@ a {
 }
 
 .member-article-card-title {
-  font-family: 'Space Grotesk', sans-serif;
+  font-family: 'Plus Jakarta Sans', sans-serif;
   font-weight: 700;
   font-size: 16px;
   color: var(--ink);
@@ -6131,7 +6132,7 @@ a {
 
 .auth-card h1 {
   color: var(--ink);
-  font: 800 28px/1.2 'Space Grotesk', sans-serif;
+  font: 800 28px/1.2 'Plus Jakarta Sans', sans-serif;
   letter-spacing: -0.03em;
   margin: 18px 0 6px;
 }

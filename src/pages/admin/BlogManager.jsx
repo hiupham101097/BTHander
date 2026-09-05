@@ -305,7 +305,7 @@ export default function BlogManager() {
                 <div style={{ border: "1.5px solid #e2e8f0", borderRadius: 10, padding: 20, background: "#fafafa" }}>
                   <p style={{ color: "#94a3b8", fontSize: 12, marginBottom: 16 }}>Xem trước nội dung:</p>
                   {form.blocks.map((b, idx) => {
-                    if (b.type === "heading") return <h2 key={idx} style={{ fontFamily: "'Space Grotesk',sans-serif", fontWeight: 700, fontSize: 22, margin: "24px 0 12px" }}>{b.content}</h2>;
+                    if (b.type === "heading") return <h2 key={idx} style={{ fontFamily: "'Plus Jakarta Sans',sans-serif", fontWeight: 700, fontSize: 22, margin: "24px 0 12px" }}>{b.content}</h2>;
                     if (b.type === "image") return (
                       <div key={idx} style={{ margin: "16px 0", borderRadius: 10, overflow: "hidden" }}>
                         {b.url && <img src={b.url} alt={b.caption} style={{ width: "100%", objectFit: "cover" }} />}
