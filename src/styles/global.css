@@ -230,15 +230,6 @@ a {
   transform: scaleX(1);
 }
 
-@media (min-width: 860px) {
-  .nav-links {
-    display: flex;
-  }
-  .nav-toggle {
-    display: none;
-  }
-}
-
 .nav-actions {
   display: flex;
   align-items: center;
@@ -282,6 +273,7 @@ a {
 }
 
 .nav-toggle {
+  display: none;
   background: none;
   border: 1px solid var(--line);
   color: var(--ink);
@@ -289,7 +281,6 @@ a {
   border-radius: 6px;
   width: 36px;
   height: 36px;
-  display: inline-flex;
   align-items: center;
   justify-content: center;
   transition: border-color 0.15s, background 0.15s;
@@ -298,6 +289,32 @@ a {
 .nav-toggle:hover {
   border-color: var(--line-strong);
   background: rgba(255, 255, 255, 0.05);
+}
+
+@media (max-width: 859px) {
+  .nav-links {
+    display: none !important;
+  }
+  .nav-toggle {
+    display: inline-flex !important;
+  }
+  .nav-login,
+  .nav-cta {
+    display: none !important;
+  }
+}
+
+@media (min-width: 860px) {
+  .nav-links {
+    display: flex !important;
+  }
+  .nav-toggle {
+    display: none !important;
+  }
+  .mobile-menu,
+  .mobile-overlay {
+    display: none !important;
+  }
 }
 
 .mobile-menu {
@@ -338,6 +355,7 @@ a {
 
 /* Profile menu (navbar dropdown) */
 .profile-menu {
+
   position: relative;
 }
 
