@@ -10,6 +10,7 @@ import {
   Globe,
   Monitor
 } from "lucide-react";
+import InteractiveProjectShowcase from "../components/ui/InteractiveProjectShowcase.jsx";
 
 const statusIcon = {
   done: CheckCircle2,
@@ -131,41 +132,8 @@ export default function ProjectDetail() {
         </div>
       </section>
 
-      {/* Gallery Mockups */}
-      {gallery.length > 0 && (
-        <section className="section detail-section detail-gallery-section">
-          <div className="wrap">
-            <h2 className="section-title detail-gallery-title">
-              Giao diện thực tế của {project.name}.
-            </h2>
-            <div className="detail-gallery-list">
-              {gallery.map((item, index) => (
-                <div key={index} className="device-mockup-wrapper">
-                  {isMobile ? (
-                    <div className="device-phone">
-                      <img src={item.image_url} alt={item.label} />
-                    </div>
-                  ) : (
-                    <div className="device-browser">
-                      <div className="device-browser-header">
-                        <div className="device-browser-dot red" />
-                        <div className="device-browser-dot yellow" />
-                        <div className="device-browser-dot green" />
-                      </div>
-                      <img src={item.image_url} alt={item.label} />
-                    </div>
-                  )}
-                  {item.label && (
-                    <p className="device-caption">
-                      {item.label}
-                    </p>
-                  )}
-                </div>
-              ))}
-            </div>
-          </div>
-        </section>
-      )}
+      {/* Interactive Project Showcase (Mobile / Web / CAD) */}
+      <InteractiveProjectShowcase project={project} />
 
       {/* Roadmap */}
       {roadmap.length > 0 && (

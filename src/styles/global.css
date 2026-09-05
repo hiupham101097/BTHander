@@ -6313,3 +6313,604 @@ a {
   place-items: center;
   margin: 0 auto 16px;
 }
+
+/* ==========================================================================
+   INTERACTIVE PROJECT SHOWCASE (MOBILE / WEB / CAD)
+   ========================================================================== */
+
+.showcase-interactive-section {
+  padding: 60px 0 80px;
+  border-top: 1px solid var(--line);
+  position: relative;
+}
+
+.showcase-header {
+  margin-bottom: 32px;
+}
+
+.showcase-type-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--neon);
+  background: var(--neon-dim);
+  border: 1px solid rgba(0, 229, 180, 0.25);
+  padding: 6px 14px;
+  border-radius: 999px;
+  margin-bottom: 14px;
+  letter-spacing: 0.04em;
+}
+
+/* Tabs */
+.showcase-tabs-container {
+  margin-bottom: 36px;
+  overflow-x: auto;
+  padding-bottom: 4px;
+}
+
+.showcase-tabs-row {
+  display: inline-flex;
+  gap: 10px;
+  background: rgba(15, 22, 35, 0.6);
+  border: 1px solid var(--line);
+  padding: 6px;
+  border-radius: 12px;
+}
+
+.showcase-tab-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 18px;
+  border-radius: 8px;
+  background: transparent;
+  border: 1px solid transparent;
+  color: var(--ink-mid);
+  font-size: 13.5px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.showcase-tab-btn .tab-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--ink-subtle);
+  transition: background 0.2s;
+}
+
+.showcase-tab-btn .tab-num {
+  font-size: 11px;
+  opacity: 0.6;
+}
+
+.showcase-tab-btn:hover {
+  color: var(--ink);
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.showcase-tab-btn.active {
+  background: var(--bg-card);
+  color: var(--ink);
+  border-color: rgba(0, 229, 180, 0.3);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+}
+
+.showcase-tab-btn.active .tab-dot {
+  background: var(--neon);
+  box-shadow: 0 0 8px var(--neon);
+}
+
+/* Stage Layout */
+.showcase-stage-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1.2fr) minmax(0, 0.8fr);
+  gap: 40px;
+  align-items: center;
+}
+
+.showcase-viewport-col {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+}
+
+/* 1. Mobile Phone Viewport */
+.mobile-phone-frame {
+  width: 300px;
+  height: 580px;
+  background: #0b0f19;
+  border: 9px solid #1e293b;
+  border-radius: 44px;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 
+    0 25px 60px -15px rgba(0, 0, 0, 0.8),
+    0 0 0 1px rgba(255, 255, 255, 0.12),
+    0 0 35px rgba(0, 229, 180, 0.12);
+  user-select: none;
+}
+
+.phone-island {
+  position: absolute;
+  top: 8px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 86px;
+  height: 20px;
+  background: #020617;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  z-index: 10;
+}
+
+.phone-mic {
+  width: 30px;
+  height: 3px;
+  background: #334155;
+  border-radius: 3px;
+}
+
+.phone-lens {
+  width: 8px;
+  height: 8px;
+  background: #0f172a;
+  border: 1.5px solid #1e293b;
+  border-radius: 50%;
+}
+
+.phone-inner-screen {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  position: relative;
+  cursor: pointer;
+  background: #000;
+}
+
+.phone-screen-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.phone-inner-screen:hover .phone-screen-img {
+  transform: scale(1.02);
+}
+
+.screen-zoom-hint {
+  position: absolute;
+  bottom: 24px;
+  right: 16px;
+  width: 32px;
+  height: 32px;
+  background: rgba(15, 22, 35, 0.75);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 8px;
+  color: #fff;
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  opacity: 0.8;
+  transition: all 0.2s;
+}
+
+.screen-zoom-hint:hover {
+  opacity: 1;
+  background: var(--neon);
+  color: #050d0a;
+}
+
+.phone-home-indicator {
+  position: absolute;
+  bottom: 8px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 90px;
+  height: 4px;
+  background: rgba(255, 255, 255, 0.6);
+  border-radius: 4px;
+  z-index: 10;
+}
+
+/* 2. Web Browser Viewport */
+.web-browser-frame {
+  width: 100%;
+  max-width: 640px;
+  background: #0d131f;
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.6);
+}
+
+.web-browser-topbar {
+  height: 42px;
+  background: rgba(15, 22, 35, 0.9);
+  border-bottom: 1px solid var(--line);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 16px;
+  gap: 12px;
+}
+
+.browser-dots {
+  display: flex;
+  gap: 7px;
+}
+
+.browser-dots .dot {
+  width: 11px;
+  height: 11px;
+  border-radius: 50%;
+}
+
+.dot-red { background: #ef4444; }
+.dot-yellow { background: #eab308; }
+.dot-green { background: #22c55e; }
+
+.browser-url-pill {
+  flex: 1;
+  max-width: 380px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 6px;
+  padding: 4px 12px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 11.5px;
+  color: var(--ink-mid);
+}
+
+.url-lock {
+  font-size: 10px;
+  opacity: 0.7;
+}
+
+.url-text {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.browser-zoom-btn {
+  color: var(--ink-mid);
+  cursor: pointer;
+  padding: 4px;
+  display: grid;
+  place-items: center;
+  border-radius: 4px;
+  transition: all 0.15s;
+}
+
+.browser-zoom-btn:hover {
+  color: var(--ink);
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.web-browser-viewport {
+  height: 380px;
+  overflow: hidden;
+  position: relative;
+  background: #080c14;
+}
+
+.browser-viewport-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  cursor: pointer;
+  transition: transform 0.3s ease;
+}
+
+.browser-viewport-img:hover {
+  transform: scale(1.015);
+}
+
+/* 3. CAD Blueprint Viewport */
+.cad-blueprint-frame {
+  width: 100%;
+  max-width: 640px;
+  background: #06111f;
+  border: 1.5px solid rgba(0, 229, 180, 0.35);
+  border-radius: 16px;
+  overflow: hidden;
+  position: relative;
+  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.7), 0 0 20px rgba(0, 229, 180, 0.08);
+}
+
+.cad-overlay-grid {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-image: 
+    linear-gradient(rgba(0, 229, 180, 0.06) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 229, 180, 0.06) 1px, transparent 1px);
+  background-size: 24px 24px;
+  z-index: 2;
+}
+
+.cad-header-hud {
+  height: 38px;
+  background: rgba(6, 17, 31, 0.95);
+  border-bottom: 1px solid rgba(0, 229, 180, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 16px;
+  position: relative;
+  z-index: 5;
+}
+
+.cad-hud-badge {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--neon);
+  letter-spacing: 0.05em;
+}
+
+.cad-hud-coords {
+  font-family: monospace !important;
+  font-size: 11px;
+  color: rgba(200, 210, 240, 0.5);
+}
+
+.cad-hud-zoom {
+  background: none;
+  border: none;
+  color: var(--neon);
+  cursor: pointer;
+  display: grid;
+  place-items: center;
+  padding: 4px;
+}
+
+.cad-viewport {
+  height: 380px;
+  overflow: hidden;
+  position: relative;
+  cursor: crosshair;
+}
+
+.cad-viewport-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  position: relative;
+  z-index: 1;
+}
+
+.cad-compass {
+  position: absolute;
+  bottom: 14px;
+  right: 16px;
+  background: rgba(6, 17, 31, 0.85);
+  border: 1px solid rgba(0, 229, 180, 0.25);
+  color: var(--neon);
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 800;
+  z-index: 5;
+}
+
+/* Nav Controls */
+.stage-nav-controls {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-top: 18px;
+}
+
+.stage-arrow-btn {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--line);
+  color: var(--ink);
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.stage-arrow-btn:hover {
+  background: var(--neon);
+  color: #050d0a;
+  border-color: var(--neon);
+}
+
+.stage-counter {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--ink-mid);
+}
+
+/* Side Info Card */
+.showcase-info-col {
+  display: flex;
+  flex-direction: column;
+}
+
+.screen-detail-card {
+  background: var(--bg-card);
+  border: 1px solid var(--line);
+  border-radius: 20px;
+  padding: 32px 28px;
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.25);
+}
+
+.screen-index-kicker {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--neon);
+  letter-spacing: 0.08em;
+  margin-bottom: 8px;
+}
+
+.screen-detail-title {
+  font-size: 24px;
+  font-weight: 800;
+  color: var(--ink);
+  margin: 0 0 12px;
+}
+
+.screen-detail-desc {
+  font-size: 14.5px;
+  line-height: 1.65;
+  color: var(--ink-mid);
+  margin: 0 0 24px;
+}
+
+.screen-specs-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+  padding: 18px 0;
+  margin-bottom: 24px;
+}
+
+.spec-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 13px;
+}
+
+.spec-row span {
+  color: var(--ink-mid);
+}
+
+.spec-row strong {
+  color: var(--ink);
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.text-green {
+  color: var(--neon);
+}
+
+.screen-actions-row {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+/* Lightbox Modal */
+.showcase-lightbox-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.88);
+  backdrop-filter: blur(10px);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  animation: fadeIn 0.2s ease-out;
+}
+
+.showcase-lightbox-modal {
+  position: relative;
+  max-width: 920px;
+  width: 100%;
+  max-height: 90vh;
+  background: var(--bg-card);
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.8);
+}
+
+.lightbox-close-btn {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: #fff;
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  z-index: 20;
+  transition: all 0.2s;
+}
+
+.lightbox-close-btn:hover {
+  background: var(--neon);
+  color: #050d0a;
+}
+
+.lightbox-img-wrapper {
+  flex: 1;
+  max-height: 68vh;
+  overflow: hidden;
+  background: #05080f;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.lightbox-img {
+  max-width: 100%;
+  max-height: 68vh;
+  object-fit: contain;
+}
+
+.lightbox-caption {
+  padding: 18px 24px;
+  background: var(--bg-panel);
+  border-top: 1px solid var(--line);
+}
+
+.lightbox-caption h4 {
+  margin: 0 0 4px;
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--ink);
+}
+
+.lightbox-caption p {
+  margin: 0;
+  font-size: 13px;
+  color: var(--ink-mid);
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@media (max-width: 860px) {
+  .showcase-stage-layout {
+    grid-template-columns: 1fr;
+    gap: 32px;
+  }
+}
+
