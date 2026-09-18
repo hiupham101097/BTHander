@@ -140,11 +140,12 @@ export default function BlogManager() {
     fetch("/api/posts", { credentials: "include" })
       .then(async (r) => {
         const b = await r.json();
-        if (!r.ok) throw new Error(b.error);
-        setPosts(b.data);
+        if (!r.ok) throw new Error(b.error || "Không tải được danh sách bài viết");
+        setPosts(b.data || []);
+        setError("");
       })
-      .catch(() =>
-        setError("Không tải được danh sách bài viết. (Có thể bạn chưa được liên kết với hồ sơ nhân viên nào)")
+      .catch((err) =>
+        setError(err.message || "Không tải được danh sách bài viết.")
       );
 
   useEffect(() => { load(); }, []);

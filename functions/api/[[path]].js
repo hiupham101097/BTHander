@@ -168,6 +168,54 @@ function articleErrors(input, partial = false) {
   if ("status" in input && !["draft", "published"].includes(input.status)) errors.push("status must be draft or published");
   return errors;
 }
+function postErrors(input, partial = false) {
+  const errors = [];
+  if ((!partial || "title" in input) && (typeof input.title !== "string" || !input.title.trim())) errors.push("title is required");
+  if ("excerpt" in input && input.excerpt !== null && typeof input.excerpt !== "string") errors.push("excerpt must be a string");
+  if ((!partial || "content" in input) && (typeof input.content !== "string" || !input.content.trim())) errors.push("content is required");
+  if ("thumbnail" in input && input.thumbnail !== null && typeof input.thumbnail !== "string") errors.push("thumbnail must be a string");
+  if ("status" in input && !["draft", "published"].includes(input.status)) errors.push("status must be draft or published");
+  return errors;
+}
+async function getLinkedMember(env, actor) {
+  if (!actor) return null;
+  let member = await env.DB.prepare("SELECT * FROM team_members WHERE account_id=?").bind(actor.id).first();
+  if (!member) {
+    const existingByName = await env.DB.prepare("SELECT * FROM team_members WHERE name=? AND account_id IS NULL").bind(actor.name).first();
+    if (existingByName) {
+      await env.DB.prepare("UPDATE team_members SET account_id=? WHERE id=?").bind(actor.id, existingByName.id).run();
+      member = { ...existingByName, account_id: actor.id };
+    } else {
+      const defaultTitle = actor.role === "admin" ? "Quản trị viên" : "Nhân viên";
+      const result = await env.DB.prepare(
+        "INSERT INTO team_members (name, title, status, account_id) VALUES (?, ?, 'active', ?)"
+      ).bind(actor.name || "Thành viên", defaultTitle, actor.id).run();
+      member = await env.DB.prepare("SELECT * FROM team_members WHERE id=?").bind(result.meta.last_row_id).first();
+    }
+  }
+  return member;
+}
+async function ensurePostsSchema(env) {
+  try {
+    await env.DB.prepare(`CREATE TABLE IF NOT EXISTS posts (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      author_id INTEGER NOT NULL,
+      title TEXT NOT NULL,
+      content TEXT NOT NULL,
+      status TEXT NOT NULL CHECK(status IN ('draft', 'published')) DEFAULT 'draft',
+      created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+      updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+    )`).run();
+    const info = await env.DB.prepare("PRAGMA table_info(posts)").all();
+    const cols = new Set((info.results || []).map(r => r.name));
+    if (!cols.has("excerpt")) {
+      await env.DB.prepare("ALTER TABLE posts ADD COLUMN excerpt TEXT").run().catch(() => {});
+    }
+    if (!cols.has("thumbnail")) {
+      await env.DB.prepare("ALTER TABLE posts ADD COLUMN thumbnail TEXT").run().catch(() => {});
+    }
+  } catch {}
+}
 async function currentAccount(request, env) {
   const token = cookieValue(request, "bthander_session") || request.headers.get("authorization")?.replace(/^Bearer\s+/i, "");
   if (!token) return null;
@@ -359,7 +407,7 @@ export async function onRequest({ request, env, ctx }) {
     if (articlesRead && !await requireRole(request, env, ["admin"])) return json({ error: "Unauthorized" }, 401);
 
     if (method === "POST" && url.pathname === "/api/media") {
-      if (!await requireRole(request, env, ["admin"])) return json({ error: "Unauthorized" }, 401);
+      if (!await requireRole(request, env, ["admin", "staff"])) return json({ error: "Unauthorized" }, 401);
       const form = await request.formData(), file = form.get("file");
       if (!file || typeof file === "string" || !file.type?.startsWith("image/") || file.size > 10 * 1024 * 1024) return json({ error: "Upload an image up to 10 MB" }, 422);
       const extension = file.type.split("/")[1]?.replace(/[^a-z0-9]/gi, "") || "jpg", key = `uploads/${randomHex(16)}.${extension}`;
@@ -487,7 +535,13 @@ export async function onRequest({ request, env, ctx }) {
     if (method === "GET" && parts[1] === "team" && parts[2] && !parts[3]) {
       const admin = await requireRole(request, env, ["admin"]);
       const query = admin ? env.DB.prepare("SELECT * FROM team_members WHERE id=?").bind(Number(parts[2])) : env.DB.prepare("SELECT * FROM team_members WHERE id=? AND status='active'").bind(Number(parts[2]));
-      const member = await query.first(); return member ? json({ data: teamFromRow(member) }) : json({ error: "Team member not found" }, 404);
+      const member = await query.first();
+      if (!member) return json({ error: "Team member not found" }, 404);
+      let posts = [];
+      try {
+        posts = (await env.DB.prepare("SELECT * FROM posts WHERE author_id=? AND status='published' ORDER BY id DESC").bind(Number(parts[2])).all()).results;
+      } catch {}
+      return json({ data: { ...teamFromRow(member), posts } });
     }
     if (method === "GET" && parts[1] === "team" && parts[2] && parts[3] === "articles") {
       const admin = await requireRole(request, env, ["admin"]);
@@ -551,8 +605,86 @@ export async function onRequest({ request, env, ctx }) {
     if (method === "GET" && url.pathname === "/api/team/me") {
       const account = await currentAccount(request, env);
       if (!account) return json({ error: "Unauthorized" }, 401);
-      const member = await env.DB.prepare("SELECT * FROM team_members WHERE account_id=?").bind(account.id).first();
+      const member = await getLinkedMember(env, account);
       return member ? json({ data: teamFromRow(member) }) : json({ error: "No linked team profile" }, 404);
+    }
+
+    /* ── Posts / Blogs ── */
+    if (method === "GET" && (url.pathname === "/api/posts" || (parts[0] === "api" && parts[1] === "posts" && !parts[2]))) {
+      const actor = await requireRole(request, env, ["admin", "staff"]);
+      if (!actor) return json({ error: "Unauthorized" }, 401);
+      await ensurePostsSchema(env);
+      const member = await getLinkedMember(env, actor);
+      const showAll = url.searchParams.get("all") === "true";
+      const query = (actor.role === "admin" && showAll)
+        ? env.DB.prepare("SELECT p.*, tm.name AS author_name FROM posts p LEFT JOIN team_members tm ON tm.id=p.author_id ORDER BY p.id DESC")
+        : (actor.role === "admin" && !member
+            ? env.DB.prepare("SELECT p.*, tm.name AS author_name FROM posts p LEFT JOIN team_members tm ON tm.id=p.author_id ORDER BY p.id DESC")
+            : env.DB.prepare("SELECT p.*, tm.name AS author_name FROM posts p LEFT JOIN team_members tm ON tm.id=p.author_id WHERE p.author_id=? ORDER BY p.id DESC").bind(member ? member.id : 0));
+      return json({ data: (await query.all()).results });
+    }
+    if (method === "POST" && (url.pathname === "/api/posts" || (parts[0] === "api" && parts[1] === "posts" && !parts[2]))) {
+      const actor = await requireRole(request, env, ["admin", "staff"]);
+      if (!actor) return json({ error: "Unauthorized" }, 401);
+      await ensurePostsSchema(env);
+      const input = await request.json(), errors = postErrors(input);
+      if (errors.length) return json({ errors }, 422);
+      const member = await getLinkedMember(env, actor);
+      if (!member) return json({ error: "Không thể tạo hoặc liên kết hồ sơ nhân viên." }, 403);
+      const result = await env.DB.prepare(
+        "INSERT INTO posts (author_id, title, content, excerpt, thumbnail, status) VALUES (?, ?, ?, ?, ?, ?)"
+      ).bind(
+        member.id,
+        input.title.trim(),
+        input.content.trim(),
+        input.excerpt?.trim() || null,
+        input.thumbnail?.trim() || null,
+        input.status || "draft"
+      ).run();
+      return json({ data: await env.DB.prepare("SELECT * FROM posts WHERE id=?").bind(result.meta.last_row_id).first() }, 201);
+    }
+    if (method === "GET" && parts[1] === "posts" && parts[2]) {
+      await ensurePostsSchema(env);
+      const id = Number(parts[2]);
+      const post = await env.DB.prepare("SELECT p.*, tm.name AS author_name FROM posts p LEFT JOIN team_members tm ON tm.id=p.author_id WHERE p.id=?").bind(id).first();
+      if (!post) return json({ error: "Post not found" }, 404);
+      if (post.status !== "published") {
+        const actor = await requireRole(request, env, ["admin", "staff"]);
+        if (!actor) return json({ error: "Unauthorized" }, 401);
+        const member = await env.DB.prepare("SELECT id FROM team_members WHERE account_id=?").bind(actor.id).first();
+        if (actor.role !== "admin" && (!member || member.id !== post.author_id)) return json({ error: "Forbidden" }, 403);
+      }
+      return json({ data: post });
+    }
+    if ((method === "PATCH" || method === "DELETE") && parts[1] === "posts" && parts[2]) {
+      const id = Number(parts[2]);
+      const actor = await requireRole(request, env, ["admin", "staff"]);
+      if (!actor) return json({ error: "Unauthorized" }, 401);
+      await ensurePostsSchema(env);
+      const post = await env.DB.prepare("SELECT * FROM posts WHERE id=?").bind(id).first();
+      if (!post) return json({ error: "Post not found" }, 404);
+      const member = await env.DB.prepare("SELECT id FROM team_members WHERE account_id=?").bind(actor.id).first();
+      if (actor.role !== "admin" && (!member || member.id !== post.author_id)) return json({ error: "Forbidden" }, 403);
+      
+      if (method === "DELETE") {
+        await env.DB.prepare("DELETE FROM posts WHERE id=?").bind(id).run();
+        return new Response(null, { status: 204 });
+      }
+      
+      const input = await request.json(), errors = postErrors(input, true);
+      if (errors.length || !Object.keys(input).length) return json({ errors: errors.length ? errors : ["At least one field is required"] }, 422);
+      const merged = { ...post, ...input };
+      await env.DB.prepare(
+        "UPDATE posts SET title=?, content=?, excerpt=?, thumbnail=?, status=?, updated_at=CURRENT_TIMESTAMP WHERE id=?"
+      ).bind(
+        merged.title.trim(),
+        merged.content.trim(),
+        merged.excerpt?.trim() || null,
+        merged.thumbnail?.trim() || null,
+        merged.status || "draft",
+        id
+      ).run();
+      return json({ data: await env.DB.prepare("SELECT * FROM posts WHERE id=?").bind(id).first() });
     }
 
     return json({ error: "Route not found" }, 404);
