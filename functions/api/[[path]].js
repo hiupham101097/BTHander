@@ -530,23 +530,85 @@ export async function onRequest({ request, env, ctx }) {
     if (method === "GET" && url.pathname === "/api/team") {
       const admin = await requireRole(request, env, ["admin"]);
       const query = admin ? env.DB.prepare("SELECT * FROM team_members ORDER BY sort_order, id") : env.DB.prepare("SELECT * FROM team_members WHERE status='active' ORDER BY sort_order, id");
-      return json({ data: (await query.all()).results.map(teamFromRow) });
+      const members = (await query.all()).results;
+
+      // Count posts from 'posts' table
+      const postCounts = {};
+      try {
+        const counts = await env.DB.prepare("SELECT author_id, COUNT(*) as cnt FROM posts WHERE status='published' GROUP BY author_id").all();
+        for (const r of counts.results) {
+          postCounts[r.author_id] = (postCounts[r.author_id] || 0) + r.cnt;
+        }
+      } catch {}
+
+      // Count articles from 'team_articles' table
+      try {
+        const artCounts = await env.DB.prepare("SELECT team_member_id, COUNT(*) as cnt FROM team_articles WHERE status='published' GROUP BY team_member_id").all();
+        for (const r of artCounts.results) {
+          postCounts[r.team_member_id] = (postCounts[r.team_member_id] || 0) + r.cnt;
+        }
+      } catch {}
+
+      return json({
+        data: members.map((m) => {
+          const parsed = teamFromRow(m);
+          const count = postCounts[m.id] ?? (parsed.articles || []).length;
+          return {
+            ...parsed,
+            article_count: count,
+            articles: count > 0 && (!parsed.articles || parsed.articles.length === 0)
+              ? new Array(count).fill("Article")
+              : parsed.articles,
+          };
+        }),
+      });
     }
     if (method === "GET" && parts[1] === "team" && parts[2] && !parts[3]) {
+      const memberId = Number(parts[2]);
       const admin = await requireRole(request, env, ["admin"]);
-      const query = admin ? env.DB.prepare("SELECT * FROM team_members WHERE id=?").bind(Number(parts[2])) : env.DB.prepare("SELECT * FROM team_members WHERE id=? AND status='active'").bind(Number(parts[2]));
+      const query = admin ? env.DB.prepare("SELECT * FROM team_members WHERE id=?").bind(memberId) : env.DB.prepare("SELECT * FROM team_members WHERE id=? AND status='active'").bind(memberId);
       const member = await query.first();
       if (!member) return json({ error: "Team member not found" }, 404);
       let posts = [];
       try {
-        posts = (await env.DB.prepare("SELECT * FROM posts WHERE author_id=? AND status='published' ORDER BY id DESC").bind(Number(parts[2])).all()).results;
+        posts = (await env.DB.prepare("SELECT id, author_id AS team_member_id, title, excerpt, content, thumbnail, status, created_at, updated_at FROM posts WHERE author_id=? AND status='published' ORDER BY id DESC").bind(memberId).all()).results;
       } catch {}
       return json({ data: { ...teamFromRow(member), posts } });
     }
     if (method === "GET" && parts[1] === "team" && parts[2] && parts[3] === "articles") {
+      const memberId = Number(parts[2]);
       const admin = await requireRole(request, env, ["admin"]);
-      const query = admin ? env.DB.prepare("SELECT * FROM team_articles WHERE team_member_id=? ORDER BY id DESC").bind(Number(parts[2])) : env.DB.prepare("SELECT * FROM team_articles WHERE team_member_id=? AND status='published' ORDER BY id DESC").bind(Number(parts[2]));
-      return json({ data: (await query.all()).results });
+
+      // 1. Query from posts (written by BlogManager)
+      let postsResults = [];
+      try {
+        const postsQuery = admin
+          ? env.DB.prepare("SELECT id, author_id AS team_member_id, title, excerpt, content, thumbnail, status, created_at, updated_at, 'post' AS item_source FROM posts WHERE author_id=? ORDER BY id DESC").bind(memberId)
+          : env.DB.prepare("SELECT id, author_id AS team_member_id, title, excerpt, content, thumbnail, status, created_at, updated_at, 'post' AS item_source FROM posts WHERE author_id=? AND status='published' ORDER BY id DESC").bind(memberId);
+        postsResults = (await postsQuery.all()).results;
+      } catch {}
+
+      // 2. Query from team_articles
+      let articlesResults = [];
+      try {
+        const articlesQuery = admin
+          ? env.DB.prepare("SELECT id, team_member_id, title, excerpt, content, null AS thumbnail, status, created_at, updated_at, 'article' AS item_source FROM team_articles WHERE team_member_id=? ORDER BY id DESC").bind(memberId)
+          : env.DB.prepare("SELECT id, team_member_id, title, excerpt, content, null AS thumbnail, status, created_at, updated_at, 'article' AS item_source FROM team_articles WHERE team_member_id=? AND status='published' ORDER BY id DESC").bind(memberId);
+        articlesResults = (await articlesQuery.all()).results;
+      } catch {}
+
+      // Combine and deduplicate by title
+      const seenTitles = new Set();
+      const combined = [];
+      for (const item of [...postsResults, ...articlesResults]) {
+        const key = item.title.trim().toLowerCase();
+        if (!seenTitles.has(key)) {
+          seenTitles.add(key);
+          combined.push(item);
+        }
+      }
+
+      return json({ data: combined });
     }
     if (method === "POST" && url.pathname === "/api/team") {
       const input = await request.json(), errors = teamErrors(input); if (errors.length) return json({ errors }, 422);
@@ -578,9 +640,30 @@ export async function onRequest({ request, env, ctx }) {
       return json({ data: rows.results });
     }
     if (method === "GET" && parts[1] === "articles" && parts[2]) {
+      const id = Number(parts[2]);
       const admin = await requireRole(request, env, ["admin"]);
-      const query = admin ? env.DB.prepare("SELECT ta.*, tm.name AS member_name, tm.title AS member_title FROM team_articles ta JOIN team_members tm ON tm.id=ta.team_member_id WHERE ta.id=?").bind(Number(parts[2])) : env.DB.prepare("SELECT ta.*, tm.name AS member_name, tm.title AS member_title FROM team_articles ta JOIN team_members tm ON tm.id=ta.team_member_id WHERE ta.id=? AND ta.status='published'").bind(Number(parts[2]));
-      const article = await query.first(); return article ? json({ data: article }) : json({ error: "Article not found" }, 404);
+
+      // 1. Check posts table (written by BlogManager)
+      let post = null;
+      try {
+        const postQuery = admin
+          ? env.DB.prepare("SELECT p.id, p.author_id AS team_member_id, p.title, p.content, p.excerpt, p.thumbnail, p.status, p.created_at, p.updated_at, tm.name AS member_name, tm.title AS member_title FROM posts p LEFT JOIN team_members tm ON tm.id=p.author_id WHERE p.id=?").bind(id)
+          : env.DB.prepare("SELECT p.id, p.author_id AS team_member_id, p.title, p.content, p.excerpt, p.thumbnail, p.status, p.created_at, p.updated_at, tm.name AS member_name, tm.title AS member_title FROM posts p LEFT JOIN team_members tm ON tm.id=p.author_id WHERE p.id=? AND p.status='published'").bind(id);
+        post = await postQuery.first();
+      } catch {}
+
+      if (post) return json({ data: post });
+
+      // 2. Check team_articles table
+      try {
+        const query = admin
+          ? env.DB.prepare("SELECT ta.*, tm.name AS member_name, tm.title AS member_title FROM team_articles ta JOIN team_members tm ON tm.id=ta.team_member_id WHERE ta.id=?").bind(id)
+          : env.DB.prepare("SELECT ta.*, tm.name AS member_name, tm.title AS member_title FROM team_articles ta JOIN team_members tm ON tm.id=ta.team_member_id WHERE ta.id=? AND ta.status='published'").bind(id);
+        const article = await query.first();
+        if (article) return json({ data: article });
+      } catch {}
+
+      return json({ error: "Article not found" }, 404);
     }
     if (method === "POST" && url.pathname === "/api/articles") {
       const input = await request.json(), errors = articleErrors(input); if (errors.length) return json({ errors }, 422);

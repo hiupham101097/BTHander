@@ -50,12 +50,27 @@ export default function TeamProfile() {
       ]);
       if (!memberRes.ok) { setState("error"); return; }
       const memberBody = await memberRes.json();
-      setMember(memberBody.data);
+      const memberData = memberBody.data;
+      setMember(memberData);
 
+      let list = [];
       if (articlesRes.ok) {
         const articlesBody = await articlesRes.json();
-        setArticles(articlesBody.data || []);
+        list = articlesBody.data || [];
       }
+
+      // Merge memberData.posts if any post is not yet included in list
+      if (Array.isArray(memberData?.posts)) {
+        const existingIds = new Set(list.map((a) => a.id));
+        const existingTitles = new Set(list.map((a) => a.title?.trim().toLowerCase()));
+        for (const p of memberData.posts) {
+          if (!existingIds.has(p.id) && !existingTitles.has(p.title?.trim().toLowerCase())) {
+            list.push(p);
+          }
+        }
+      }
+
+      setArticles(list);
       setState("ready");
     } catch {
       setState("error");

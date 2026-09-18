@@ -46,11 +46,11 @@ export default function Footer() {
           <div className="footer-col-title">Liên hệ</div>
           <div className="footer-contact-item">
             <MapPin size={15} />
-            <span>Hà Nội, Việt Nam</span>
+            <span>558 Lê Trọng Tấn, Tân Bình, Hồ Chí Minh, Việt Nam</span>
           </div>
           <div className="footer-contact-item">
             <Mail size={15} />
-            <span>contact@bthander.com</span>
+            <span>hieupham101097@gmail.com</span>
           </div>
           <div className="footer-social-row">
             <a href="https://www.facebook.com/profile.php?id=61587912490570" target="_blank" rel="noreferrer" aria-label="Facebook" className="footer-social-btn">

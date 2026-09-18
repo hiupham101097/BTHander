@@ -874,61 +874,30 @@
   background: var(--lab-bg-raised);
 }
 
-.public-shell .team-section::before {
-  display: none;
-}
-
 .public-shell .team-heading {
   display: grid;
-  grid-template-columns: minmax(0, 1.3fr) minmax(260px, 0.55fr);
+  grid-template-columns: minmax(0, 1.25fr) minmax(280px, 0.75fr);
   align-items: end;
   gap: 36px;
-  margin-bottom: 40px;
+  margin-bottom: 48px;
 }
 
 .public-shell .team-title {
-  max-width: 790px;
+  max-width: 800px;
   color: var(--lab-text);
-  font: 600 clamp(40px, 5.2vw, 72px) / 1.02 'Plus Jakarta Sans', system-ui, sans-serif;
+  font: 700 clamp(32px, 4.4vw, 54px) / 1.08 'Plus Jakarta Sans', system-ui, sans-serif;
   letter-spacing: -0.04em;
 }
 
 .public-shell .team-intro {
   color: var(--lab-muted);
-  font-size: 15px;
+  font-size: 15.5px;
 }
 
 .public-shell .team-section .team-grid {
-  gap: 28px 16px;
-}
-
-.public-shell .team-portrait {
-  background: var(--lab-panel);
-  border: 1px solid var(--lab-line);
-  border-radius: 16px;
-}
-
-.public-shell .team-monogram {
-  color: var(--lab-muted-strong);
-  background: var(--lab-panel-2);
-}
-
-.public-shell .team-card-link .team-index {
-  display: none;
-}
-
-.public-shell .team-section .team-name {
-  color: var(--lab-text);
-  font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
-}
-
-.public-shell .team-section .team-role,
-.public-shell .team-card-link .team-cta {
-  color: var(--lab-accent-strong);
-}
-
-.public-shell .team-bio {
-  color: var(--lab-muted);
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 24px;
 }
 
 /* Contact */

@@ -60,14 +60,27 @@ export function TeamArticles() {
         fetch(`/api/team/${id}`),
         fetch(`/api/team/${id}/articles`),
       ]);
+      let memberData = null;
+      let list = [];
       if (memberRes.ok) {
         const b = await memberRes.json();
-        setMember(b.data);
+        memberData = b.data;
+        setMember(memberData);
       }
       if (articlesRes.ok) {
         const b = await articlesRes.json();
-        setArticles(b.data || []);
+        list = b.data || [];
       }
+      if (Array.isArray(memberData?.posts)) {
+        const existingIds = new Set(list.map((a) => a.id));
+        const existingTitles = new Set(list.map((a) => a.title?.trim().toLowerCase()));
+        for (const p of memberData.posts) {
+          if (!existingIds.has(p.id) && !existingTitles.has(p.title?.trim().toLowerCase())) {
+            list.push(p);
+          }
+        }
+      }
+      setArticles(list);
       setState("ready");
     } catch {
       setState("ready");
@@ -92,31 +105,29 @@ export function TeamArticles() {
         </div>
       )}
 
-      <h1 className="section-title">
-        {articles.length > 0
-          ? `${articles.length} bài viết chia sẻ`
-          : "Chưa có bài viết"}
-      </h1>
+      <div className="articles-header">
+        <h1>Bài viết của {member?.name || "thành viên"}</h1>
+        <p>Góc chia sẻ kiến thức, kinh nghiệm và góc nhìn chuyên môn.</p>
+      </div>
 
       {state === "loading" && <p className="api-state">Đang tải…</p>}
 
-      <div className="article-grid" style={{ marginTop: 28 }}>
+      <div className="articles-grid">
         {articles.map((article) => (
           <Link
-            key={article.id}
             to={`/team/${id}/articles/${article.id}`}
+            key={article.id}
             className="article-card"
           >
-            {article.thumbnail && (
-              <img
-                src={article.thumbnail}
-                alt={article.title}
-                style={{ width: "100%", height: 140, objectFit: "cover", borderRadius: 8, marginBottom: 12 }}
-              />
+            {article.thumbnail ? (
+              <img src={article.thumbnail} alt={article.title} className="article-card-thumb" />
+            ) : (
+              <div className="article-card-thumb-placeholder">
+                <FileText size={28} />
+              </div>
             )}
-            {!article.thumbnail && <FileText size={24} style={{ color: "var(--accent)" }} />}
 
-            <h2 style={{ fontSize: 17, margin: "10px 0 6px", lineHeight: 1.35 }}>{article.title}</h2>
+            <h2>{article.title}</h2>
 
             {article.excerpt && (
               <p style={{ color: "#64748b", fontSize: 13.5, lineHeight: 1.6, margin: "0 0 10px" }}>
@@ -157,14 +168,18 @@ export function TeamArticleDetail() {
   async function loadArticle() {
     setState("loading");
     try {
-      const res = await fetch(`/api/articles/${articleId}`);
+      let res = await fetch(`/api/articles/${articleId}`);
+      if (!res.ok) {
+        res = await fetch(`/api/posts/${articleId}`);
+      }
       if (!res.ok) { setState("error"); return; }
       const body = await res.json();
       setArticle(body.data);
       setState("ready");
 
       // Load related articles from same member
-      const relRes = await fetch(`/api/team/${body.data.team_member_id || id}/articles`);
+      const memberId = body.data.team_member_id || body.data.author_id || id;
+      const relRes = await fetch(`/api/team/${memberId}/articles`);
       if (relRes.ok) {
         const relBody = await relRes.json();
         setRelated(
