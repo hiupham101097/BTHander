@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { FolderKanban, Pencil, Plus, Trash2, X, Image as ImageIcon, Type, Eye, EyeOff } from "lucide-react";
+import ImageUpload from "../../components/ui/ImageUpload.jsx";
 
 /* ── Block helpers ── */
 const makeText = () => ({ type: "text", content: "" });
@@ -87,6 +88,7 @@ const createRoadmapItem = () => ({ phase: "", title: "", desc: "", status: "upco
 const createDefaultForm = () => ({
   name: "",
   category: "web",
+  cover_image: "",
   description: "",
   detail_tag: "",
   full_description: [makeText()],
@@ -148,6 +150,7 @@ export default function ProjectsManager() {
     setForm({
       name: project.name || "",
       category: project.category || "web",
+      cover_image: project.cover_image || "",
       description: project.description || "",
       detail_tag: project.detail_tag || "",
       full_description: stringToBlocks(project.full_description),
@@ -197,6 +200,7 @@ export default function ProjectsManager() {
 
     const payload = {
       ...form,
+      cover_image: form.cover_image?.trim() || null,
       full_description: blocksToString(form.full_description),
       languages: form.languages.split(",").map((language) => language.trim()).filter(Boolean),
       configuration: Object.fromEntries(form.configuration.filter((item) => item.key.trim()).map((item) => [item.key.trim(), item.value])),
@@ -280,6 +284,17 @@ export default function ProjectsManager() {
                 Mô tả ngắn (Hiển thị thẻ dự án)
                 <textarea value={form.description} onChange={handleFieldChange("description")} rows={2} />
               </label>
+
+              <div className="admin-form-full">
+                <span className="form-label" style={{ display: "block", marginBottom: 6, fontWeight: 700, fontSize: 13 }}>
+                  Ảnh bìa dự án (Hiển thị trên thẻ trang chủ)
+                </span>
+                <ImageUpload
+                  value={form.cover_image}
+                  onChange={(url) => setForm((v) => ({ ...v, cover_image: url }))}
+                  label="Tải ảnh bìa dự án"
+                />
+              </div>
 
               <label className="admin-form-full">
                 Dòng tag giới thiệu (Hiển thị trang chi tiết)
@@ -374,9 +389,17 @@ export default function ProjectsManager() {
               <tr key={project.id}>
                 <td>
                   <div className="admin-table-item">
-                    <span className="admin-table-icon">
-                      <FolderKanban size={15} />
-                    </span>
+                    {project.cover_image || project.gallery?.[0]?.image_url ? (
+                      <img
+                        src={project.cover_image || project.gallery?.[0]?.image_url}
+                        alt=""
+                        style={{ width: 48, height: 34, objectFit: "cover", borderRadius: 6, flexShrink: 0, border: "1px solid #e2e8f0" }}
+                      />
+                    ) : (
+                      <span className="admin-table-icon">
+                        <FolderKanban size={15} />
+                      </span>
+                    )}
                     <div>
                       <strong>{project.name}</strong>
                       <div className="admin-table-sub">{project.description}</div>

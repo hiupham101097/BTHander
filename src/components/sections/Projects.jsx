@@ -44,7 +44,7 @@ export default function Projects() {
 
         <div className="core-project-grid">
           {visibleProjects.map((project, index) => {
-            const visual = project.gallery?.[0]?.image_url;
+            const visual = project.cover_image || project.gallery?.[0]?.image_url;
             return (
               <Reveal key={project.id} delay={100 + index * 70}>
                 <article className="core-project-card">

@@ -49,6 +49,15 @@ export default function InteractiveProjectShowcase({ project }) {
       image_url: item.image_url,
       desc: item.desc || `Giao diện thực tế chi tiết ${idx + 1} của ${project.name}.`,
     }));
+  } else if (project.cover_image) {
+    screens = [
+      {
+        id: 0,
+        label: "Ảnh bìa & Giao diện chính",
+        image_url: project.cover_image,
+        desc: `Giao diện tổng quan của ${project.name}.`,
+      }
+    ];
   } else {
     // High-fidelity fallback screens based on project domain
     if (isMobile) {

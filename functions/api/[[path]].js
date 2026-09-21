@@ -3,7 +3,7 @@ const json = (body, status = 200, headers = {}) => new Response(body === null ? 
   status,
   headers: { "content-type": "application/json; charset=utf-8", ...headers },
 });
-const projectFromRow = (row) => row && ({ ...row, languages: JSON.parse(row.languages), configuration: JSON.parse(row.configuration), gallery: JSON.parse(row.gallery || "[]"), roadmap: JSON.parse(row.roadmap || "[]") });
+const projectFromRow = (row) => row && ({ ...row, cover_image: row.cover_image || null, languages: JSON.parse(row.languages), configuration: JSON.parse(row.configuration), gallery: JSON.parse(row.gallery || "[]"), roadmap: JSON.parse(row.roadmap || "[]") });
 const productFromRow = (row) => row && ({ ...row, specifications: JSON.parse(row.specifications) });
 const teamFromRow = (row) => row && ({ ...row, skills: JSON.parse(row.skills || "[]"), experience: JSON.parse(row.experience || "[]"), featured_projects: JSON.parse(row.featured_projects || "[]"), articles: JSON.parse(row.articles || "[]") });
 const hex = (bytes) => [...new Uint8Array(bytes)].map((byte) => byte.toString(16).padStart(2, "0")).join("");
@@ -126,6 +126,7 @@ function projectErrors(input, partial = false) {
   if ("roadmap" in input && (!Array.isArray(input.roadmap) || input.roadmap.some((item) => !item || typeof item.phase !== "string" || typeof item.title !== "string" || typeof item.desc !== "string" || !["done", "current", "upcoming"].includes(item.status)))) errors.push("roadmap items must include phase, title, desc and status");
   if ((!partial || "price" in input) && (typeof input.price !== "number" || !Number.isFinite(input.price) || input.price < 0)) errors.push("price must be a non-negative number");
   if ("currency" in input && (typeof input.currency !== "string" || !/^[A-Z]{3}$/.test(input.currency))) errors.push("currency must be a 3-letter uppercase code");
+  if ("cover_image" in input && input.cover_image != null && typeof input.cover_image !== "string") errors.push("cover_image must be a string");
   return errors;
 }
 function productErrors(input, partial = false) {
@@ -213,6 +214,15 @@ async function ensurePostsSchema(env) {
     }
     if (!cols.has("thumbnail")) {
       await env.DB.prepare("ALTER TABLE posts ADD COLUMN thumbnail TEXT").run().catch(() => {});
+    }
+  } catch {}
+}
+async function ensureProjectsSchema(env) {
+  try {
+    const info = await env.DB.prepare("PRAGMA table_info(projects)").all();
+    const cols = new Set((info.results || []).map(r => r.name));
+    if (!cols.has("cover_image")) {
+      await env.DB.prepare("ALTER TABLE projects ADD COLUMN cover_image TEXT").run().catch(() => {});
     }
   } catch {}
 }
@@ -490,20 +500,22 @@ export async function onRequest({ request, env, ctx }) {
       return json({ data: { project_id: projectId } }, 201);
     }
     if (method === "POST" && url.pathname === "/api/projects") {
+      await ensureProjectsSchema(env);
       const input = await request.json(), errors = projectErrors(input);
       if (errors.length) return json({ errors }, 422);
-      const result = await env.DB.prepare("INSERT INTO projects (name,category,description,languages,configuration,price,currency,detail_tag,full_description,gallery,roadmap) VALUES (?,?,?,?,?,?,?,?,?,?,?)").bind(input.name.trim(), input.category || 'web', input.description?.trim() || null, JSON.stringify(input.languages), JSON.stringify(input.configuration), input.price, input.currency || "VND", input.detail_tag?.trim() || null, input.full_description?.trim() || null, JSON.stringify(input.gallery || []), JSON.stringify(input.roadmap || [])).run();
+      const result = await env.DB.prepare("INSERT INTO projects (name,category,cover_image,description,languages,configuration,price,currency,detail_tag,full_description,gallery,roadmap) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)").bind(input.name.trim(), input.category || 'web', input.cover_image?.trim() || null, input.description?.trim() || null, JSON.stringify(input.languages), JSON.stringify(input.configuration), input.price, input.currency || "VND", input.detail_tag?.trim() || null, input.full_description?.trim() || null, JSON.stringify(input.gallery || []), JSON.stringify(input.roadmap || [])).run();
       return json({ data: projectFromRow(await env.DB.prepare("SELECT * FROM projects WHERE id=?").bind(result.meta.last_row_id).first()) }, 201);
     }
     if ((method === "PATCH" || method === "DELETE") && parts[1] === "projects" && parts[2]) {
       const id = Number(parts[2]);
       if (method === "DELETE") { const result = await env.DB.prepare("DELETE FROM projects WHERE id=?").bind(id).run(); return result.meta.changes ? new Response(null, { status: 204 }) : json({ error: "Project not found" }, 404); }
+      await ensureProjectsSchema(env);
       const input = await request.json(), errors = projectErrors(input, true);
       if (errors.length || !Object.keys(input).length) return json({ errors: errors.length ? errors : ["At least one field is required"] }, 422);
       const current = await env.DB.prepare("SELECT * FROM projects WHERE id=?").bind(id).first();
       if (!current) return json({ error: "Project not found" }, 404);
       const merged = { ...projectFromRow(current), ...input };
-      await env.DB.prepare("UPDATE projects SET name=?,category=?,description=?,languages=?,configuration=?,price=?,currency=?,detail_tag=?,full_description=?,gallery=?,roadmap=?,updated_at=CURRENT_TIMESTAMP WHERE id=?").bind(merged.name.trim(), merged.category || 'web', merged.description?.trim() || null, JSON.stringify(merged.languages), JSON.stringify(merged.configuration), merged.price, merged.currency || "VND", merged.detail_tag?.trim() || null, merged.full_description?.trim() || null, JSON.stringify(merged.gallery || []), JSON.stringify(merged.roadmap || []), id).run();
+      await env.DB.prepare("UPDATE projects SET name=?,category=?,cover_image=?,description=?,languages=?,configuration=?,price=?,currency=?,detail_tag=?,full_description=?,gallery=?,roadmap=?,updated_at=CURRENT_TIMESTAMP WHERE id=?").bind(merged.name.trim(), merged.category || 'web', merged.cover_image?.trim() || null, merged.description?.trim() || null, JSON.stringify(merged.languages), JSON.stringify(merged.configuration), merged.price, merged.currency || "VND", merged.detail_tag?.trim() || null, merged.full_description?.trim() || null, JSON.stringify(merged.gallery || []), JSON.stringify(merged.roadmap || []), id).run();
       return json({ data: projectFromRow(await env.DB.prepare("SELECT * FROM projects WHERE id=?").bind(id).first()) });
     }
     if (method === "GET" && url.pathname === "/api/products") {
