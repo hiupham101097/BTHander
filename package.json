@@ -10,6 +10,7 @@
     "dev:api": "npx --yes wrangler@latest dev",
     "migrate:remote": "npx --yes wrangler@latest d1 migrations apply app-db --remote",
     "lint": "eslint src --ext .js,.jsx",
+    "deploy": "npm run deploy:worker",
     "deploy:worker": "npm run build && npm run migrate:remote && npx --yes wrangler@latest deploy"
   },
   "dependencies": {
