@@ -59,11 +59,6 @@ export default function TechShowcase() {
               <article className={`tech-card ${item.className}`}>
                 <img src={item.image} alt={item.title} />
                 <div className="tech-card-shade" />
-                <div className="tech-motion" aria-hidden="true">
-                  <div className="tech-orbit" />
-                  <div className="tech-orbit-two" />
-                  <div className="tech-pulse" />
-                </div>
                 <div className="tech-card-content">
                   <div className="tech-card-top">
                     <div className="tech-card-icon">

@@ -1,0 +1,672 @@
+/* ==========================================================================
+   BThander — UI primitives
+   Buttons, form controls, chips, cards, states. Everything here is prefixed
+   `bt-` so the legacy admin stylesheet can never collide with it.
+   ========================================================================== */
+
+/* ==========================================================================
+   1. Buttons
+   ========================================================================== */
+
+.bt-btn {
+  --bt-btn-bg: transparent;
+  --bt-btn-fg: var(--bt-ink);
+  --bt-btn-bd: transparent;
+
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.55em;
+  flex: 0 0 auto;
+
+  padding: 0.875rem 1.5rem;
+  border: 1px solid var(--bt-btn-bd);
+  border-radius: var(--bt-r-sm);
+  background: var(--bt-btn-bg);
+  color: var(--bt-btn-fg);
+
+  font-size: var(--bt-fs-sm);
+  font-weight: 600;
+  letter-spacing: -0.008em;
+  line-height: 1;
+  white-space: nowrap;
+  cursor: pointer;
+
+  transition:
+    background-color var(--bt-dur-1) var(--bt-ease),
+    border-color var(--bt-dur-1) var(--bt-ease),
+    color var(--bt-dur-1) var(--bt-ease),
+    box-shadow var(--bt-dur-2) var(--bt-ease),
+    transform var(--bt-dur-1) var(--bt-ease);
+}
+
+.bt-btn:active {
+  transform: translate3d(0, 1px, 0);
+}
+
+.bt-btn[disabled],
+.bt-btn[aria-disabled="true"] {
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+/* Primary — brand blue with dark ink for AA contrast. */
+.bt-btn--primary {
+  --bt-btn-bg: var(--bt-accent);
+  --bt-btn-fg: #04101F;
+  --bt-btn-bd: var(--bt-accent);
+  box-shadow: 0 0 0 0 var(--bt-accent-glow);
+}
+
+.bt-btn--primary:hover {
+  --bt-btn-bg: var(--bt-accent-hi);
+  --bt-btn-bd: var(--bt-accent-hi);
+  box-shadow: 0 0 0 4px var(--bt-accent-soft);
+}
+
+/* Secondary — hairline ghost. */
+.bt-btn--ghost {
+  --bt-btn-bd: var(--bt-line-2);
+  background: rgba(255, 255, 255, 0.02);
+  color: var(--bt-ink);
+}
+
+.bt-btn--ghost:hover {
+  --bt-btn-bd: var(--bt-line-3);
+  background: rgba(255, 255, 255, 0.055);
+}
+
+/* Quiet — text only, used inside dense layouts. */
+.bt-btn--quiet {
+  padding-inline: 0.75rem;
+  color: var(--bt-ink-2);
+}
+
+.bt-btn--quiet:hover {
+  color: var(--bt-ink);
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.bt-btn--lg {
+  padding: 1.0625rem 1.875rem;
+  font-size: var(--bt-fs-body);
+}
+
+.bt-btn--sm {
+  padding: 0.5625rem 0.875rem;
+  font-size: var(--bt-fs-xs);
+  border-radius: var(--bt-r-xs);
+}
+
+.bt-btn--block {
+  width: 100%;
+}
+
+/* Inline link with a travelling arrow. */
+.bt-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45em;
+  color: var(--bt-accent-hi);
+  font-size: var(--bt-fs-sm);
+  font-weight: 600;
+  transition: color var(--bt-dur-1) var(--bt-ease);
+}
+
+.bt-link:hover {
+  color: #A8D2FF;
+}
+
+/* ==========================================================================
+   2. Chips, tags, badges
+   ========================================================================== */
+
+.bt-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5em;
+  padding: 0.375rem 0.6875rem;
+  border: 1px solid var(--bt-line-2);
+  border-radius: var(--bt-r-pill);
+  background: rgba(255, 255, 255, 0.028);
+  color: var(--bt-ink-2);
+  font-size: var(--bt-fs-xs);
+  font-weight: 500;
+  line-height: 1.25;
+  white-space: nowrap;
+}
+
+.bt-chip--accent {
+  border-color: var(--bt-accent-line);
+  background: var(--bt-accent-soft);
+  color: var(--bt-accent-hi);
+}
+
+.bt-chip--mono {
+  font-family: var(--bt-font-mono);
+  font-size: var(--bt-fs-mono);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+/* Small square index marker, e.g. 01 / 02 in lists. */
+.bt-index {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 2.25rem;
+  height: 1.5rem;
+  padding-inline: 0.4rem;
+  border: 1px solid var(--bt-line-2);
+  border-radius: var(--bt-r-xs);
+  font-family: var(--bt-font-mono);
+  font-size: var(--bt-fs-mono);
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  color: var(--bt-ink-3);
+  flex: 0 0 auto;
+}
+
+.bt-index--accent {
+  border-color: var(--bt-accent-line);
+  background: var(--bt-accent-soft);
+  color: var(--bt-accent-hi);
+}
+
+/* ==========================================================================
+   3. Surfaces
+   ========================================================================== */
+
+.bt-card {
+  position: relative;
+  background: var(--bt-surface);
+  border: 1px solid var(--bt-line);
+  border-radius: var(--bt-r-lg);
+  overflow: hidden;
+}
+
+.bt-card--pad {
+  padding: clamp(1.25rem, 2.2vw, 1.75rem);
+}
+
+.bt-card--plain {
+  background: transparent;
+}
+
+.bt-card--interactive:hover {
+  border-color: var(--bt-line-3);
+  background: var(--bt-surface-2);
+  box-shadow: var(--bt-shadow-md);
+}
+
+/* Technical corner brackets — used on media frames and feature cards. */
+.bt-frame {
+  position: relative;
+}
+
+.bt-frame::before {
+  content: "";
+  position: absolute;
+  inset: -1px;
+  pointer-events: none;
+  z-index: 2;
+  --bt-tick: 20px;
+  --bt-tick-c: var(--bt-line-3);
+  background-repeat: no-repeat;
+  background-image:
+    linear-gradient(var(--bt-tick-c) 0 0), linear-gradient(var(--bt-tick-c) 0 0),
+    linear-gradient(var(--bt-tick-c) 0 0), linear-gradient(var(--bt-tick-c) 0 0),
+    linear-gradient(var(--bt-tick-c) 0 0), linear-gradient(var(--bt-tick-c) 0 0),
+    linear-gradient(var(--bt-tick-c) 0 0), linear-gradient(var(--bt-tick-c) 0 0);
+  background-size:
+    var(--bt-tick) 1px, 1px var(--bt-tick),
+    var(--bt-tick) 1px, 1px var(--bt-tick),
+    var(--bt-tick) 1px, 1px var(--bt-tick),
+    var(--bt-tick) 1px, 1px var(--bt-tick);
+  background-position:
+    left top, left top,
+    right top, right top,
+    left bottom, left bottom,
+    right bottom, right bottom;
+}
+
+/* Media wrapper with a consistent aspect and dark vignette. */
+.bt-media {
+  position: relative;
+  overflow: hidden;
+  background: var(--bt-surface-3);
+}
+
+.bt-media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.bt-media::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(180deg, rgba(7, 8, 11, 0.1) 0%, rgba(7, 8, 11, 0.62) 100%);
+}
+
+/* ==========================================================================
+   4. Forms
+   ========================================================================== */
+
+.bt-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.bt-field__label {
+  font-family: var(--bt-font-mono);
+  font-size: var(--bt-fs-mono);
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--bt-ink-3);
+}
+
+.bt-input,
+.bt-textarea,
+.bt-select {
+  width: 100%;
+  padding: 0.8125rem 0.9375rem;
+  background: var(--bt-surface);
+  border: 1px solid var(--bt-line-2);
+  border-radius: var(--bt-r-sm);
+  color: var(--bt-ink);
+  font-size: var(--bt-fs-sm);
+  line-height: 1.5;
+  transition:
+    border-color var(--bt-dur-1) var(--bt-ease),
+    background-color var(--bt-dur-1) var(--bt-ease),
+    box-shadow var(--bt-dur-1) var(--bt-ease);
+}
+
+.bt-input::placeholder,
+.bt-textarea::placeholder {
+  color: var(--bt-ink-4);
+}
+
+.bt-input:hover,
+.bt-textarea:hover,
+.bt-select:hover {
+  border-color: var(--bt-line-3);
+}
+
+.bt-input:focus,
+.bt-textarea:focus,
+.bt-select:focus {
+  outline: none;
+  border-color: var(--bt-accent);
+  background: var(--bt-surface-2);
+  box-shadow: 0 0 0 3px var(--bt-accent-soft);
+}
+
+.bt-textarea {
+  min-height: 7.5rem;
+  resize: vertical;
+}
+
+.bt-field__help {
+  font-size: var(--bt-fs-xs);
+  color: var(--bt-ink-3);
+}
+
+.bt-field__error {
+  font-size: var(--bt-fs-xs);
+  color: var(--bt-danger);
+}
+
+/* Password visibility toggle sits inside the input shell. */
+.bt-input-shell {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.bt-input-shell .bt-input {
+  padding-right: 4.25rem;
+}
+
+.bt-input-shell__action {
+  position: absolute;
+  right: 0.5rem;
+  display: inline-flex;
+  align-items: center;
+  padding: 0.375rem 0.5rem;
+  border-radius: var(--bt-r-xs);
+  color: var(--bt-ink-3);
+  font-size: var(--bt-fs-xs);
+  font-weight: 600;
+  transition: color var(--bt-dur-1) var(--bt-ease), background-color var(--bt-dur-1) var(--bt-ease);
+}
+
+.bt-input-shell__action:hover {
+  color: var(--bt-ink);
+  background: rgba(255, 255, 255, 0.06);
+}
+
+/* ==========================================================================
+   5. Form feedback
+   ========================================================================== */
+
+.bt-note {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.6rem;
+  padding: 0.8125rem 0.9375rem;
+  border: 1px solid var(--bt-line-2);
+  border-radius: var(--bt-r-sm);
+  background: rgba(255, 255, 255, 0.025);
+  font-size: var(--bt-fs-sm);
+  line-height: 1.55;
+}
+
+.bt-note--error {
+  border-color: rgba(242, 104, 95, 0.35);
+  background: rgba(242, 104, 95, 0.08);
+  color: #FFB3AD;
+}
+
+.bt-note--success {
+  border-color: rgba(53, 192, 138, 0.32);
+  background: rgba(53, 192, 138, 0.08);
+  color: #8FE3C0;
+}
+
+.bt-note--info {
+  border-color: var(--bt-accent-line);
+  background: var(--bt-accent-soft);
+  color: var(--bt-accent-hi);
+}
+
+/* ==========================================================================
+   6. Lists
+   ========================================================================== */
+
+.bt-specs {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5625rem;
+}
+
+.bt-specs li {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.625rem;
+  font-size: var(--bt-fs-sm);
+  color: var(--bt-ink-2);
+  line-height: 1.5;
+}
+
+.bt-specs svg {
+  flex: 0 0 auto;
+  margin-top: 0.25rem;
+  color: var(--bt-accent);
+}
+
+/* Key/value definition rows — used for project meta and profile facts. */
+.bt-meta-list {
+  display: flex;
+  flex-direction: column;
+}
+
+.bt-meta-list__row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.6875rem 0;
+  border-bottom: 1px solid var(--bt-line);
+  font-size: var(--bt-fs-sm);
+}
+
+.bt-meta-list__row:last-child {
+  border-bottom: 0;
+}
+
+.bt-meta-list__key {
+  color: var(--bt-ink-3);
+}
+
+.bt-meta-list__val {
+  color: var(--bt-ink);
+  font-weight: 500;
+  text-align: right;
+}
+
+/* ==========================================================================
+   7. States: loading, empty, error
+   ========================================================================== */
+
+.bt-skel {
+  position: relative;
+  overflow: hidden;
+  background: var(--bt-surface-2);
+  border-radius: var(--bt-r-sm);
+}
+
+.bt-skel::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  transform: translate3d(-100%, 0, 0);
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.055),
+    transparent
+  );
+  animation: bt-skel 1.5s var(--bt-ease-inout) infinite;
+}
+
+@keyframes bt-skel {
+  to { transform: translate3d(100%, 0, 0); }
+}
+
+.bt-skel--text   { height: 0.75rem; }
+.bt-skel--title  { height: 1.375rem; }
+.bt-skel--block  { height: 100%; }
+
+.bt-loading-bar {
+  position: relative;
+  height: 2px;
+  width: 100%;
+  overflow: hidden;
+  background: var(--bt-line);
+  border-radius: var(--bt-r-pill);
+}
+
+.bt-loading-bar::after {
+  content: "";
+  position: absolute;
+  inset-block: 0;
+  left: -35%;
+  width: 35%;
+  background: var(--bt-accent);
+  animation: bt-loading-bar 1.2s var(--bt-ease-inout) infinite;
+}
+
+@keyframes bt-loading-bar {
+  to { left: 100%; }
+}
+
+.bt-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+  padding: clamp(2.5rem, 6vw, 4rem) 1.5rem;
+  border: 1px dashed var(--bt-line-2);
+  border-radius: var(--bt-r-lg);
+  background: var(--bt-bg-2);
+  text-align: center;
+}
+
+.bt-empty__icon {
+  display: grid;
+  place-items: center;
+  width: 3rem;
+  height: 3rem;
+  border: 1px solid var(--bt-line-2);
+  border-radius: var(--bt-r-md);
+  color: var(--bt-ink-3);
+}
+
+.bt-empty__title {
+  font-size: var(--bt-fs-body);
+  font-weight: 600;
+  color: var(--bt-ink);
+}
+
+.bt-empty__text {
+  font-size: var(--bt-fs-sm);
+  color: var(--bt-ink-3);
+  max-width: 42ch;
+}
+
+/* ==========================================================================
+   8. Section header
+   Index + label + title + supporting copy, used by every public section.
+   ========================================================================== */
+
+.bt-head {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  margin-bottom: clamp(2.25rem, 4vw, 3.25rem);
+}
+
+.bt-head__top {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.bt-head__title {
+  font-size: var(--bt-fs-h2);
+  font-weight: 700;
+  line-height: 1.1;
+  letter-spacing: -0.034em;
+  max-width: 20ch;
+  text-wrap: balance;
+}
+
+.bt-head__sub {
+  font-size: var(--bt-fs-lead);
+  line-height: 1.62;
+  color: var(--bt-ink-2);
+  max-width: 56ch;
+}
+
+/* Two-column variant: title left, supporting copy right. */
+.bt-head--split {
+  display: grid;
+  grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
+  gap: 1.5rem 3.5rem;
+  align-items: end;
+}
+
+.bt-head--split .bt-head__title {
+  max-width: 22ch;
+}
+
+.bt-head--split .bt-head__sub {
+  padding-bottom: 0.375rem;
+}
+
+@media (max-width: 900px) {
+  .bt-head--split {
+    grid-template-columns: 1fr;
+    align-items: start;
+  }
+}
+
+/* ==========================================================================
+   9. Tabs
+   ========================================================================== */
+
+.bt-tabs {
+  display: flex;
+  gap: 0.25rem;
+  padding: 0.25rem;
+  border: 1px solid var(--bt-line);
+  border-radius: var(--bt-r-sm);
+  background: var(--bt-bg-2);
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.bt-tabs::-webkit-scrollbar {
+  display: none;
+}
+
+.bt-tab {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 0.875rem;
+  border-radius: var(--bt-r-xs);
+  color: var(--bt-ink-3);
+  font-size: var(--bt-fs-xs);
+  font-weight: 600;
+  white-space: nowrap;
+  transition: color var(--bt-dur-1) var(--bt-ease), background-color var(--bt-dur-1) var(--bt-ease);
+}
+
+.bt-tab:hover {
+  color: var(--bt-ink);
+  background: rgba(255, 255, 255, 0.045);
+}
+
+.bt-tab[aria-selected="true"] {
+  color: var(--bt-ink);
+  background: var(--bt-surface-3);
+}
+
+.bt-tab__num {
+  font-family: var(--bt-font-mono);
+  font-size: var(--bt-fs-mono);
+  letter-spacing: 0.06em;
+  color: var(--bt-accent-hi);
+}
+
+/* ==========================================================================
+   10. Avatar
+   ========================================================================== */
+
+.bt-avatar {
+  position: relative;
+  flex: 0 0 auto;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  background: var(--bt-surface-3);
+  border: 1px solid var(--bt-line-2);
+  border-radius: var(--bt-r-md);
+  color: var(--bt-ink-2);
+}
+
+.bt-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.bt-avatar__monogram {
+  font-family: var(--bt-font-mono);
+  font-size: 0.95rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  color: var(--bt-accent-hi);
+}
+
+.bt-avatar--sm { width: 2.5rem; height: 2.5rem; }
+.bt-avatar--md { width: 3.5rem; height: 3.5rem; }
+.bt-avatar--lg { width: 4.75rem; height: 4.75rem; border-radius: var(--bt-r-lg); }

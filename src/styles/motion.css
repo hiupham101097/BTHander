@@ -1,0 +1,303 @@
+/* ==========================================================================
+   BThander — Motion system
+   Every effect here is opt-out: the reduced-motion block at the bottom of
+   this file disables the whole system in one place.
+   ========================================================================== */
+
+/* ==========================================================================
+   1. Scroll reveal
+   Elements start hidden and are promoted to `.is-in` by hooks/useReveal.
+   Stagger with `--bt-delay`, choose an effect with `data-variant`.
+   ========================================================================== */
+
+.bt-reveal {
+  opacity: 0;
+  will-change: opacity, transform, filter;
+  transition:
+    opacity var(--bt-dur-3) var(--bt-ease),
+    transform var(--bt-dur-3) var(--bt-ease),
+    filter var(--bt-dur-3) var(--bt-ease),
+    clip-path var(--bt-dur-4) var(--bt-ease);
+  transition-delay: var(--bt-delay, 0ms);
+}
+
+.bt-reveal[data-variant="up"]    { transform: translate3d(0, 28px, 0); }
+.bt-reveal[data-variant="fade"]  { transform: none; }
+.bt-reveal[data-variant="left"]  { transform: translate3d(-30px, 0, 0); }
+.bt-reveal[data-variant="right"] { transform: translate3d(30px, 0, 0); }
+.bt-reveal[data-variant="scale"] { transform: scale(0.965); }
+.bt-reveal[data-variant="blur"]  { transform: translate3d(0, 20px, 0); filter: blur(12px); }
+.bt-reveal[data-variant="clip"]  { transform: none; clip-path: inset(0 0 100% 0); }
+
+.bt-reveal.is-in {
+  opacity: 1;
+  transform: none;
+  filter: none;
+  clip-path: inset(0 0 0 0);
+}
+
+/* ==========================================================================
+   2. Headline line-mask
+   Each line sits in an overflow-hidden box and slides up into place.
+   ========================================================================== */
+
+.bt-mask-line {
+  display: block;
+  overflow: hidden;
+}
+
+.bt-mask-line > span {
+  display: block;
+  transform: translate3d(0, 108%, 0);
+  transition: transform 0.95s var(--bt-ease);
+  transition-delay: var(--bt-delay, 0ms);
+}
+
+.bt-mask-line.is-in > span,
+.is-in .bt-mask-line > span {
+  transform: none;
+}
+
+/* ==========================================================================
+   3. Marquee — capability ticker
+   The track must contain the item list twice; it travels exactly -50%.
+   ========================================================================== */
+
+.bt-marquee {
+  display: flex;
+  overflow: hidden;
+  user-select: none;
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
+  mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
+}
+
+.bt-marquee__track {
+  display: flex;
+  flex: 0 0 auto;
+  align-items: center;
+  gap: var(--bt-marquee-gap, 3.5rem);
+  padding-right: var(--bt-marquee-gap, 3.5rem);
+  animation: bt-marquee var(--bt-marquee-duration, 42s) linear infinite;
+}
+
+.bt-marquee:hover .bt-marquee__track {
+  animation-play-state: paused;
+}
+
+@keyframes bt-marquee {
+  to {
+    transform: translate3d(-50%, 0, 0);
+  }
+}
+
+/* ==========================================================================
+   4. Pointer spotlight
+   hooks/useSpotlight writes --bt-mx / --bt-my on the element.
+   ========================================================================== */
+
+.bt-spot {
+  position: relative;
+}
+
+.bt-spot::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity var(--bt-dur-2) var(--bt-ease);
+  background: radial-gradient(
+    380px circle at var(--bt-mx, 50%) var(--bt-my, 50%),
+    var(--bt-accent-soft-2),
+    transparent 62%
+  );
+}
+
+.bt-spot:hover::after,
+.bt-spot:focus-within::after {
+  opacity: 1;
+}
+
+/* ==========================================================================
+   5. Button sheen
+   ========================================================================== */
+
+.bt-sheen {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+}
+
+.bt-sheen > * {
+  position: relative;
+  z-index: 1;
+}
+
+.bt-sheen::after {
+  content: "";
+  position: absolute;
+  inset: -1px;
+  z-index: 0;
+  pointer-events: none;
+  background: linear-gradient(
+    105deg,
+    transparent 38%,
+    rgba(255, 255, 255, 0.32) 50%,
+    transparent 62%
+  );
+  transform: translate3d(-130%, 0, 0);
+  transition: transform 0.85s var(--bt-ease);
+}
+
+.bt-sheen:hover::after {
+  transform: translate3d(130%, 0, 0);
+}
+
+/* ==========================================================================
+   6. Indicators
+   ========================================================================== */
+
+.bt-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--bt-accent);
+  flex: 0 0 auto;
+}
+
+.bt-dot--pulse {
+  animation: bt-dot-ring 2.6s var(--bt-ease-inout) infinite;
+}
+
+.bt-dot--blink {
+  animation: bt-dot-blink 2s steps(1, end) infinite;
+}
+
+@keyframes bt-dot-ring {
+  0%          { box-shadow: 0 0 0 0 rgba(47, 139, 255, 0.55); }
+  70%, 100%   { box-shadow: 0 0 0 9px rgba(47, 139, 255, 0); }
+}
+
+@keyframes bt-dot-blink {
+  0%, 45%   { opacity: 1; }
+  50%, 95%  { opacity: 0.25; }
+}
+
+/* ==========================================================================
+   7. Hover choreography (shared by cards and media)
+   ========================================================================== */
+
+.bt-lift {
+  transition:
+    transform var(--bt-dur-2) var(--bt-ease),
+    border-color var(--bt-dur-2) var(--bt-ease),
+    box-shadow var(--bt-dur-2) var(--bt-ease),
+    background-color var(--bt-dur-2) var(--bt-ease);
+}
+
+.bt-lift:hover {
+  transform: translate3d(0, -4px, 0);
+}
+
+.bt-zoom {
+  overflow: hidden;
+}
+
+.bt-zoom img {
+  transition: transform 0.85s var(--bt-ease), filter var(--bt-dur-3) var(--bt-ease);
+}
+
+.bt-zoom:hover img {
+  transform: scale(1.045);
+}
+
+/* Arrow that nudges on hover of its parent. */
+.bt-arrow {
+  transition: transform var(--bt-dur-2) var(--bt-ease);
+}
+
+:is(.bt-lift, .bt-row-link):hover .bt-arrow {
+  transform: translate3d(3px, -3px, 0);
+}
+
+/* Underline that grows from the left on hover. */
+.bt-underline {
+  position: relative;
+}
+
+.bt-underline::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -3px;
+  height: 1px;
+  background: currentColor;
+  transform: scaleX(0);
+  transform-origin: left center;
+  transition: transform var(--bt-dur-2) var(--bt-ease);
+}
+
+.bt-underline:hover::after,
+.bt-underline:focus-visible::after {
+  transform: scaleX(1);
+}
+
+/* ==========================================================================
+   8. Ambient loops
+   ========================================================================== */
+
+.bt-spin      { animation: bt-spin 22s linear infinite; }
+.bt-spin--rev { animation-direction: reverse; }
+
+@keyframes bt-spin {
+  to { transform: rotate(360deg); }
+}
+
+.bt-float {
+  animation: bt-float 7s var(--bt-ease-inout) infinite;
+}
+
+@keyframes bt-float {
+  0%, 100% { transform: translate3d(0, 0, 0); }
+  50%      { transform: translate3d(0, -8px, 0); }
+}
+
+/* ==========================================================================
+   9. Reduced motion — disables the entire system
+   ========================================================================== */
+
+@media (prefers-reduced-motion: reduce) {
+  .bt-reveal,
+  .bt-mask-line > span {
+    transition: none !important;
+    transform: none !important;
+    filter: none !important;
+    clip-path: none !important;
+    opacity: 1 !important;
+  }
+
+  .bt-marquee__track,
+  .bt-spin,
+  .bt-spin--rev,
+  .bt-float,
+  .bt-dot--pulse,
+  .bt-dot--blink {
+    animation: none !important;
+  }
+
+  .bt-sheen::after {
+    display: none;
+  }
+
+  .bt-lift:hover,
+  .bt-zoom:hover img,
+  :is(.bt-lift, .bt-row-link):hover .bt-arrow {
+    transform: none !important;
+  }
+
+  .bt-spot::after {
+    display: none;
+  }
+}

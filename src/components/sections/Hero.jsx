@@ -62,16 +62,6 @@ export default function Hero() {
             src="/images/hero-tech-lab.png"
             alt="Công nghệ phần mềm, game và kỹ thuật chế tạo máy"
           />
-          <div className="hero-scanline" />
-          <div className="hero-energy-core">
-            <i /><i /><i />
-          </div>
-          <div className="data-stream data-stream-a">
-            <b /><b /><b />
-          </div>
-          <div className="data-stream data-stream-b">
-            <b /><b /><b />
-          </div>
           <div className="hero-visual-label">
             <span />
             TECH LAB &amp; PROTOTYPING

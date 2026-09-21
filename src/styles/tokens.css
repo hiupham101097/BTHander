@@ -1,0 +1,105 @@
+/* ==========================================================================
+   BThander — Design tokens
+   Brand: "Brave Trust Hander" — software engineering + mechanical design.
+   Visual direction: precision-engineering editorial on graphite.
+   The single accent is the logo blue. No gradients.
+   ========================================================================== */
+
+:root {
+  /* ── Surfaces ───────────────────────────────────────────────────────── */
+  --bt-bg:            #07080B;
+  --bt-bg-2:          #0A0C10;
+  --bt-surface:       #0F1216;
+  --bt-surface-2:     #14181E;
+  --bt-surface-3:     #1A1F26;
+
+  /* ── Hairlines ──────────────────────────────────────────────────────── */
+  --bt-line:          rgba(255, 255, 255, 0.075);
+  --bt-line-2:        rgba(255, 255, 255, 0.13);
+  --bt-line-3:        rgba(255, 255, 255, 0.22);
+
+  /* ── Ink ────────────────────────────────────────────────────────────── */
+  --bt-ink:           #EDF1F7;
+  --bt-ink-2:         rgba(237, 241, 247, 0.64);
+  --bt-ink-3:         rgba(237, 241, 247, 0.42);
+  --bt-ink-4:         rgba(237, 241, 247, 0.24);
+
+  /* ── Brand accent (matches bthander-logo-mark.png) ──────────────────── */
+  --bt-accent:        #2F8BFF;
+  --bt-accent-hi:     #79BBFF;
+  --bt-accent-lo:     #1257AE;
+  --bt-accent-soft:   rgba(47, 139, 255, 0.10);
+  --bt-accent-soft-2: rgba(47, 139, 255, 0.18);
+  --bt-accent-line:   rgba(47, 139, 255, 0.28);
+  --bt-accent-glow:   rgba(47, 139, 255, 0.40);
+
+  /* ── Signal colours (status only, used sparingly) ───────────────────── */
+  --bt-ok:            #35C08A;
+  --bt-warn:          #E0A94A;
+  --bt-danger:        #F2685F;
+
+  /* ── Typography ─────────────────────────────────────────────────────── */
+  --bt-font-sans: 'Inter', system-ui, -apple-system, BlinkMacSystemFont,
+                  'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  --bt-font-mono: 'IBM Plex Mono', ui-monospace, SFMono-Regular, Menlo,
+                  Consolas, 'Liberation Mono', monospace;
+
+  --bt-fs-display: clamp(2.6rem, 6vw, 5rem);
+  --bt-fs-h1:      clamp(2.2rem, 4.6vw, 3.6rem);
+  --bt-fs-h2:      clamp(1.85rem, 3.4vw, 2.9rem);
+  --bt-fs-h3:      clamp(1.2rem, 1.7vw, 1.5rem);
+  --bt-fs-h4:      clamp(1.05rem, 1.3vw, 1.15rem);
+  --bt-fs-lead:    clamp(1rem, 1.15vw, 1.15rem);
+  --bt-fs-body:    1rem;
+  --bt-fs-sm:      0.875rem;
+  --bt-fs-xs:      0.78rem;
+  --bt-fs-mono:    0.7rem;
+
+  --bt-lh-tight:   1.06;
+  --bt-lh-snug:    1.22;
+  --bt-lh-body:    1.68;
+
+  --bt-track-tight: -0.035em;
+  --bt-track-snug:  -0.015em;
+  --bt-track-wide:   0.14em;
+
+  /* ── Layout ─────────────────────────────────────────────────────────── */
+  --bt-max:        1280px;
+  --bt-max-text:   68ch;
+  --bt-pad-x:      clamp(1.25rem, 4vw, 2rem);
+  --bt-section-y:  clamp(4.5rem, 9vw, 8rem);
+  --bt-nav-h:      68px;
+
+  /* ── Radii ──────────────────────────────────────────────────────────── */
+  --bt-r-xs:  4px;
+  --bt-r-sm:  8px;
+  --bt-r-md:  12px;
+  --bt-r-lg:  18px;
+  --bt-r-xl:  26px;
+  --bt-r-pill: 999px;
+
+  /* ── Elevation ──────────────────────────────────────────────────────── */
+  --bt-shadow-sm:  0 1px 2px rgba(0, 0, 0, 0.45);
+  --bt-shadow-md:  0 14px 34px -16px rgba(0, 0, 0, 0.75);
+  --bt-shadow-lg:  0 36px 70px -28px rgba(0, 0, 0, 0.88);
+  --bt-shadow-accent: 0 22px 50px -24px var(--bt-accent-glow);
+
+  /* ── Motion ─────────────────────────────────────────────────────────── */
+  --bt-ease:        cubic-bezier(0.22, 1, 0.36, 1);
+  --bt-ease-inout:  cubic-bezier(0.65, 0, 0.35, 1);
+  --bt-ease-back:   cubic-bezier(0.34, 1.4, 0.64, 1);
+  --bt-dur-1:       0.16s;
+  --bt-dur-2:       0.3s;
+  --bt-dur-3:       0.55s;
+  --bt-dur-4:       0.9s;
+
+  /* ── Stacking ───────────────────────────────────────────────────────── */
+  --bt-z-sticky: 60;
+  --bt-z-nav:    100;
+  --bt-z-menu:   120;
+  --bt-z-modal:  200;
+
+  /* ── Motifs ─────────────────────────────────────────────────────────── */
+  --bt-grid-line:  rgba(47, 139, 255, 0.07);
+  --bt-grid-size:  56px;
+}
