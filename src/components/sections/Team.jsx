@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from "react";
-import { ArrowUpRight, UsersRound, Sparkles, BookOpen } from "lucide-react";
+import { ArrowUpRight, BookOpen } from "lucide-react";
 import { Link } from "react-router-dom";
 import Reveal from "../ui/Reveal.jsx";
+import { TEAM } from "../../constants/data.js";
 
 const apiBaseUrl = import.meta.env.VITE_API_BASE_URL || "";
 
@@ -37,14 +38,26 @@ function getFallbackSkills(title = "") {
   if (t.includes("thiết kế") || t.includes("ui") || t.includes("ux") || t.includes("designer")) {
     return ["UI/UX Design", "Figma", "Design System"];
   }
+  if (t.includes("cơ khí") || t.includes("chế tạo") || t.includes("cad")) {
+    return ["SolidWorks", "2D/3D CAD", "Gia công CNC"];
+  }
   if (t.includes("phần mềm") || t.includes("kỹ sư") || t.includes("developer") || t.includes("engineer")) {
-    return ["Web Architecture", "Frontend", "Backend"];
+    return ["Software Architecture", "Frontend", "Backend"];
   }
-  if (t.includes("quản trị") || t.includes("admin") || t.includes("lead")) {
-    return ["Quản trị hệ thống", "Điều phối", "Giải pháp số"];
+  if (t.includes("quản trị") || t.includes("lead") || t.includes("sáng lập")) {
+    return ["Product Architecture", "Hệ thống số", "Kỹ thuật"];
   }
-  return ["Giải pháp số", "Tối ưu vận hành", "Công nghệ"];
+  return ["Kỹ thuật phần mềm", "Tối ưu vận hành", "Giải pháp số"];
 }
+
+const FALLBACK_MEMBERS = TEAM.map((m, idx) => ({
+  id: idx + 1,
+  name: m.name,
+  title: m.role,
+  bio: "Tham gia trực tiếp vào nghiên cứu, thiết kế kiến trúc và đảm bảo chất lượng bàn giao cho từng sản phẩm kỹ thuật tại BThander.",
+  skills: getFallbackSkills(m.role),
+  articles: [],
+}));
 
 export default function Team() {
   const [members, setMembers] = useState([]);
@@ -58,182 +71,128 @@ export default function Team() {
         return response.json();
       })
       .then((body) => {
-        setMembers(body.data || []);
+        const fetched = body.data || [];
+        setMembers(fetched.length > 0 ? fetched : FALLBACK_MEMBERS);
         setState("ready");
       })
       .catch((error) => {
-        if (error.name !== "AbortError") setState("error");
+        if (error.name !== "AbortError") {
+          setMembers(FALLBACK_MEMBERS);
+          setState("ready");
+        }
       });
     return () => controller.abort();
   }, []);
+
+  const displayMembers = members.length > 0 ? members : FALLBACK_MEMBERS;
 
   return (
     <section className="section team-section" id="team">
       <div className="wrap team-wrap">
         <div className="team-heading">
           <div>
+            <div className="kicker">
+              <span className="kicker-dot" />
+              <span>Đội ngũ Kỹ sư &amp; Chuyên môn</span>
+            </div>
             <Reveal>
-              <div className="kicker">
-                <span className="kicker-dot" />
-                <span>Đội ngũ kiến tạo & chuyên môn</span>
-              </div>
-            </Reveal>
-            <Reveal delay={60}>
-              <h2 className="team-title">Những người biến ý tưởng thành sản phẩm.</h2>
+              <h2 className="team-title">Những người trực tiếp kiến tạo giải pháp.</h2>
             </Reveal>
           </div>
-          <Reveal delay={100}>
+          <Reveal delay={70}>
             <div className="team-heading-side">
               <p className="team-intro">
-                Một đội ngũ đa chuyên môn, cùng theo đuổi một mục tiêu: tạo ra những giải pháp số rõ ràng, hữu ích và có thể vận hành trong thực tế.
+                Đội ngũ đa lĩnh vực từ kỹ sư phần mềm, lập trình viên di động đến kỹ sư thiết kế cơ điện tử, cùng chung một chuẩn mực về sự chính xác và hiệu quả thực tế.
               </p>
               <div className="team-status-banner">
                 <span className="team-pulse-dot" />
-                <span>Đội ngũ sẵn sàng đồng hành cùng bạn</span>
+                <span>Sẵn sàng tham gia &amp; đồng hành cùng dự án</span>
               </div>
             </div>
           </Reveal>
         </div>
 
-        {state === "loading" && (
-          <div className="team-grid team-grid-loading" aria-label="Đang tải đội ngũ">
-            {[0, 1, 2].map((item) => (
-              <div className="team-skeleton-card" key={item}>
-                <div className="skeleton-top-bar" />
-                <div className="skeleton-profile-row">
-                  <div className="skeleton-avatar" />
-                  <div className="skeleton-id-group">
-                    <div className="skeleton-line line-title" />
-                    <div className="skeleton-line line-sub" />
+        <div className="team-grid">
+          {displayMembers.map((member, index) => {
+            const displayName = formatMemberName(member.name);
+            const initials = getInitials(displayName);
+            const parsedSkills = parseSkills(member.skills);
+            const skills = parsedSkills.length > 0 ? parsedSkills.slice(0, 3) : getFallbackSkills(member.title);
+            const articleCount = Array.isArray(member.articles) ? member.articles.length : 0;
+            const indexStr = String(index + 1).padStart(2, "0");
+
+            return (
+              <Reveal delay={index * 60} key={member.id} className="team-card-reveal">
+                <Link
+                  className="team-card"
+                  to={`/team/${member.id}`}
+                  aria-label={`Xem hồ sơ của ${displayName}`}
+                >
+                  <div className="team-card-topbar">
+                    <span className="team-index-tag">#{indexStr} // ROSTER</span>
+                    <div className="team-arrow-action" aria-hidden="true">
+                      <ArrowUpRight size={17} />
+                    </div>
                   </div>
-                </div>
-                <div className="skeleton-line line-bio" />
-                <div className="skeleton-line line-bio-short" />
-                <div className="skeleton-chips">
-                  <span />
-                  <span />
-                  <span />
-                </div>
-              </div>
-            ))}
-          </div>
-        )}
 
-        {state === "error" && (
-          <div className="team-empty">
-            <UsersRound size={32} />
-            <p>Chưa thể tải thông tin đội ngũ.</p>
-            <span>Vui lòng quay lại sau ít phút.</span>
-          </div>
-        )}
-
-        {state === "ready" && members.length === 0 && (
-          <div className="team-empty">
-            <UsersRound size={32} />
-            <p>Đội ngũ đang được cập nhật.</p>
-            <span>Những gương mặt mới sẽ sớm xuất hiện tại đây.</span>
-          </div>
-        )}
-
-        {state === "ready" && members.length > 0 && (
-          <div className="team-grid">
-            {members.map((member, index) => {
-              const displayName = formatMemberName(member.name);
-              const initials = getInitials(displayName);
-              const parsedSkills = parseSkills(member.skills);
-              const skills = parsedSkills.length > 0 ? parsedSkills.slice(0, 3) : getFallbackSkills(member.title);
-              const articleCount = Array.isArray(member.articles) ? member.articles.length : 0;
-              const themeClass = `team-theme-${index % 4}`;
-
-              return (
-                <Reveal delay={70 + index * 60} key={member.id} className="team-card-reveal">
-                  <Link
-                    className={`team-card team-card-v2 ${themeClass}`}
-                    to={`/team/${member.id}`}
-                    aria-label={`Xem hồ sơ của ${displayName}`}
-                  >
-                    {/* Atmospheric card ambient glow */}
-                    <div className="team-card-ambient" aria-hidden="true" />
-
-                    {/* Top Row: Index Tag & Action Arrow */}
-                    <div className="team-card-topbar">
-                      <div className="team-tag-group">
-                        <span className="team-index-tag">#{String(index + 1).padStart(2, "0")}</span>
-                        <span className="team-status-chip">
-                          <span className="team-chip-dot" />
-                          <span>Thành viên cốt lõi</span>
-                        </span>
-                      </div>
-                      <div className="team-arrow-action" aria-hidden="true">
-                        <ArrowUpRight size={17} />
-                      </div>
-                    </div>
-
-                    {/* Avatar & Identity Row */}
-                    <div className="team-identity-layout">
-                      <div className="team-avatar-wrapper">
-                        {member.avatar_url ? (
-                          <img
-                            src={member.avatar_url}
-                            alt={`Chân dung ${displayName}`}
-                            className="team-avatar-photo"
-                            loading="lazy"
-                          />
-                        ) : (
-                          <div className="team-monogram-badge" aria-hidden="true">
-                            <span>{initials}</span>
-                          </div>
-                        )}
-                        <span className="team-avatar-border" aria-hidden="true" />
-                      </div>
-
-                      <div className="team-identity-details">
-                        <h3 className="team-name">{displayName}</h3>
-                        <div className="team-role-pill">
-                          <Sparkles size={12} className="team-role-sparkle" />
-                          <span>{member.title || "Chuyên gia kỹ thuật"}</span>
+                  <div className="team-identity-layout">
+                    <div className="team-avatar-wrapper">
+                      {member.avatar_url ? (
+                        <img
+                          src={member.avatar_url}
+                          alt={`Chân dung ${displayName}`}
+                          className="team-avatar-photo"
+                          loading="lazy"
+                        />
+                      ) : (
+                        <div className="team-monogram-badge" aria-hidden="true">
+                          <span>{initials}</span>
                         </div>
-                      </div>
+                      )}
                     </div>
 
-                    {/* Bio */}
-                    <p className="team-bio">
-                      {member.bio || member.profile_intro || "Đóng góp nghiên cứu, kiến trúc và hoàn thiện các giải pháp công nghệ chất lượng cao."}
-                    </p>
-
-                    {/* Skills Chips */}
-                    {skills.length > 0 && (
-                      <div className="team-skills-container">
-                        {skills.map((skill) => (
-                          <span key={skill} className="team-skill-badge">
-                            {skill}
-                          </span>
-                        ))}
+                    <div className="team-identity-details">
+                      <h3 className="team-name">{displayName}</h3>
+                      <div className="team-role-pill">
+                        {member.title || "Kỹ sư kỹ thuật"}
                       </div>
-                    )}
-
-                    {/* Bottom Action / Meta Footer */}
-                    <div className="team-card-footer">
-                      <div className="team-footer-meta">
-                        {articleCount > 0 ? (
-                          <span className="team-articles-counter">
-                            <BookOpen size={12} /> {articleCount} bài chia sẻ
-                          </span>
-                        ) : (
-                          <span className="team-explore-hint">Xem hồ sơ & dự án</span>
-                        )}
-                      </div>
-                      <span className="team-cta-button">
-                        <span>Khám phá</span>
-                        <ArrowUpRight size={14} className="team-cta-arrow" />
-                      </span>
                     </div>
-                  </Link>
-                </Reveal>
-              );
-            })}
-          </div>
-        )}
+                  </div>
+
+                  <p className="team-bio">
+                    {member.bio || member.profile_intro || "Đóng góp nghiên cứu, kiến trúc và hoàn thiện các giải pháp công nghệ chất lượng cao."}
+                  </p>
+
+                  {skills.length > 0 && (
+                    <div className="team-skills-container">
+                      {skills.map((skill) => (
+                        <span key={skill} className="team-skill-badge">
+                          {skill}
+                        </span>
+                      ))}
+                    </div>
+                  )}
+
+                  <div className="team-card-footer">
+                    <div className="team-footer-meta">
+                      {articleCount > 0 ? (
+                        <span className="team-articles-counter">
+                          <BookOpen size={12} /> {articleCount} bài chia sẻ
+                        </span>
+                      ) : (
+                        <span className="team-explore-hint">Xem hồ sơ kỹ thuật</span>
+                      )}
+                    </div>
+                    <span className="team-cta-button">
+                      <span>Chi tiết</span>
+                      <ArrowUpRight size={14} />
+                    </span>
+                  </div>
+                </Link>
+              </Reveal>
+            );
+          })}
+        </div>
       </div>
     </section>
   );
