@@ -9,6 +9,76 @@ const teamFromRow = (row) => row && ({ ...row, skills: JSON.parse(row.skills || 
 const hex = (bytes) => [...new Uint8Array(bytes)].map((byte) => byte.toString(16).padStart(2, "0")).join("");
 const randomHex = (length = 32) => hex(crypto.getRandomValues(new Uint8Array(length)));
 
+/* ============================================================
+   DEFENSE IN DEPTH: APPLICATION RATE LIMITER & BOT SHIELD
+   ============================================================ */
+const rateLimitStore = new Map(); // key -> { count, resetAt }
+
+function checkRateLimit(key, maxRequests, windowMs) {
+  const now = Date.now();
+  if (rateLimitStore.size > 20000) {
+    for (const [k, v] of rateLimitStore.entries()) {
+      if (v.resetAt < now) rateLimitStore.delete(k);
+    }
+  }
+
+  const record = rateLimitStore.get(key);
+  if (!record || record.resetAt <= now) {
+    rateLimitStore.set(key, { count: 1, resetAt: now + windowMs });
+    return { allowed: true, remaining: maxRequests - 1, resetAt: now + windowMs };
+  }
+
+  if (record.count >= maxRequests) {
+    const retryAfter = Math.max(1, Math.ceil((record.resetAt - now) / 1000));
+    return { allowed: false, remaining: 0, resetAt: record.resetAt, retryAfter };
+  }
+
+  record.count += 1;
+  return { allowed: true, remaining: maxRequests - record.count, resetAt: record.resetAt };
+}
+
+function rateLimitResponse(retryAfter) {
+  return json(
+    {
+      error: "Quá nhiều yêu cầu. Vui lòng thử lại sau.",
+      retryAfter,
+    },
+    429,
+    { "Retry-After": String(retryAfter) }
+  );
+}
+
+function getClientIp(request) {
+  return (
+    request.headers.get("cf-connecting-ip") ||
+    request.headers.get("x-real-ip") ||
+    request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ||
+    "127.0.0.1"
+  );
+}
+
+async function verifyTurnstile(token, ip, env) {
+  const secretKey = env.TURNSTILE_SECRET_KEY;
+  if (!secretKey) return true; // Graceful pass if Turnstile not configured in env
+  if (!token) return false;
+  try {
+    const formData = new URLSearchParams();
+    formData.append("secret", secretKey);
+    formData.append("response", token);
+    if (ip) formData.append("remoteip", ip);
+
+    const res = await fetch("https://challenges.cloudflare.com/turnstile/v0/siteverify", {
+      method: "POST",
+      body: formData,
+    });
+    const outcome = await res.json();
+    return outcome.success === true;
+  } catch (err) {
+    console.error("Turnstile verification error:", err);
+    return false;
+  }
+}
+
 /* ── Email sender (Resend API or MailChannels) ─────────────────────────
  *  Requires env variables:
  *    RESEND_API_KEY  – if using Resend (recommended, resend.com free tier)
@@ -251,8 +321,20 @@ async function authRoutes(request, env, url) {
     return createSession(env, result.meta.last_row_id, 201, url.protocol === "https:");
   }
   if (method === "POST" && url.pathname === "/api/auth/register") {
+    const clientIp = getClientIp(request);
+    const regLimit = checkRateLimit(`register:ip:${clientIp}`, 3, 600000); // 3 per 10 mins
+    if (!regLimit.allowed) {
+      return rateLimitResponse(regLimit.retryAfter);
+    }
+
     const input = await request.json(), errors = accountErrors(input);
     if (errors.length) return json({ errors }, 422);
+
+    const turnstileToken = input.turnstileToken || input["cf-turnstile-response"] || request.headers.get("cf-turnstile-response");
+    if (!(await verifyTurnstile(turnstileToken, clientIp, env))) {
+      return json({ error: "Xác thực bảo mật Turnstile không hợp lệ hoặc đã hết hạn" }, 403);
+    }
+
     const salt = randomHex(16), hash = await passwordHash(input.password, salt);
     try {
       const result = await env.DB.prepare("INSERT INTO accounts (name,email,password_hash,password_salt,role) VALUES (?,?,?,?, 'user')").bind(input.name.trim(), input.email.trim().toLowerCase(), hash, salt).run();
@@ -263,10 +345,28 @@ async function authRoutes(request, env, url) {
     }
   }
   if (method === "POST" && url.pathname === "/api/auth/login") {
+    const clientIp = getClientIp(request);
+    const ipLimit = checkRateLimit(`login:ip:${clientIp}`, 5, 60000); // 5 attempts per min per IP
+    if (!ipLimit.allowed) {
+      return rateLimitResponse(ipLimit.retryAfter);
+    }
+
     const input = await request.json();
     if (typeof input.email !== "string" || typeof input.password !== "string") return json({ error: "email and password are required" }, 422);
-    const account = await env.DB.prepare("SELECT * FROM accounts WHERE email=?").bind(input.email.trim().toLowerCase()).first();
-    if (!account || await passwordHash(input.password, account.password_salt) !== account.password_hash) return json({ error: "Invalid email or password" }, 401);
+
+    const email = input.email.trim().toLowerCase();
+    const accountLimit = checkRateLimit(`login:email:${email}`, 5, 60000); // 5 attempts per min per email
+    if (!accountLimit.allowed) {
+      return rateLimitResponse(accountLimit.retryAfter);
+    }
+
+    const turnstileToken = input.turnstileToken || input["cf-turnstile-response"] || request.headers.get("cf-turnstile-response");
+    if (!(await verifyTurnstile(turnstileToken, clientIp, env))) {
+      return json({ error: "Xác thực bảo mật Turnstile không hợp lệ hoặc đã hết hạn" }, 403);
+    }
+
+    const account = await env.DB.prepare("SELECT * FROM accounts WHERE email=?").bind(email).first();
+    if (!account || await passwordHash(input.password, account.password_salt) !== account.password_hash) return json({ error: "Email hoặc mật khẩu không chính xác" }, 401);
     return createSession(env, account.id, 200, url.protocol === "https:");
   }
   if (method === "POST" && url.pathname === "/api/auth/logout") {
@@ -281,10 +381,22 @@ async function authRoutes(request, env, url) {
 
   /* ── Forgot Password: send OTP ── */
   if (method === "POST" && url.pathname === "/api/auth/forgot-password") {
+    const clientIp = getClientIp(request);
+    const fpLimit = checkRateLimit(`forgot:ip:${clientIp}`, 3, 900000); // 3 attempts per 15 min per IP
+    if (!fpLimit.allowed) {
+      return rateLimitResponse(fpLimit.retryAfter);
+    }
+
     const input = await request.json();
     if (typeof input.email !== "string" || !/^\S+@\S+\.\S+$/.test(input.email.trim())) {
       return json({ error: "Email không hợp lệ" }, 422);
     }
+
+    const turnstileToken = input.turnstileToken || input["cf-turnstile-response"] || request.headers.get("cf-turnstile-response");
+    if (!(await verifyTurnstile(turnstileToken, clientIp, env))) {
+      return json({ error: "Xác thực bảo mật Turnstile không hợp lệ hoặc đã hết hạn" }, 403);
+    }
+
     const email = input.email.trim().toLowerCase();
     const account = await env.DB.prepare("SELECT id, name FROM accounts WHERE email=?").bind(email).first();
 
@@ -401,6 +513,14 @@ async function createSession(env, accountId, status = 200, secure = true) {
 export async function onRequest({ request, env, ctx }) {
   const url = new URL(request.url), parts = url.pathname.split("/").filter(Boolean), method = request.method;
   try {
+    const clientIp = getClientIp(request);
+
+    // Global burst rate limit: max 120 req / 60s per IP across all /api/
+    const burst = checkRateLimit(`burst:ip:${clientIp}`, 120, 60000);
+    if (!burst.allowed) {
+      return rateLimitResponse(burst.retryAfter);
+    }
+
     if (url.pathname.startsWith("/api/auth/")) return await authRoutes(request, env, url) || json({ error: "Route not found" }, 404);
     const supportRead = method === "GET" && url.pathname === "/api/support";
     const supportUpdate = method === "PATCH" && parts[1] === "support";
@@ -426,8 +546,20 @@ export async function onRequest({ request, env, ctx }) {
     }
 
     if (method === "POST" && url.pathname === "/api/support") {
+      // Rate limit: max 5 submissions / 10 mins / IP
+      const supportLimit = checkRateLimit(`support:ip:${clientIp}`, 5, 600000);
+      if (!supportLimit.allowed) {
+        return rateLimitResponse(supportLimit.retryAfter);
+      }
+
       const input = await request.json(), errors = supportErrors(input);
       if (errors.length) return json({ errors }, 422);
+
+      const turnstileToken = input.turnstileToken || input["cf-turnstile-response"] || request.headers.get("cf-turnstile-response");
+      if (!(await verifyTurnstile(turnstileToken, clientIp, env))) {
+        return json({ error: "Xác thực bảo mật Turnstile không hợp lệ hoặc đã hết hạn" }, 403);
+      }
+
       const result = await env.DB.prepare("INSERT INTO support_requests (name,email,phone,company,message,account_id) VALUES (?,?,?,?,?,?)").bind(input.name.trim(), input.email.trim().toLowerCase(), input.phone?.trim() || null, input.company?.trim() || null, input.message.trim(), account?.id || null).run();
       
       /* Lấy danh sách email của admin và staff */
@@ -469,8 +601,16 @@ export async function onRequest({ request, env, ctx }) {
       return json({ id: result.meta.last_row_id, message: "Support request received" }, 201);
     }
     if (method === "GET" && url.pathname === "/api/support") {
+      const limit = Math.min(Math.max(1, Number(url.searchParams.get("limit")) || 30), 50);
+      const offset = Math.max(0, Number(url.searchParams.get("offset")) || 0);
       const status = url.searchParams.get("status"), own = account.role !== "admin";
-      const query = own ? (status ? env.DB.prepare("SELECT * FROM support_requests WHERE account_id=? AND status=? ORDER BY id DESC").bind(account.id, status) : env.DB.prepare("SELECT * FROM support_requests WHERE account_id=? ORDER BY id DESC").bind(account.id)) : (status ? env.DB.prepare("SELECT * FROM support_requests WHERE status=? ORDER BY id DESC").bind(status) : env.DB.prepare("SELECT * FROM support_requests ORDER BY id DESC"));
+      const query = own
+        ? (status
+            ? env.DB.prepare("SELECT * FROM support_requests WHERE account_id=? AND status=? ORDER BY id DESC LIMIT ? OFFSET ?").bind(account.id, status, limit, offset)
+            : env.DB.prepare("SELECT * FROM support_requests WHERE account_id=? ORDER BY id DESC LIMIT ? OFFSET ?").bind(account.id, limit, offset))
+        : (status
+            ? env.DB.prepare("SELECT * FROM support_requests WHERE status=? ORDER BY id DESC LIMIT ? OFFSET ?").bind(status, limit, offset)
+            : env.DB.prepare("SELECT * FROM support_requests ORDER BY id DESC LIMIT ? OFFSET ?").bind(limit, offset));
       return json({ data: (await query.all()).results });
     }
     if (method === "PATCH" && parts[1] === "support" && parts[2]) {
@@ -487,7 +627,12 @@ export async function onRequest({ request, env, ctx }) {
       const consultations = own ? env.DB.prepare("SELECT * FROM support_requests WHERE account_id=? ORDER BY id DESC").bind(account.id) : env.DB.prepare("SELECT sr.*, a.name AS account_name, a.email AS account_email FROM support_requests sr LEFT JOIN accounts a ON a.id=sr.account_id ORDER BY sr.id DESC");
       return json({ data: { profile: cleanAccount(account), interests: (await interests.all()).results, purchases: (await purchases.all()).results, consultations: (await consultations.all()).results } });
     }
-    if (method === "GET" && url.pathname === "/api/projects") return json({ data: (await env.DB.prepare("SELECT * FROM projects ORDER BY id DESC").all()).results.map(projectFromRow) });
+    if (method === "GET" && url.pathname === "/api/projects") {
+      const limit = Math.min(Math.max(1, Number(url.searchParams.get("limit")) || 20), 50);
+      const offset = Math.max(0, Number(url.searchParams.get("offset")) || 0);
+      const rows = (await env.DB.prepare("SELECT * FROM projects ORDER BY id DESC LIMIT ? OFFSET ?").bind(limit, offset).all()).results;
+      return json({ data: rows.map(projectFromRow) });
+    }
     if (method === "GET" && parts[1] === "projects" && parts[2]) {
       const project = await env.DB.prepare("SELECT * FROM projects WHERE id=?").bind(Number(parts[2])).first();
       return project ? json({ data: projectFromRow(project) }) : json({ error: "Project not found" }, 404);
@@ -520,7 +665,11 @@ export async function onRequest({ request, env, ctx }) {
     }
     if (method === "GET" && url.pathname === "/api/products") {
       const admin = await requireRole(request, env, ["admin"]);
-      const query = admin ? env.DB.prepare("SELECT * FROM products ORDER BY id DESC") : env.DB.prepare("SELECT * FROM products WHERE status='published' ORDER BY id DESC");
+      const limit = Math.min(Math.max(1, Number(url.searchParams.get("limit")) || 20), 50);
+      const offset = Math.max(0, Number(url.searchParams.get("offset")) || 0);
+      const query = admin
+        ? env.DB.prepare("SELECT * FROM products ORDER BY id DESC LIMIT ? OFFSET ?").bind(limit, offset)
+        : env.DB.prepare("SELECT * FROM products WHERE status='published' ORDER BY id DESC LIMIT ? OFFSET ?").bind(limit, offset);
       return json({ data: (await query.all()).results.map(productFromRow) });
     }
     if (method === "POST" && url.pathname === "/api/products") {
@@ -648,7 +797,9 @@ export async function onRequest({ request, env, ctx }) {
       return json({ data: teamFromRow(await env.DB.prepare("SELECT * FROM team_members WHERE id=?").bind(id).first()) });
     }
     if (method === "GET" && url.pathname === "/api/articles") {
-      const rows = await env.DB.prepare("SELECT ta.*, tm.name AS member_name FROM team_articles ta JOIN team_members tm ON tm.id=ta.team_member_id ORDER BY ta.id DESC").all();
+      const limit = Math.min(Math.max(1, Number(url.searchParams.get("limit")) || 30), 50);
+      const offset = Math.max(0, Number(url.searchParams.get("offset")) || 0);
+      const rows = await env.DB.prepare("SELECT ta.*, tm.name AS member_name FROM team_articles ta JOIN team_members tm ON tm.id=ta.team_member_id ORDER BY ta.id DESC LIMIT ? OFFSET ?").bind(limit, offset).all();
       return json({ data: rows.results });
     }
     if (method === "GET" && parts[1] === "articles" && parts[2]) {
@@ -687,7 +838,11 @@ export async function onRequest({ request, env, ctx }) {
       const input = await request.json(), errors = articleErrors(input, true); if (errors.length || !Object.keys(input).length) return json({ errors: errors.length ? errors : ["At least one field is required"] }, 422); const current = await env.DB.prepare("SELECT * FROM team_articles WHERE id=?").bind(id).first(); if (!current) return json({ error: "Article not found" }, 404); const merged = { ...current, ...input };
       await env.DB.prepare("UPDATE team_articles SET team_member_id=?,title=?,excerpt=?,content=?,status=?,updated_at=CURRENT_TIMESTAMP WHERE id=?").bind(merged.team_member_id, merged.title.trim(), merged.excerpt?.trim() || null, merged.content.trim(), merged.status || "published", id).run(); return json({ data: await env.DB.prepare("SELECT * FROM team_articles WHERE id=?").bind(id).first() });
     }
-    if (method === "GET" && url.pathname === "/api/accounts") return json({ data: (await env.DB.prepare("SELECT id,name,email,role,created_at,updated_at FROM accounts ORDER BY id DESC").all()).results });
+    if (method === "GET" && url.pathname === "/api/accounts") {
+      const limit = Math.min(Math.max(1, Number(url.searchParams.get("limit")) || 50), 100);
+      const offset = Math.max(0, Number(url.searchParams.get("offset")) || 0);
+      return json({ data: (await env.DB.prepare("SELECT id,name,email,role,created_at,updated_at FROM accounts ORDER BY id DESC LIMIT ? OFFSET ?").bind(limit, offset).all()).results });
+    }
     if (method === "PATCH" && parts[1] === "accounts" && parts[2]) {
       const id = Number(parts[2]), input = await request.json();
       if (!['admin', 'staff', 'user'].includes(input.role)) return json({ error: "role must be admin, staff or user" }, 422);
@@ -711,11 +866,13 @@ export async function onRequest({ request, env, ctx }) {
       await ensurePostsSchema(env);
       const member = await getLinkedMember(env, actor);
       const showAll = url.searchParams.get("all") === "true";
+      const limit = Math.min(Math.max(1, Number(url.searchParams.get("limit")) || 30), 50);
+      const offset = Math.max(0, Number(url.searchParams.get("offset")) || 0);
       const query = (actor.role === "admin" && showAll)
-        ? env.DB.prepare("SELECT p.*, tm.name AS author_name FROM posts p LEFT JOIN team_members tm ON tm.id=p.author_id ORDER BY p.id DESC")
+        ? env.DB.prepare("SELECT p.*, tm.name AS author_name FROM posts p LEFT JOIN team_members tm ON tm.id=p.author_id ORDER BY p.id DESC LIMIT ? OFFSET ?").bind(limit, offset)
         : (actor.role === "admin" && !member
-            ? env.DB.prepare("SELECT p.*, tm.name AS author_name FROM posts p LEFT JOIN team_members tm ON tm.id=p.author_id ORDER BY p.id DESC")
-            : env.DB.prepare("SELECT p.*, tm.name AS author_name FROM posts p LEFT JOIN team_members tm ON tm.id=p.author_id WHERE p.author_id=? ORDER BY p.id DESC").bind(member ? member.id : 0));
+            ? env.DB.prepare("SELECT p.*, tm.name AS author_name FROM posts p LEFT JOIN team_members tm ON tm.id=p.author_id ORDER BY p.id DESC LIMIT ? OFFSET ?").bind(limit, offset)
+            : env.DB.prepare("SELECT p.*, tm.name AS author_name FROM posts p LEFT JOIN team_members tm ON tm.id=p.author_id WHERE p.author_id=? ORDER BY p.id DESC LIMIT ? OFFSET ?").bind(member ? member.id : 0, limit, offset));
       return json({ data: (await query.all()).results });
     }
     if (method === "POST" && (url.pathname === "/api/posts" || (parts[0] === "api" && parts[1] === "posts" && !parts[2]))) {
