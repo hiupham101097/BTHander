@@ -1,5 +1,20 @@
 import React, { useEffect, useState } from "react";
-import { FolderKanban, Pencil, Plus, Trash2, X, Image as ImageIcon, Type, Eye, EyeOff } from "lucide-react";
+import {
+  FolderKanban,
+  Pencil,
+  Plus,
+  Trash2,
+  X,
+  Image as ImageIcon,
+  Type,
+  Eye,
+  EyeOff,
+  ArrowUp,
+  ArrowDown,
+  Upload,
+  Smartphone,
+  Globe,
+} from "lucide-react";
 import ImageUpload from "../../components/ui/ImageUpload.jsx";
 
 /* ── Block helpers ── */
@@ -81,8 +96,145 @@ function BlockEditor({ blocks, onChange }) {
   );
 }
 
+/* ── Screen Editor Card for Interactive Showcase ── */
+function ScreenEditorCard({ item, index, total, category, onChange, onMove, onRemove }) {
+  const [uploading, setUploading] = useState(false);
+  const isMobile = category === "mobile";
+
+  const handleUpload = async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setUploading(true);
+    try {
+      const data = new FormData();
+      data.append("file", file);
+      const res = await fetch("/api/media", { method: "POST", credentials: "include", body: data });
+      const body = await res.json();
+      if (res.ok) {
+        onChange("image_url", body.data.url);
+      } else {
+        alert("Lỗi tải ảnh: " + (body.error || "Không thể tải"));
+      }
+    } catch (err) {
+      alert("Lỗi tải ảnh: " + err.message);
+    } finally {
+      setUploading(false);
+      e.target.value = "";
+    }
+  };
+
+  return (
+    <div className="screen-card-box">
+      <div className="screen-card-header">
+        <div className="screen-card-badge">
+          <span className="screen-badge-num">0{index + 1}</span>
+          <strong>{item.label ? item.label : `Màn hình ${index + 1}`}</strong>
+        </div>
+        <div className="screen-card-actions">
+          <button
+            type="button"
+            className="icon-btn"
+            disabled={index === 0}
+            onClick={() => onMove(-1)}
+            title="Di chuyển lên trên"
+          >
+            <ArrowUp size={14} />
+          </button>
+          <button
+            type="button"
+            className="icon-btn"
+            disabled={index === total - 1}
+            onClick={() => onMove(1)}
+            title="Di chuyển xuống dưới"
+          >
+            <ArrowDown size={14} />
+          </button>
+          <button
+            type="button"
+            className="icon-btn icon-danger"
+            onClick={onRemove}
+            title="Xóa màn hình này"
+          >
+            <Trash2 size={14} />
+          </button>
+        </div>
+      </div>
+
+      <div className="screen-card-grid">
+        <div className="screen-card-inputs">
+          <label className="admin-field-label">
+            Tên màn hình (Hiển thị tab điều hướng & tiêu đề)
+            <input
+              type="text"
+              value={item.label}
+              onChange={(e) => onChange("label", e.target.value)}
+              placeholder="VD: Màn hình chính & Menu / Gameplay & Tính năng lõi"
+              required
+            />
+          </label>
+
+          <label className="admin-field-label">
+            Mô tả chi tiết tính năng màn hình
+            <textarea
+              rows={3}
+              value={item.desc}
+              onChange={(e) => onChange("desc", e.target.value)}
+              placeholder="VD: Giao diện khởi động trực quan, tối ưu trải nghiệm chạm vuốt 60fps trên di động..."
+            />
+          </label>
+
+          <div className="screen-image-row">
+            <label className="admin-field-label" style={{ flex: 1, minWidth: 220 }}>
+              Đường dẫn ảnh (URL hoặc dán link)
+              <div style={{ display: "flex", gap: 6 }}>
+                <input
+                  type="text"
+                  value={item.image_url}
+                  onChange={(e) => onChange("image_url", e.target.value)}
+                  placeholder="https://... hoặc /images/..."
+                />
+                {item.image_url && (
+                  <button
+                    type="button"
+                    className="icon-btn icon-danger"
+                    onClick={() => onChange("image_url", "")}
+                    title="Xoá ảnh"
+                  >
+                    <X size={14} />
+                  </button>
+                )}
+              </div>
+            </label>
+
+            <div style={{ paddingTop: 20 }}>
+              <label className="image-upload-button" style={{ margin: 0, whiteSpace: "nowrap", cursor: "pointer" }}>
+                <input type="file" accept="image/*" onChange={handleUpload} disabled={uploading} style={{ display: "none" }} />
+                <Upload size={14} /> {uploading ? "Đang tải…" : (item.image_url ? "Đổi ảnh từ máy" : "Tải ảnh từ máy")}
+              </label>
+            </div>
+          </div>
+        </div>
+
+        <div className="screen-card-preview-col">
+          <span className="preview-label">Khung {isMobile ? "Smartphone" : "Browser"}:</span>
+          <div className={`admin-screen-mockup ${isMobile ? "mockup-mobile" : "mockup-web"}`}>
+            {item.image_url ? (
+              <img src={item.image_url} alt={item.label || "Preview"} className="admin-mockup-img" />
+            ) : (
+              <div className="admin-mockup-placeholder">
+                <ImageIcon size={22} style={{ opacity: 0.4 }} />
+                <span>Chưa có ảnh</span>
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 const createConfigItem = () => ({ key: "", value: "" });
-const createGalleryItem = () => ({ label: "", image_url: "" });
+const createGalleryItem = () => ({ label: "", image_url: "", desc: "" });
 const createRoadmapItem = () => ({ phase: "", title: "", desc: "", status: "upcoming" });
 
 const createDefaultForm = () => ({
@@ -134,6 +286,23 @@ export default function ProjectsManager() {
   const addItem = (listName, createItem) => setForm((v) => ({ ...v, [listName]: [...v[listName], createItem()] }));
   const removeItem = (listName, index) => setForm((v) => ({ ...v, [listName]: v[listName].filter((_, i) => i !== index) }));
 
+  const moveItem = (listName, index, direction) => {
+    const targetIdx = index + direction;
+    if (targetIdx < 0 || targetIdx >= form[listName].length) return;
+    const list = [...form[listName]];
+    const temp = list[index];
+    list[index] = list[targetIdx];
+    list[targetIdx] = temp;
+    setForm((v) => ({ ...v, [listName]: list }));
+  };
+
+  const handleItemDirectChange = (listName, index, field, value) => {
+    setForm((v) => ({
+      ...v,
+      [listName]: v[listName].map((item, i) => (i === index ? { ...item, [field]: value } : item)),
+    }));
+  };
+
   const openCreateForm = () => {
     setForm(createDefaultForm());
     setEditingId(null);
@@ -156,7 +325,11 @@ export default function ProjectsManager() {
       full_description: stringToBlocks(project.full_description),
       languages: (project.languages || []).join(", "),
       configuration: Object.entries(project.configuration || {}).map(([key, value]) => ({ key, value: String(value) })),
-      gallery: project.gallery || [],
+      gallery: (project.gallery || []).map((item) => ({
+        label: item.label || "",
+        image_url: item.image_url || "",
+        desc: item.desc || "",
+      })),
       roadmap: project.roadmap || [],
       price: String(project.price || 0),
       currency: project.currency || "VND",
@@ -166,32 +339,15 @@ export default function ProjectsManager() {
     setIsFormOpen(true);
   };
 
-  const handleImageUpload = (index) => async (event) => {
-    const file = event.target.files?.[0];
-    if (!file) return;
-    try {
-      const data = new FormData();
-      data.append("file", file);
-      const response = await fetch("/api/media", { method: "POST", credentials: "include", body: data });
-      const body = await response.json();
-      if (response.ok) {
-        setForm((v) => ({
-          ...v,
-          gallery: v.gallery.map((item, i) => (i === index ? { ...item, image_url: body.data.url } : item)),
-        }));
-      } else alert("Lỗi tải ảnh: " + (body.error || ""));
-    } catch (error) {
-      alert("Lỗi tải ảnh: " + error.message);
-    } finally {
-      event.target.value = "";
-    }
-  };
-
   const handleSubmit = async (event) => {
     event.preventDefault();
-    setError("");
-
-    const gallery = form.gallery.filter((item) => item.label.trim() && item.image_url).map((item) => ({ label: item.label.trim(), image_url: item.image_url.trim() }));
+    const gallery = form.gallery
+      .filter((item) => (item.image_url && item.image_url.trim()) || (item.label && item.label.trim()) || (item.desc && item.desc.trim()))
+      .map((item, idx) => ({
+        label: (item.label || "").trim() || `Màn hình 0${idx + 1}`,
+        image_url: (item.image_url || "").trim(),
+        desc: (item.desc || "").trim(),
+      }));
     const roadmap = form.roadmap.filter((item) => item.phase || item.title || item.desc);
     if (roadmap.some((item) => !item.phase || !item.title || !item.desc)) {
       setError("Mỗi bước lộ trình cần điền đủ thông tin (Giai đoạn, Tiêu đề, Mô tả).");
@@ -289,11 +445,22 @@ export default function ProjectsManager() {
                 <span className="form-label" style={{ display: "block", marginBottom: 6, fontWeight: 700, fontSize: 13 }}>
                   Ảnh bìa dự án (Hiển thị trên thẻ trang chủ)
                 </span>
-                <ImageUpload
-                  value={form.cover_image}
-                  onChange={(url) => setForm((v) => ({ ...v, cover_image: url }))}
-                  label="Tải ảnh bìa dự án"
-                />
+                <div style={{ display: "flex", gap: 10, alignItems: "flex-start", flexWrap: "wrap" }}>
+                  <ImageUpload
+                    value={form.cover_image}
+                    onChange={(url) => setForm((v) => ({ ...v, cover_image: url }))}
+                    label="Tải ảnh bìa từ máy"
+                  />
+                  <div style={{ flex: 1, minWidth: 240 }}>
+                    <input
+                      type="text"
+                      value={form.cover_image}
+                      onChange={handleFieldChange("cover_image")}
+                      placeholder="Hoặc dán URL ảnh bìa (https://...)"
+                      style={{ width: "100%", height: 38, border: "1.5px solid var(--line, #e2e8f0)", borderRadius: 8, padding: "0 10px", fontSize: 13 }}
+                    />
+                  </div>
+                </div>
               </div>
 
               <label className="admin-form-full">
@@ -310,22 +477,57 @@ export default function ProjectsManager() {
               <BlockEditor blocks={form.full_description} onChange={(blocks) => setForm({ ...form, full_description: blocks })} />
             </section>
 
-            {/* Hình ảnh */}
-            <section className="admin-repeat">
-              <div className="admin-repeat-head">
-                <h4>Hình ảnh Demo ({form.category === "mobile" ? "Hiển thị khung điện thoại" : "Hiển thị khung trình duyệt"})</h4>
-                <button type="button" className="text-action" onClick={() => addItem("gallery", createGalleryItem)}>+ Thêm hình ảnh</button>
-              </div>
-              {form.gallery.map((item, index) => (
-                <div className="gallery-editor" key={index}>
-                  <div className="admin-repeat-row gallery-inputs">
-                    <input value={item.label} onChange={handleItemChange("gallery", index, "label")} placeholder="Chú thích ảnh..." />
-                    <input type="file" accept="image/*" onChange={handleImageUpload(index)} />
-                    <button type="button" className="icon-btn icon-danger" onClick={() => removeItem("gallery", index)}><Trash2 size={15} /></button>
-                  </div>
-                  {item.image_url && <img className="gallery-admin-preview" src={item.image_url} alt={item.label} />}
+            {/* Trải nghiệm màn hình thực tế (Interactive Showcase Screens) */}
+            <section className="admin-repeat" style={{ marginTop: 24 }}>
+              <div className="admin-repeat-head" style={{ alignItems: "flex-start", gap: 12 }}>
+                <div>
+                  <h4 style={{ display: "flex", alignItems: "center", gap: 8, margin: 0, fontSize: 15 }}>
+                    {form.category === "mobile" ? <Smartphone size={17} style={{ color: "#10b981" }} /> : <Globe size={17} style={{ color: "#10b981" }} />}
+                    Trải nghiệm màn hình thực tế (Interactive Showcase)
+                  </h4>
+                  <p style={{ margin: "4px 0 0", fontSize: 13, color: "#64748b" }}>
+                    Nhập các tab màn hình demo hiển thị trên khung {form.category === "mobile" ? "điện thoại" : "trình duyệt"} của trang chi tiết dự án.
+                  </p>
                 </div>
-              ))}
+                <button
+                  type="button"
+                  className="btn-primary"
+                  style={{ padding: "6px 14px", fontSize: 13, display: "inline-flex", alignItems: "center", gap: 6, whiteSpace: "nowrap" }}
+                  onClick={() => addItem("gallery", createGalleryItem)}
+                >
+                  <Plus size={14} /> Thêm màn hình demo
+                </button>
+              </div>
+
+              {form.gallery.length === 0 ? (
+                <div className="empty-screens-box">
+                  <p style={{ margin: 0, fontWeight: 500 }}>Chưa có màn hình demo nào được cấu hình cho dự án này.</p>
+                  <p style={{ margin: "4px 0 12px", fontSize: 12, opacity: 0.8 }}>Hệ thống sẽ dùng ảnh mặc định theo loại dự án cho đến khi bạn thêm màn hình thực tế.</p>
+                  <button
+                    type="button"
+                    className="text-action"
+                    style={{ fontWeight: 600 }}
+                    onClick={() => addItem("gallery", createGalleryItem)}
+                  >
+                    + Nhấn vào đây để thêm màn hình đầu tiên
+                  </button>
+                </div>
+              ) : (
+                <div className="screens-editor-list">
+                  {form.gallery.map((item, index) => (
+                    <ScreenEditorCard
+                      key={index}
+                      item={item}
+                      index={index}
+                      total={form.gallery.length}
+                      category={form.category}
+                      onChange={(field, val) => handleItemDirectChange("gallery", index, field, val)}
+                      onMove={(dir) => moveItem("gallery", index, dir)}
+                      onRemove={() => removeItem("gallery", index)}
+                    />
+                  ))}
+                </div>
+              )}
             </section>
 
             {/* Cấu hình kỹ thuật */}
