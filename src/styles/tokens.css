@@ -1,105 +1,105 @@
 /* ==========================================================================
-   BThander Design System Tokens
-   Engineering Company + Modern Software Product + Technical Consultancy
+   BThander — Design tokens
+   Brand: "Brave Trust Hander" — software engineering + mechanical design.
+   Visual direction: precision-engineering editorial on graphite.
+   The single accent is the logo blue. No gradients.
    ========================================================================== */
 
 :root {
-  /* ── Neutral Base Palette (Light Canvas) ── */
-  --background: #F8F9FA;
-  --surface: #FFFFFF;
-  --surface-secondary: #F4F5F6;
-  --surface-tertiary: #ECEEF1;
+  /* ── Surfaces ───────────────────────────────────────────────────────── */
+  --bt-bg:            #07080B;
+  --bt-bg-2:          #0A0C10;
+  --bt-surface:       #0F1216;
+  --bt-surface-2:     #14181E;
+  --bt-surface-3:     #1A1F26;
 
-  /* ── Typography Colors ── */
-  --text-primary: #171719;
-  --text-secondary: #60646C;
-  --text-muted: #8B8D98;
-  --text-faint: #B5B7C0;
+  /* ── Hairlines ──────────────────────────────────────────────────────── */
+  --bt-line:          rgba(255, 255, 255, 0.075);
+  --bt-line-2:        rgba(255, 255, 255, 0.13);
+  --bt-line-3:        rgba(255, 255, 255, 0.22);
 
-  /* ── Hairline Borders ── */
-  --border: #E5E7EB;
-  --border-strong: #D8DADE;
-  --border-hover: #C2C5CD;
+  /* ── Ink ────────────────────────────────────────────────────────────── */
+  --bt-ink:           #EDF1F7;
+  --bt-ink-2:         rgba(237, 241, 247, 0.64);
+  --bt-ink-3:         rgba(237, 241, 247, 0.42);
+  --bt-ink-4:         rgba(237, 241, 247, 0.24);
 
-  /* ── Primary Brand Accent (BThander Cobalt Blue) ── */
-  --brand: #1E60D5;
-  --brand-hover: #174EBA;
-  --brand-active: #123E96;
-  --brand-subtle: rgba(30, 96, 213, 0.07);
-  --brand-border: rgba(30, 96, 213, 0.22);
-  --brand-contrast: #FFFFFF;
+  /* ── Brand accent (matches bthander-logo-mark.png) ──────────────────── */
+  --bt-accent:        #2F8BFF;
+  --bt-accent-hi:     #79BBFF;
+  --bt-accent-lo:     #1257AE;
+  --bt-accent-soft:   rgba(47, 139, 255, 0.10);
+  --bt-accent-soft-2: rgba(47, 139, 255, 0.18);
+  --bt-accent-line:   rgba(47, 139, 255, 0.28);
+  --bt-accent-glow:   rgba(47, 139, 255, 0.40);
 
-  /* ── Semantic Signals (Status Only) ── */
-  --color-success: #16A34A;
-  --color-success-subtle: rgba(22, 163, 74, 0.08);
-  --color-warning: #D97706;
-  --color-warning-subtle: rgba(217, 119, 6, 0.08);
-  --color-danger: #DC2626;
-  --color-danger-subtle: rgba(220, 38, 38, 0.08);
+  /* ── Signal colours (status only, used sparingly) ───────────────────── */
+  --bt-ok:            #35C08A;
+  --bt-warn:          #E0A94A;
+  --bt-danger:        #F2685F;
 
-  /* ── Dark Section & Footer Canvas (High Contrast) ── */
-  --dark-bg: #111214;
-  --dark-surface: #18191D;
-  --dark-surface-elevated: #202227;
-  --dark-border: rgba(255, 255, 255, 0.08);
-  --dark-border-strong: rgba(255, 255, 255, 0.16);
-  --dark-text-primary: #F4F5F6;
-  --dark-text-secondary: #9DA1AA;
-  --dark-text-muted: #6B7280;
+  /* ── Typography ─────────────────────────────────────────────────────── */
+  --bt-font-sans: 'Inter', system-ui, -apple-system, BlinkMacSystemFont,
+                  'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  --bt-font-mono: 'IBM Plex Mono', ui-monospace, SFMono-Regular, Menlo,
+                  Consolas, 'Liberation Mono', monospace;
 
-  /* ── Typography Families ── */
-  --font-sans: 'Geist', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  --font-mono: 'Geist Mono', 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+  --bt-fs-display: clamp(2.6rem, 6vw, 5rem);
+  --bt-fs-h1:      clamp(2.2rem, 4.6vw, 3.6rem);
+  --bt-fs-h2:      clamp(1.85rem, 3.4vw, 2.9rem);
+  --bt-fs-h3:      clamp(1.2rem, 1.7vw, 1.5rem);
+  --bt-fs-h4:      clamp(1.05rem, 1.3vw, 1.15rem);
+  --bt-fs-lead:    clamp(1rem, 1.15vw, 1.15rem);
+  --bt-fs-body:    1rem;
+  --bt-fs-sm:      0.875rem;
+  --bt-fs-xs:      0.78rem;
+  --bt-fs-mono:    0.7rem;
 
-  /* ── Type Scale ── */
-  --font-hero: clamp(2.35rem, 4.2vw, 3.5rem);   /* 38px - 56px */
-  --font-h1: clamp(1.9rem, 3.2vw, 2.5rem);       /* 30px - 40px */
-  --font-h2: clamp(1.6rem, 2.5vw, 2.1rem);       /* 26px - 34px */
-  --font-h3: clamp(1.15rem, 1.6vw, 1.35rem);     /* 18px - 22px */
-  --font-subhead: 1.1rem;                        /* 17.5px */
-  --font-body: 0.95rem;                          /* 15.2px */
-  --font-small: 0.84rem;                         /* 13.5px */
-  --font-mono-xs: 0.75rem;                       /* 12px */
+  --bt-lh-tight:   1.06;
+  --bt-lh-snug:    1.22;
+  --bt-lh-body:    1.68;
 
-  /* ── Spacing Scale ── */
-  --space-1: 4px;
-  --space-2: 8px;
-  --space-3: 12px;
-  --space-4: 16px;
-  --space-5: 20px;
-  --space-6: 24px;
-  --space-8: 32px;
-  --space-10: 40px;
-  --space-12: 48px;
-  --space-16: 64px;
-  --space-20: 80px;
-  --space-24: 96px;
-  --space-32: 128px;
+  --bt-track-tight: -0.035em;
+  --bt-track-snug:  -0.015em;
+  --bt-track-wide:   0.14em;
 
-  /* ── Layout ── */
-  --container-max: 1220px;
-  --container-pad-desktop: 32px;
-  --container-pad-tablet: 24px;
-  --container-pad-mobile: 18px;
-  --section-space-desktop: 96px;
-  --section-space-tablet: 72px;
-  --section-space-mobile: 56px;
-  --header-height: 68px;
+  /* ── Layout ─────────────────────────────────────────────────────────── */
+  --bt-max:        1280px;
+  --bt-max-text:   68ch;
+  --bt-pad-x:      clamp(1.25rem, 4vw, 2rem);
+  --bt-section-y:  clamp(4.5rem, 9vw, 8rem);
+  --bt-nav-h:      68px;
 
-  /* ── Radii (Controlled & Precise) ── */
-  --radius-xs: 4px;
-  --radius-btn: 8px;
-  --radius-input: 8px;
-  --radius-card: 10px;
-  --radius-panel: 12px;
-  --radius-lg: 14px;
+  /* ── Radii ──────────────────────────────────────────────────────────── */
+  --bt-r-xs:  4px;
+  --bt-r-sm:  8px;
+  --bt-r-md:  12px;
+  --bt-r-lg:  18px;
+  --bt-r-xl:  26px;
+  --bt-r-pill: 999px;
 
-  /* ── Shadows (Restrained, subtle) ── */
-  --shadow-subtle: 0 1px 3px rgba(0, 0, 0, 0.04);
-  --shadow-card: 0 2px 6px rgba(0, 0, 0, 0.03);
-  --shadow-popover: 0 8px 24px rgba(0, 0, 0, 0.08);
+  /* ── Elevation ──────────────────────────────────────────────────────── */
+  --bt-shadow-sm:  0 1px 2px rgba(0, 0, 0, 0.45);
+  --bt-shadow-md:  0 14px 34px -16px rgba(0, 0, 0, 0.75);
+  --bt-shadow-lg:  0 36px 70px -28px rgba(0, 0, 0, 0.88);
+  --bt-shadow-accent: 0 22px 50px -24px var(--bt-accent-glow);
 
-  /* ── Transitions ── */
-  --transition-fast: 150ms cubic-bezier(0.16, 1, 0.3, 1);
-  --transition-smooth: 220ms cubic-bezier(0.16, 1, 0.3, 1);
+  /* ── Motion ─────────────────────────────────────────────────────────── */
+  --bt-ease:        cubic-bezier(0.22, 1, 0.36, 1);
+  --bt-ease-inout:  cubic-bezier(0.65, 0, 0.35, 1);
+  --bt-ease-back:   cubic-bezier(0.34, 1.4, 0.64, 1);
+  --bt-dur-1:       0.16s;
+  --bt-dur-2:       0.3s;
+  --bt-dur-3:       0.55s;
+  --bt-dur-4:       0.9s;
+
+  /* ── Stacking ───────────────────────────────────────────────────────── */
+  --bt-z-sticky: 60;
+  --bt-z-nav:    100;
+  --bt-z-menu:   120;
+  --bt-z-modal:  200;
+
+  /* ── Motifs ─────────────────────────────────────────────────────────── */
+  --bt-grid-line:  rgba(47, 139, 255, 0.07);
+  --bt-grid-size:  56px;
 }

@@ -17,18 +17,18 @@ export default function Hero() {
         <div className="hero-copy">
           <div className="kicker">
             <span className="kicker-dot" />
-            <span>01 / KỸ THUẬT PHẦN MỀM &amp; THIẾT KẾ CƠ ĐIỆN TỬ</span>
+            <span>Phần mềm &amp; Kỹ thuật chế tạo</span>
           </div>
 
           <Reveal>
             <h1 className="h1">
-              Biến ý tưởng kỹ thuật thành sản phẩm thực tế.
+              Biến ý tưởng kỹ thuật thành <span className="accent">sản phẩm thật.</span>
             </h1>
           </Reveal>
 
           <Reveal delay={90}>
             <p className="lead">
-              Đội ngũ kỹ thuật chuyên sâu về kiến trúc phần mềm, ứng dụng di động, hệ thống quản lý và bản vẽ chế tạo máy — tập trung vào tính chính xác, hiệu năng và khả năng triển khai thực tế.
+              Phần mềm, ứng dụng di động và thiết kế chế tạo máy được xây dựng bởi một đội ngũ tinh gọn, từ nghiên cứu đến bàn giao.
             </p>
           </Reveal>
 
@@ -38,42 +38,33 @@ export default function Hero() {
                 Bắt đầu dự án <ArrowUpRight size={17} />
               </a>
               <a className="btn-ghost" href="#projects">
-                Xem dự án thực tế <ArrowDownRight size={16} />
+                Xem dự án <ArrowDownRight size={16} />
               </a>
             </div>
           </Reveal>
 
           <div className="hero-trust-row">
-            <span><CheckCircle2 size={14} /> Mã nguồn &amp; CAD bàn giao đầy đủ</span>
+            <span><CheckCircle2 size={14} /> Mã nguồn bàn giao đầy đủ</span>
             <span><CheckCircle2 size={14} /> Tiêu chuẩn kỹ thuật cao</span>
-            <span><CheckCircle2 size={14} /> Hỗ trợ triển khai &amp; vận hành</span>
+            <span><CheckCircle2 size={14} /> Hỗ trợ dài hạn</span>
           </div>
 
           <div className="hero-capabilities">
-            <span><Code2 size={14} /> Web &amp; Hệ thống</span>
-            <span><Smartphone size={14} /> Mobile Apps</span>
-            <span><Gamepad2 size={14} /> Game &amp; 3D</span>
-            <span><Cpu size={14} /> Chế tạo máy &amp; CAD</span>
+            <span><Code2 size={15} /> Web &amp; Hệ thống</span>
+            <span><Smartphone size={15} /> Mobile Apps</span>
+            <span><Gamepad2 size={15} /> Game &amp; 3D</span>
+            <span><Cpu size={15} /> Chế tạo máy &amp; IoT</span>
           </div>
         </div>
 
         <Reveal delay={80} className="hero-visual">
-          <div className="hero-visual-frame">
-            <div className="hero-visual-bar">
-              <div className="spec-code">
-                <span />
-                <span>SPEC // CORE_LAB_V2</span>
-              </div>
-              <div>COORDINATES: [10.76° N, 106.66° E]</div>
-            </div>
-            <img
-              src="/images/hero-tech-lab.png"
-              alt="BThander Tech Lab & Prototyping - Phần mềm và cơ điện tử"
-            />
-            <div className="hero-visual-label">
-              <span>STATUS: PRODUCTION_READY</span>
-              <span>BTHANDER PRECISION LAB</span>
-            </div>
+          <img
+            src="/images/hero-tech-lab.png"
+            alt="Công nghệ phần mềm, game và kỹ thuật chế tạo máy"
+          />
+          <div className="hero-visual-label">
+            <span />
+            TECH LAB &amp; PROTOTYPING
           </div>
         </Reveal>
       </div>
