@@ -2804,8 +2804,16 @@
 .public-shell .hero-copy > *:nth-child(4) { animation-delay: 230ms; }
 .public-shell .hero-copy > *:nth-child(5) { animation-delay: 300ms; }
 .public-shell .hero-visual { animation: studio-focus .85s cubic-bezier(.22,1,.36,1) 120ms both; }
-.public-shell .reveal { transition-duration: .7s !important; }
-.public-shell .reveal-in { opacity: 1 !important; transform: translateY(0) !important; }
+.public-shell .reveal {
+  opacity: 1 !important;
+  transform: none !important;
+  transition-duration: .7s !important;
+}
+.public-shell .reveal-in {
+  opacity: 1 !important;
+  transform: translateY(0) !important;
+  animation: studio-rise .7s cubic-bezier(.22,1,.36,1) both;
+}
 .public-shell .projects-heading,
 .public-shell .services-heading,
 .public-shell .free-apps-head {
