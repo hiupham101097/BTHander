@@ -1,33 +1,36 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { ArrowUpRight, Check, Code2, Layers3 } from "lucide-react";
 import Reveal from "../ui/Reveal.jsx";
 import { useAuth } from "../../context/AuthContext.jsx";
 import { Link } from "react-router-dom";
+import { apiRequest } from "../../lib/api.js";
 
-const apiBaseUrl = import.meta.env.VITE_API_BASE_URL || "";
+import useApiList from "../../hooks/useApiList.js";
 function formatPrice(price, currency) {
   return new Intl.NumberFormat("vi-VN", { style: "currency", currency: currency || "VND", maximumFractionDigits: 0 }).format(price);
 }
 
 export default function Projects() {
-  const [projects, setProjects] = useState([]);
-  const [state, setState] = useState("loading");
+  const { data: projects, state, retry } = useApiList("/api/projects?view=summary");
   const [interested, setInterested] = useState([]);
+  const [pending, setPending] = useState(null);
+  const [actionError, setActionError] = useState("");
   const { user } = useAuth();
   const visibleProjects = projects.filter((project) => !project.name?.toLocaleLowerCase("vi").includes("ứng dụng miễn phí"));
 
-  useEffect(() => {
-    const controller = new AbortController();
-    fetch(`${apiBaseUrl}/api/projects`, { signal: controller.signal })
-      .then((response) => { if (!response.ok) throw new Error("Không thể tải dự án"); return response.json(); })
-      .then((body) => { setProjects(body.data || []); setState("ready"); })
-      .catch((error) => { if (error.name !== "AbortError") setState("error"); });
-    return () => controller.abort();
-  }, []);
 
   const markInterest = async (id) => {
-    const response = await fetch(`/api/projects/${id}/interest`, { method: "POST", credentials: "include" });
-    if (response.ok) setInterested((items) => [...items, id]);
+    if (pending !== null) return;
+    setPending(id);
+    setActionError("");
+    try {
+      await apiRequest(`/api/projects/${id}/interest`, { method: "POST" });
+      setInterested((items) => [...items, id]);
+    } catch (error) {
+      setActionError(error.message);
+    } finally {
+      setPending(null);
+    }
   };
 
   return (
@@ -39,9 +42,10 @@ export default function Projects() {
         </div>
 
         {state === "loading" && <div className="project-loading"><span /><span /><span /></div>}
-        {state === "error" && <p className="api-state api-state-error">Chưa thể tải dự án. Vui lòng thử lại sau.</p>}
+        {state === "error" && <p role="alert" className="api-state api-state-error">Chưa thể tải dự án. Vui lòng thử lại sau. <button type="button" className="btn-ghost" onClick={retry}>Thử lại</button></p>}
         {state === "ready" && visibleProjects.length === 0 && <p className="api-state">Dự án đang được cập nhật.</p>}
 
+        {actionError && <p className="api-state api-state-error" role="alert">{actionError}</p>}
         <div className="core-project-grid">
           {visibleProjects.map((project, index) => {
             const visual = project.cover_image || project.gallery?.[0]?.image_url;
@@ -49,7 +53,7 @@ export default function Projects() {
               <Reveal key={project.id} delay={100 + index * 70}>
                 <article className="core-project-card">
                   <div className="project-cover">
-                    {visual ? <img src={visual} alt={`Ảnh bìa dự án ${project.name}`} /> : <div className="project-cover-empty"><Layers3 size={34} /><span>Chưa có ảnh bìa</span></div>}
+                    {visual ? <img loading="lazy" decoding="async" src={visual} alt={`Ảnh bìa dự án ${project.name}`} /> : <div className="project-cover-empty"><Layers3 size={34} /><span>Chưa có ảnh bìa</span></div>}
                     <div className="project-cover-overlay" />
                     <Link className="project-open" to={`/projects/${project.id}`} onClick={(event) => event.stopPropagation()} aria-label={`Xem ${project.name}`}><ArrowUpRight size={20} /></Link>
                   </div>
@@ -63,7 +67,7 @@ export default function Projects() {
                     </div>
                     <div className="project-actions">
                       <Link className="proj-detail-link" to={`/projects/${project.id}`} onClick={(event) => event.stopPropagation()}>Xem case study <ArrowUpRight size={15} /></Link>
-                      {user ? <button className="project-interest" disabled={interested.includes(project.id)} onClick={(event) => { event.stopPropagation(); markInterest(project.id); }}>{interested.includes(project.id) ? <><Check size={14} /> Đã quan tâm</> : "Quan tâm"}</button> : <Link className="project-interest" to="/login" onClick={(event) => event.stopPropagation()}>Quan tâm</Link>}
+                      {user ? <button className="project-interest" disabled={pending !== null || interested.includes(project.id)} aria-busy={pending === project.id} onClick={(event) => { event.stopPropagation(); markInterest(project.id); }}>{interested.includes(project.id) ? <><Check size={14} /> Đã quan tâm</> : pending === project.id ? "Đang lưu…" : "Quan tâm"}</button> : <Link className="project-interest" to="/login" onClick={(event) => event.stopPropagation()}>Quan tâm</Link>}
                     </div>
                   </div>
                 </article>

@@ -7,8 +7,6 @@ import {
   X,
   Image as ImageIcon,
   Type,
-  Eye,
-  EyeOff,
   ArrowUp,
   ArrowDown,
   Upload,

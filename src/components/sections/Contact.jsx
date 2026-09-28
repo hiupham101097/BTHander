@@ -1,8 +1,8 @@
 import React, { useState } from "react";
-import { ArrowRight, Check, ChevronRight, Send, ShieldCheck, Terminal } from "lucide-react";
+import { ArrowRight, Check, ChevronRight, ShieldCheck, Terminal } from "lucide-react";
 import Reveal from "../ui/Reveal.jsx";
+import { apiRequest } from "../../lib/api.js";
 
-const apiBaseUrl = import.meta.env.VITE_API_BASE_URL || "";
 const initialForm = { name: "", email: "", phone: "", company: "", message: "" };
 
 const DOMAINS = [
@@ -25,6 +25,7 @@ export default function Contact() {
 
   const submit = async (event) => {
     event.preventDefault();
+    if (status === "sending") return;
     setStatus("sending");
     setError("");
 
@@ -34,14 +35,12 @@ export default function Contact() {
     };
 
     try {
-      const response = await fetch(`${apiBaseUrl}/api/support`, {
+      await apiRequest("/api/support", {
         method: "POST",
         credentials: "include",
         headers: { "content-type": "application/json" },
         body: JSON.stringify(payload),
       });
-      const body = await response.json();
-      if (!response.ok) throw new Error(body.errors?.[0] || body.error || "Không thể gửi yêu cầu");
       setForm(initialForm);
       setStatus("sent");
     } catch (requestError) {
@@ -55,7 +54,7 @@ export default function Contact() {
       <div className="wrap contact-layout">
         <Reveal>
           <div className="contact-copy">
-            <span className="eyebrow">// INQUIRY PROTOCOL</span>
+            <span className="eyebrow">{"// INQUIRY PROTOCOL"}</span>
             <h2 className="section-title">Cùng hiện thực hóa bài toán kỹ thuật của bạn.</h2>
             <p className="section-sub">
               Cho chúng tôi biết mục tiêu, phạm vi và tiến độ mong muốn. Đội ngũ kỹ sư BThander sẽ phân tích kiến trúc, rà soát tính khả thi và phản hồi phương án triển khai thực tế.

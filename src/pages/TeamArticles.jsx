@@ -1,3 +1,4 @@
+import { apiRequest } from "../lib/api.js";
 import React, { useEffect, useState } from "react";
 import {
   ArrowLeft,
@@ -119,92 +120,24 @@ export function TeamArticles() {
   const [member, setMember] = useState(null);
   const [state, setState] = useState("loading");
 
+  const [attempt, setAttempt] = useState(0);
   useEffect(() => {
-    loadData();
-  }, [id]);
-
-  async function loadData() {
+    const controller = new AbortController();
     setState("loading");
-    try {
-      const [memberRes, articlesRes] = await Promise.all([
-        fetch(`/api/team/${id}`),
-        fetch(`/api/team/${id}/articles`),
-      ]);
-      let memberData = null;
-      let list = [];
-      if (memberRes.ok) {
-        const b = await memberRes.json();
-        memberData = b.data;
-        setMember(memberData);
-      }
-      if (articlesRes.ok) {
-        const b = await articlesRes.json();
-        list = b.data || [];
-      }
-      if (Array.isArray(memberData?.posts)) {
-        const existingIds = new Set(list.map((a) => a.id));
-        const existingTitles = new Set(list.map((a) => a.title?.trim().toLowerCase()));
-        for (const p of memberData.posts) {
-          if (!existingIds.has(p.id) && !existingTitles.has(p.title?.trim().toLowerCase())) {
-            list.push(p);
-          }
-        }
-      }
-
-      // Fallback articles if none returned
-      if (list.length === 0) {
-        list = [
-          {
-            id: 1,
-            title: "KỶ NGUYÊN AI – KHI CÔNG NGHỆ BẮT ĐẦU THAY ĐỔI CÁCH CON NGƯỜI SỐNG VÀ LÀM VIỆC",
-            excerpt: "Chúng ta đang bước vào một giai đoạn đặc biệt của lịch sử công nghệ, nơi trí tuệ nhân tạo (AI) tái định hình toàn bộ tư duy công việc và đời sống.",
-            thumbnail: "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=800&auto=format&fit=crop",
-            created_at: "2026-09-22T08:00:00.000Z",
-            content: "Chúng ta đang bước vào một giai đoạn đặc biệt của lịch sử công nghệ...",
-          },
-          {
-            id: 2,
-            title: "Tối ưu hóa hiệu năng ứng dụng di động Flutter và chiến lược quản lý State",
-            excerpt: "Phân tích kỹ thuật chuyên sâu về quản lý bộ nhớ, tối ưu render UI 120fps và các pattern bất đồng bộ trong Flutter.",
-            thumbnail: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?q=80&w=800&auto=format&fit=crop",
-            created_at: "2026-09-18T10:30:00.000Z",
-            content: "Nội dung bài viết...",
-          }
-        ];
-      }
-
-      if (!memberData) {
-        setMember({
-          id: id || 1,
-          name: "Phạm Minh Hiếu",
-          title: "Lead Engineer / AI Researcher",
-          avatar_url: null,
-        });
-      }
-
-      setArticles(list);
+    Promise.all([
+      apiRequest(`/api/team/${id}`, { signal: controller.signal }),
+      apiRequest(`/api/team/${id}/articles`, { signal: controller.signal }),
+    ]).then(([profile, result]) => {
+      if (controller.signal.aborted) return;
+      setMember(profile.data);
+      setArticles(result.data || []);
       setState("ready");
-    } catch {
-      // Fallback on error
-      setArticles([
-        {
-          id: 1,
-          title: "KỶ NGUYÊN AI – KHI CÔNG NGHỆ BẮT ĐẦU THAY ĐỔI CÁCH CON NGƯỜI SỐNG VÀ LÀM VIỆC",
-          excerpt: "Chúng ta đang bước vào một giai đoạn đặc biệt của lịch sử công nghệ, nơi trí tuệ nhân tạo (AI) tái định hình toàn bộ tư duy công việc và đời sống.",
-          thumbnail: "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=800&auto=format&fit=crop",
-          created_at: "2026-09-22T08:00:00.000Z",
-          content: "Chúng ta đang bước vào một giai đoạn đặc biệt của lịch sử công nghệ...",
-        },
-      ]);
-      setMember({
-        id: id || 1,
-        name: "Phạm Minh Hiếu",
-        title: "Lead Engineer / AI Researcher",
-        avatar_url: null,
-      });
-      setState("ready");
-    }
-  }
+    }).catch(() => {
+      if (!controller.signal.aborted) setState("error");
+    });
+    return () => controller.abort();
+  }, [id, attempt]);
+  if (state === "error") return <div className="wrap detail-state" role="alert"><p>Chưa thể tải bài viết.</p><button className="btn-primary" onClick={() => setAttempt(value => value + 1)}>Thử lại</button></div>;
 
   return (
     <main className="newspaper-archive-page">
@@ -324,81 +257,29 @@ export function TeamArticleDetail() {
   const [copied, setCopied] = useState(false);
 
   useEffect(() => {
-    loadArticle();
-  }, [articleId]);
-
-  async function loadArticle() {
+    const controller = new AbortController();
     setState("loading");
-    try {
-      let res = await fetch(`/api/articles/${articleId}`);
-      if (!res.ok) {
-        res = await fetch(`/api/posts/${articleId}`);
+    setRelated([]);
+    async function loadArticle() {
+      try {
+        const body = await apiRequest(`/api/articles/${articleId}`, { signal: controller.signal });
+        if (controller.signal.aborted) return;
+        if (!body.data) throw new Error("Article missing");
+        setArticle(body.data);
+        setState("ready");
+        const memberId = body.data.team_member_id || body.data.author_id || id;
+        try {
+          const result = await apiRequest(`/api/team/${memberId}/articles`, { signal: controller.signal });
+          if (!controller.signal.aborted) setRelated((result.data || []).filter(item => item.id !== Number(articleId) && item.status === "published").slice(0, 4));
+        } catch { /* Related content must not hide a successfully loaded article. */ }
+      } catch {
+        if (!controller.signal.aborted) setState("error");
       }
-      if (res.ok) {
-        const body = await res.json();
-        if (body.data) {
-          setArticle(body.data);
-          setState("ready");
+    }
+    loadArticle();
+    return () => controller.abort();
+  }, [id, articleId]);
 
-          const memberId = body.data.team_member_id || body.data.author_id || id;
-          const relRes = await fetch(`/api/team/${memberId}/articles`);
-          if (relRes.ok) {
-            const relBody = await relRes.json();
-            setRelated(
-              (relBody.data || [])
-                .filter((a) => a.id !== Number(articleId) && a.status === "published")
-                .slice(0, 4)
-            );
-          }
-          return;
-        }
-      }
-    } catch {}
-
-    // Fallback: Default full-featured article for preview
-    setArticle({
-      id: articleId || 1,
-      team_member_id: id || 1,
-      member_name: "Phạm Minh Hiếu",
-      member_title: "Lead Engineer / AI Researcher",
-      title: "KỶ NGUYÊN AI – KHI CÔNG NGHỆ BẮT ĐẦU THAY ĐỔI CÁCH CON NGƯỜI SỐNG VÀ LÀM VIỆC",
-      excerpt: "Chúng ta đang bước vào một giai đoạn đặc biệt của lịch sử công nghệ, nơi trí tuệ nhân tạo (AI) không còn là viễn tưởng mà đã hiện diện trực tiếp trong mọi ngóc ngách của công việc và cuộc sống.",
-      thumbnail: "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=1200&auto=format&fit=crop",
-      created_at: "2026-09-22T08:00:00.000Z",
-      content: `Chúng ta đang bước vào một giai đoạn đặc biệt của lịch sử công nghệ, nơi trí tuệ nhân tạo (AI) không còn là khái niệm viễn tưởng trong các bộ phim khoa học mà đã hiện diện trực tiếp trong đời sống thường nhật. Từ chiếc điện thoại thông minh, công cụ làm việc cho đến hệ thống quản lý giao thông, AI đang tái định hình thế giới với tốc độ chưa từng có.
-
-## 1. AI và sự thay đổi trong cách chúng ta làm việc
-
-Một trong những tác động rõ nét nhất của AI là sự biến đổi sâu sắc trong môi trường công sở. Các công việc mang tính lặp đi lặp lại như nhập liệu, phân tích báo cáo cơ bản, hay thậm chí lập trình mã nguồn khởi tạo đang dần được tự động hóa.
-
-Các công cụ AI tạo sinh (Generative AI) không thay thế con người mà đang đóng vai trò như một trợ lý đắc lực, giúp tăng năng suất lao động lên gấp nhiều lần. Thay vì mất hàng giờ để soạn thảo tài liệu hay kiểm thử logic, các kỹ sư phần mềm giờ đây tập trung nhiều hơn vào kiến trúc hệ thống và giải quyết bài toán cốt lõi.
-
-> "AI không thay thế bạn. Người biết sử dụng AI hiệu quả sẽ thay thế những ai từ chối thích nghi."
-
-## 2. Thách thức và cơ hội cho thế hệ kỹ sư mới
-
-Sự bùng nổ của AI cũng đặt ra những yêu cầu khắt khe hơn đối với chất lượng nhân sự. Kỹ năng tư duy phản biện, khả năng đặt câu hỏi chính xác (prompt engineering), và hiểu biết sâu sắc về đạo đức dữ liệu trở thành những tiêu chuẩn bắt buộc.
-
-Tại BThander, chúng tôi không ngừng nghiên cứu và ứng dụng các mô hình học sâu vào việc tối ưu hóa quy trình thiết kế phần mềm và mô phỏng kỹ thuật, giúp rút ngắn thời gian đưa sản phẩm ra thị trường nhưng vẫn đảm bảo độ tin cậy tuyệt đối.`,
-    });
-    setRelated([
-      {
-        id: 2,
-        title: "Tối ưu hóa hiệu năng ứng dụng di động Flutter và chiến lược quản lý State",
-        excerpt: "Phân tích kỹ thuật chuyên sâu về quản lý bộ nhớ, tối ưu render UI 120fps và các pattern bất đồng bộ.",
-        created_at: "2026-09-18T10:30:00.000Z",
-        thumbnail: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?q=80&w=600&auto=format&fit=crop",
-      },
-      {
-        id: 3,
-        title: "Thiết kế hệ thống vi dịch vụ Microservices: Từ Monolith đến Event-Driven",
-        excerpt: "Kinh nghiệm thực chiến khi phân rã hệ thống lõi và xây dựng message broker phân tán.",
-        created_at: "2026-09-12T14:15:00.000Z",
-        thumbnail: "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=600&auto=format&fit=crop",
-      },
-    ]);
-    setState("ready");
-  }
 
   function handleShare() {
     if (navigator.clipboard) {
@@ -570,7 +451,7 @@ Tại BThander, chúng tôi không ngừng nghiên cứu và ứng dụng các m
 
               {/* Consultation CTA */}
               <div className="newspaper-cta-box">
-                <div className="cta-box-tag">// TƯ VẤN KỸ THUẬT</div>
+                <div className="cta-box-tag">{"// TƯ VẤN KỸ THUẬT"}</div>
                 <h4 className="cta-box-title">Cần giải pháp kỹ thuật chuyên sâu?</h4>
                 <p className="cta-box-desc">
                   Trao đổi trực tiếp cùng đội ngũ kỹ sư của chúng tôi về bài toán phần mềm hoặc chuyển đổi công nghệ.

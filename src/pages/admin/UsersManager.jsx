@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useMemo } from "react";
-import { Search, ShieldCheck, User, UserCog } from "lucide-react";
+import { Search } from "lucide-react";
 
 const ROLES = [
   { value: "admin", label: "Quản trị viên", badge: "role-badge-admin" },
@@ -7,11 +7,6 @@ const ROLES = [
   { value: "user", label: "Người dùng", badge: "role-badge-user" },
 ];
 
-function RoleIcon({ role }) {
-  if (role === "admin") return <ShieldCheck size={15} />;
-  if (role === "staff") return <UserCog size={15} />;
-  return <User size={15} />;
-}
 
 export default function UsersManager() {
   const [accounts, setAccounts] = useState([]);

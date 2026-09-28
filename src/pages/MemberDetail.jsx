@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
-import { ArrowLeft, User, FileText, ChevronRight } from "lucide-react";
+import { ArrowLeft, User, FileText } from "lucide-react";
 
 const apiBaseUrl = import.meta.env.VITE_API_BASE_URL || "";
 

@@ -11,6 +11,7 @@ import {
   Monitor
 } from "lucide-react";
 import InteractiveProjectShowcase from "../components/ui/InteractiveProjectShowcase.jsx";
+import { apiRequest } from "../lib/api.js";
 
 const statusIcon = {
   done: CheckCircle2,
@@ -32,23 +33,26 @@ export default function ProjectDetail() {
 
   const [project, setProject] = useState(null);
   const [state, setState] = useState("loading");
+  const [attempt, setAttempt] = useState(0);
 
   useEffect(() => {
-    loadProject();
-  }, [id]);
+    const controller = new AbortController();
+    setState("loading");
+    setProject(null);
+    apiRequest(`/api/projects/${id}`, { signal: controller.signal })
+      .then(body => {
+        if (controller.signal.aborted) return;
+        setProject(body.data);
+        setState("ready");
+      })
+      .catch(error => {
+        if (!controller.signal.aborted) setState(error.status === 404 ? "missing" : "error");
+      });
+    return () => controller.abort();
+  }, [id, attempt]);
 
-  async function loadProject() {
-    try {
-      setState("loading");
-      const response = await fetch(`/api/projects/${id}`);
-      const body = await response.json();
-      if (!response.ok) throw new Error(body.error);
-      setProject(body.data);
-    } catch (e) {
-      setState("error");
-    } finally {
-      setState("ready");
-    }
+  if (state === "error") {
+    return <div className="wrap detail-state" role="alert"><h1>Chưa thể tải dự án</h1><p>Vui lòng kiểm tra kết nối và thử lại.</p><button className="btn-primary" onClick={() => setAttempt(value => value + 1)}>Thử lại</button></div>;
   }
 
   if (state === "loading") {
@@ -65,7 +69,6 @@ export default function ProjectDetail() {
     );
   }
 
-  const gallery = project.gallery || [];
   const roadmap = project.roadmap || [];
   const blocks = stringToBlocks(project.full_description);
 

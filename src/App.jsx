@@ -1,28 +1,30 @@
-import React from "react";
+import React, { lazy, Suspense } from "react";
+import RouteBoundary from "./components/ui/RouteBoundary.jsx";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import MainLayout from "./layouts/MainLayout.jsx";
 import Home from "./pages/Home.jsx";
-import Login from "./pages/Login.jsx";
-import Register from "./pages/Register.jsx";
-import ForgotPassword from "./pages/ForgotPassword.jsx";
+const Login = lazy(() => import("./pages/Login.jsx"));
+const Register = lazy(() => import("./pages/Register.jsx"));
+const ForgotPassword = lazy(() => import("./pages/ForgotPassword.jsx"));
 import { AuthProvider } from "./context/AuthContext.jsx";
 
 import ProtectedRoute from "./components/auth/ProtectedRoute.jsx";
-import AdminLayout from "./layouts/AdminLayout.jsx";
-import Dashboard from "./pages/admin/Dashboard.jsx";
-import ProjectsManager from "./pages/admin/ProjectsManager.jsx";
-import Profile from "./pages/admin/Profile.jsx";
-import CatalogManager from "./pages/admin/CatalogManager.jsx";
-import UsersManager from "./pages/admin/UsersManager.jsx";
-import ContactsManager from "./pages/admin/ContactsManager.jsx";
-import BlogManager from "./pages/admin/BlogManager.jsx";
-import ArticlesManager from "./pages/admin/ArticlesManager.jsx";
-import MyProjectsManager from "./pages/admin/MyProjectsManager.jsx";
-import MyStats from "./pages/admin/MyStats.jsx";
+const AdminLayout = lazy(() => import("./layouts/AdminLayout.jsx"));
+const Dashboard = lazy(() => import("./pages/admin/Dashboard.jsx"));
+const ProjectsManager = lazy(() => import("./pages/admin/ProjectsManager.jsx"));
+const Profile = lazy(() => import("./pages/admin/Profile.jsx"));
+const CatalogManager = lazy(() => import("./pages/admin/CatalogManager.jsx"));
+const UsersManager = lazy(() => import("./pages/admin/UsersManager.jsx"));
+const ContactsManager = lazy(() => import("./pages/admin/ContactsManager.jsx"));
+const BlogManager = lazy(() => import("./pages/admin/BlogManager.jsx"));
+const ArticlesManager = lazy(() => import("./pages/admin/ArticlesManager.jsx"));
+const MyProjectsManager = lazy(() => import("./pages/admin/MyProjectsManager.jsx"));
+const MyStats = lazy(() => import("./pages/admin/MyStats.jsx"));
 
-import ProjectDetail from "./pages/ProjectDetail.jsx";
-import TeamProfile from "./pages/TeamProfile.jsx";
-import { TeamArticleDetail, TeamArticles } from "./pages/TeamArticles.jsx";
+const ProjectDetail = lazy(() => import("./pages/ProjectDetail.jsx"));
+const TeamProfile = lazy(() => import("./pages/TeamProfile.jsx"));
+const TeamArticles = lazy(() => import("./pages/TeamArticles.jsx").then(module => ({ default: module.TeamArticles })));
+const TeamArticleDetail = lazy(() => import("./pages/TeamArticles.jsx").then(module => ({ default: module.TeamArticleDetail })));
 import ScrollToTop from "./components/ScrollToTop.jsx";
 
 export default function App() {
@@ -30,6 +32,8 @@ export default function App() {
     <BrowserRouter>
       <AuthProvider>
         <ScrollToTop />
+        <RouteBoundary>
+        <Suspense fallback={<div className="wrap detail-state" role="status" aria-live="polite">Đang tải trang…</div>}>
         <Routes>
           {/* ── Public ── */}
           <Route element={<MainLayout />}>
@@ -156,7 +160,10 @@ export default function App() {
           >
             <Route index element={<Profile />} />
           </Route>
+          <Route path="*" element={<div className="wrap detail-state"><h1>Không tìm thấy trang</h1><a className="btn-primary" href="/">Về trang chủ</a></div>} />
         </Routes>
+        </Suspense>
+        </RouteBoundary>
       </AuthProvider>
     </BrowserRouter>
   );

@@ -11,6 +11,11 @@ export default function useReveal(threshold = 0.15) {
   useEffect(() => {
     const el = ref.current;
     if (!el) return;
+    const preference = window.matchMedia("(prefers-reduced-motion: reduce)");
+    if (preference.matches || !("IntersectionObserver" in window)) {
+      setShown(true);
+      return;
+    }
 
     const observer = new IntersectionObserver(
       ([entry]) => {
@@ -19,7 +24,7 @@ export default function useReveal(threshold = 0.15) {
           observer.disconnect();
         }
       },
-      { threshold }
+      { threshold, rootMargin: "0px 0px 80px 0px" }
     );
 
     observer.observe(el);

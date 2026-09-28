@@ -7,15 +7,14 @@ import {
   ChevronRight,
   Maximize2,
   X,
-  ExternalLink,
-  Download,
-  Layers,
-  Sparkles,
   Eye,
   CheckCircle2
 } from "lucide-react";
 
 export default function InteractiveProjectShowcase({ project }) {
+  const [activeIndex, setActiveIndex] = useState(0);
+  const [fullscreenOpen, setFullscreenOpen] = useState(false);
+
   if (!project) return null;
 
   // Determine category type
@@ -126,8 +125,6 @@ export default function InteractiveProjectShowcase({ project }) {
     }
   }
 
-  const [activeIndex, setActiveIndex] = useState(0);
-  const [fullscreenOpen, setFullscreenOpen] = useState(false);
 
   const activeScreen = screens[activeIndex] || screens[0];
 

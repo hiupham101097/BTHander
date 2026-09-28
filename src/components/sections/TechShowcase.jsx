@@ -1,4 +1,5 @@
 import React from "react";
+import ResponsiveImage from "../ui/ResponsiveImage.jsx";
 import { ArrowUpRight, Gamepad2, MonitorSmartphone, Smartphone, Wrench } from "lucide-react";
 import Reveal from "../ui/Reveal.jsx";
 
@@ -57,7 +58,7 @@ export default function TechShowcase() {
           {showcase.map((item, index) => (
             <Reveal key={item.title} delay={index * 90} className="tech-card-wrap">
               <article className={`tech-card ${item.className}`}>
-                <img src={item.image} alt={item.title} />
+                <ResponsiveImage src={item.image} alt={item.title} />
                 <div className="tech-card-shade" />
                 <div className="tech-card-content">
                   <div className="tech-card-top">

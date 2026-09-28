@@ -1,4 +1,5 @@
 import React from "react";
+import ResponsiveImage from "../ui/ResponsiveImage.jsx";
 import {
   ArrowDownRight,
   ArrowUpRight,
@@ -8,7 +9,6 @@ import {
   Gamepad2,
   Smartphone,
 } from "lucide-react";
-import Reveal from "../ui/Reveal.jsx";
 
 export default function Hero() {
   return (
@@ -20,19 +20,19 @@ export default function Hero() {
             <span>Phần mềm &amp; Kỹ thuật chế tạo</span>
           </div>
 
-          <Reveal>
+          <div>
             <h1 className="h1">
               Biến ý tưởng kỹ thuật thành <span className="accent">sản phẩm thật.</span>
             </h1>
-          </Reveal>
+          </div>
 
-          <Reveal delay={90}>
+          <div>
             <p className="lead">
               Phần mềm, ứng dụng di động và thiết kế chế tạo máy được xây dựng bởi một đội ngũ tinh gọn, từ nghiên cứu đến bàn giao.
             </p>
-          </Reveal>
+          </div>
 
-          <Reveal delay={160}>
+          <div>
             <div className="hero-actions">
               <a className="btn-primary" href="#contact">
                 Bắt đầu dự án <ArrowUpRight size={17} />
@@ -41,7 +41,7 @@ export default function Hero() {
                 Xem dự án <ArrowDownRight size={16} />
               </a>
             </div>
-          </Reveal>
+          </div>
 
           <div className="hero-trust-row">
             <span><CheckCircle2 size={14} /> Mã nguồn bàn giao đầy đủ</span>
@@ -57,16 +57,18 @@ export default function Hero() {
           </div>
         </div>
 
-        <Reveal delay={80} className="hero-visual">
-          <img
+        <div className="hero-visual">
+          <ResponsiveImage
             src="/images/hero-tech-lab.png"
+            loading="eager"
+            fetchPriority="high"
             alt="Công nghệ phần mềm, game và kỹ thuật chế tạo máy"
           />
           <div className="hero-visual-label">
             <span />
             TECH LAB &amp; PROTOTYPING
           </div>
-        </Reveal>
+        </div>
       </div>
     </header>
   );

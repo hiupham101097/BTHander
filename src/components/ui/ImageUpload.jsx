@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 import { ImagePlus, LoaderCircle, X } from "lucide-react";
+import { prepareImage } from "../../lib/prepareImage.js";
+import { apiRequest } from "../../lib/api.js";
 
 export default function ImageUpload({ value, onChange, label = "Tải ảnh lên" }) {
   const [uploading, setUploading] = useState(false);
@@ -12,10 +14,8 @@ export default function ImageUpload({ value, onChange, label = "Tải ảnh lên
     setError("");
     try {
       const data = new FormData();
-      data.append("file", file);
-      const response = await fetch("/api/media", { method: "POST", credentials: "include", body: data });
-      const body = await response.json();
-      if (!response.ok) throw new Error(body.error || "Không thể tải ảnh.");
+      data.append("file", await prepareImage(file));
+      const body = await apiRequest("/api/media", { method: "POST", body: data, timeout: 60000 });
       onChange(body.data.url);
     } catch (requestError) {
       setError(requestError.message);

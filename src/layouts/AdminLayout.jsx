@@ -1,7 +1,7 @@
+import "../styles/admin.css";
 import React from "react";
 import { NavLink, Outlet, useNavigate, useLocation } from "react-router-dom";
 import {
-  BarChart2,
   ExternalLink,
   FileText,
   FolderKanban,

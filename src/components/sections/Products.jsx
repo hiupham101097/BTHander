@@ -1,4 +1,5 @@
 import React from "react";
+import ResponsiveImage from "../ui/ResponsiveImage.jsx";
 import { ArrowRight, ArrowUpRight, Check } from "lucide-react";
 import Reveal from "../ui/Reveal.jsx";
 import { SALE_PRODUCTS } from "../../constants/data.js";
@@ -22,7 +23,7 @@ export default function Products() {
           {SALE_PRODUCTS.map((p, i) => (
             <Reveal delay={i * 80} key={p.name}>
               <article className="prod-card">
-                <div className="service-visual"><img src={serviceVisuals[i]} alt={`Minh họa ${p.name}`} /><div className="prod-icon"><p.icon size={21} /></div></div>
+                <div className="service-visual"><ResponsiveImage src={serviceVisuals[i]} alt={`Minh họa ${p.name}`} /><div className="prod-icon"><p.icon size={21} /></div></div>
                 <div className="service-card-content">
                   <div className="prod-name">{p.name}</div>
                   <p className="prod-desc">{p.desc}</p>

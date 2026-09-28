@@ -1,7 +1,7 @@
 const encoder = new TextEncoder();
 const json = (body, status = 200, headers = {}) => new Response(body === null ? null : JSON.stringify(body), {
   status,
-  headers: { "content-type": "application/json; charset=utf-8", ...headers },
+  headers: { "content-type": "application/json; charset=utf-8", "cache-control": "private, no-store", ...headers },
 });
 const projectFromRow = (row) => row && ({ ...row, cover_image: row.cover_image || null, languages: JSON.parse(row.languages), configuration: JSON.parse(row.configuration), gallery: JSON.parse(row.gallery || "[]"), roadmap: JSON.parse(row.roadmap || "[]") });
 const productFromRow = (row) => row && ({ ...row, specifications: JSON.parse(row.specifications) });
@@ -630,7 +630,12 @@ export async function onRequest({ request, env, ctx }) {
     if (method === "GET" && url.pathname === "/api/projects") {
       const limit = Math.min(Math.max(1, Number(url.searchParams.get("limit")) || 20), 50);
       const offset = Math.max(0, Number(url.searchParams.get("offset")) || 0);
-      const rows = (await env.DB.prepare("SELECT * FROM projects ORDER BY id DESC LIMIT ? OFFSET ?").bind(limit, offset).all()).results;
+      // Home cards do not need full descriptions, roadmap or the entire gallery.
+      // Keep the default response intact for existing admin clients.
+      const columns = url.searchParams.get("view") === "summary"
+        ? "id, name, description, languages, configuration, price, currency, category, COALESCE(NULLIF(cover_image, ''), json_extract(gallery, '$[0].image_url')) AS cover_image"
+        : "*";
+      const rows = (await env.DB.prepare(`SELECT ${columns} FROM projects ORDER BY id DESC LIMIT ? OFFSET ?`).bind(limit, offset).all()).results;
       return json({ data: rows.map(projectFromRow) });
     }
     if (method === "GET" && parts[1] === "projects" && parts[2]) {

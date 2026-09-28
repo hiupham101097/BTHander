@@ -1,9 +1,9 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { ArrowUpRight, UsersRound, Sparkles, BookOpen } from "lucide-react";
 import { Link } from "react-router-dom";
 import Reveal from "../ui/Reveal.jsx";
 
-const apiBaseUrl = import.meta.env.VITE_API_BASE_URL || "";
+import useApiList from "../../hooks/useApiList.js";
 
 function getInitials(name = "") {
   if (!name) return "BT";
@@ -20,7 +20,7 @@ function parseSkills(skills) {
     try {
       const parsed = JSON.parse(skills);
       if (Array.isArray(parsed)) return parsed;
-    } catch {}
+    } catch { /* Legacy comma-separated skills are supported below. */ }
     return skills.split(",").map((s) => s.trim()).filter(Boolean);
   }
   return [];
@@ -47,29 +47,13 @@ function getFallbackSkills(title = "") {
 }
 
 export default function Team() {
-  const [members, setMembers] = useState([]);
-  const [state, setState] = useState("loading");
+  const { data: members, state, retry } = useApiList("/api/team");
 
-  useEffect(() => {
-    const controller = new AbortController();
-    fetch(`${apiBaseUrl}/api/team`, { signal: controller.signal })
-      .then((response) => {
-        if (!response.ok) throw new Error("Không thể tải đội ngũ");
-        return response.json();
-      })
-      .then((body) => {
-        setMembers(body.data || []);
-        setState("ready");
-      })
-      .catch((error) => {
-        if (error.name !== "AbortError") setState("error");
-      });
-    return () => controller.abort();
-  }, []);
 
   return (
     <section className="section team-section" id="team">
       <div className="wrap team-wrap">
+        {state === "error" && <p className="api-state api-state-error" role="alert">Chưa thể tải đội ngũ. <button className="btn-ghost" onClick={retry}>Thử lại</button></p>}
         <div className="team-heading">
           <div>
             <Reveal>

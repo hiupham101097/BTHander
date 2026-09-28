@@ -1,26 +1,14 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { ArrowUpRight, Download, LayoutGrid, Sparkles } from "lucide-react";
 import Reveal from "../ui/Reveal.jsx";
 
-const apiBaseUrl = import.meta.env.VITE_API_BASE_URL || "";
+import useApiList from "../../hooks/useApiList.js";
 const colors = ["app-cyan", "app-violet", "app-orange", "app-green"];
 
 export default function FreeApps() {
-  const [apps, setApps] = useState([]);
-  const [state, setState] = useState("loading");
+  const { data: products, state, retry } = useApiList("/api/products");
+  const apps = products.filter(item => item.product_type === "trial");
 
-  useEffect(() => {
-    const controller = new AbortController();
-    fetch(`${apiBaseUrl}/api/products`, { signal: controller.signal })
-      .then((response) => response.ok ? response.json() : Promise.reject())
-      .then((body) => {
-        const freeApps = (body.data || []).filter((item) => item.product_type === "trial");
-        setApps(freeApps);
-        setState("ready");
-      })
-      .catch(() => setState("error"));
-    return () => controller.abort();
-  }, []);
 
   return (
     <section className="section free-apps-section" id="free-apps">
@@ -34,7 +22,7 @@ export default function FreeApps() {
         </div>
 
         {state === "loading" && <div className="project-loading"><span /><span /><span /></div>}
-        {state === "error" && <p className="api-state api-state-error">Chưa thể tải danh sách ứng dụng.</p>}
+        {state === "error" && <p role="alert" className="api-state api-state-error">Chưa thể tải danh sách ứng dụng. <button type="button" className="btn-ghost" onClick={retry}>Thử lại</button></p>}
         {state === "ready" && apps.length === 0 && <div className="free-apps-empty"><Sparkles size={22} /><div><strong>Ứng dụng đang được cập nhật</strong><p>Các ứng dụng miễn phí mới sẽ xuất hiện tại đây.</p></div></div>}
 
         {apps.length > 0 && <div className="free-apps-grid">
@@ -43,7 +31,7 @@ export default function FreeApps() {
             return (
               <Reveal key={app.id || app.name} delay={(index % 6) * 55}>
                 <article className={`free-app-card ${colors[index % colors.length]}`}>
-                  <div className="free-app-cover">{app.image_url ? <img src={app.image_url} alt={`Ảnh ứng dụng ${app.name}`} /> : <div className="free-app-cover-empty"><Icon size={30} /></div>}</div>
+                  <div className="free-app-cover">{app.image_url ? <img loading="lazy" decoding="async" src={app.image_url} alt={`Ảnh ứng dụng ${app.name}`} /> : <div className="free-app-cover-empty"><Icon size={30} /></div>}</div>
                   <div className="free-app-icon"><Icon size={21} /></div>
                   <div className="free-app-copy">
                     <h3>{app.name}</h3>

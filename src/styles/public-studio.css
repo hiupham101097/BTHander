@@ -1,5 +1,19 @@
 /* BThander public studio — scoped so admin stays on the existing system. */
 
+.public-shell :focus-visible,
+.auth-page :focus-visible {
+  outline: 2px solid var(--neon, #3ecf8e);
+  outline-offset: 4px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .public-shell .reveal {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+}
+
 .public-shell,
 .auth-page {
   --bg-base: #090c11;
@@ -1369,7 +1383,8 @@
   line-height: 1.68;
   color: #9aa8b7 !important;
   padding-left: 20px;
-  border-left: 3px solid var(--neon);
+  border-left: 1px solid var(--neon);
+  box-shadow: -2px 0 0 rgba(62, 207, 142, 0.25);
   margin: 0 0 36px;
   max-width: 1050px;
 }
@@ -1597,7 +1612,8 @@
 .public-shell .article-block-quote {
   margin: 32px 0;
   padding: 22px 26px;
-  border-left: 3px solid var(--neon);
+  border-left: 1px solid var(--neon);
+  box-shadow: -2px 0 0 rgba(62, 207, 142, 0.25);
   background: rgba(22, 29, 39, 0.45);
   border-radius: 0 4px 4px 0;
   font-style: italic;

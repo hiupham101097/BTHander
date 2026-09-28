@@ -13,7 +13,7 @@ import { Link } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext.jsx";
 
 /* ── Helper ── */
-function StatCard({ icon: Icon, label, value, color = "accent" }) {
+function StatCard({ icon: Icon, label, value }) {
   return (
     <div className="admin-card">
       <div className="admin-card-icon">

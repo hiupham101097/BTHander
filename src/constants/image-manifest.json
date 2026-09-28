@@ -1,0 +1,56 @@
+{
+  "/images/ai-machine-engineering.png": {
+    "src": "/images/optimized/ai-machine-engineering-1200.webp",
+    "srcSet": "/images/optimized/ai-machine-engineering-480.webp 480w, /images/optimized/ai-machine-engineering-800.webp 800w, /images/optimized/ai-machine-engineering-1200.webp 1200w",
+    "width": 1672,
+    "height": 941
+  },
+  "/images/bthander-logo-mark.png": {
+    "src": "/images/optimized/bthander-logo-mark-128.webp",
+    "srcSet": "/images/optimized/bthander-logo-mark-64.webp 64w, /images/optimized/bthander-logo-mark-128.webp 128w",
+    "width": 1254,
+    "height": 1254
+  },
+  "/images/game-development.png": {
+    "src": "/images/optimized/game-development-1200.webp",
+    "srcSet": "/images/optimized/game-development-480.webp 480w, /images/optimized/game-development-800.webp 800w, /images/optimized/game-development-1200.webp 1200w",
+    "width": 1536,
+    "height": 1024
+  },
+  "/images/hero-tech-lab.png": {
+    "src": "/images/optimized/hero-tech-lab-1200.webp",
+    "srcSet": "/images/optimized/hero-tech-lab-480.webp 480w, /images/optimized/hero-tech-lab-800.webp 800w, /images/optimized/hero-tech-lab-1200.webp 1200w",
+    "width": 1672,
+    "height": 941
+  },
+  "/images/management-website.png": {
+    "src": "/images/optimized/management-website-1200.webp",
+    "srcSet": "/images/optimized/management-website-480.webp 480w, /images/optimized/management-website-800.webp 800w, /images/optimized/management-website-1200.webp 1200w",
+    "width": 1536,
+    "height": 1024
+  },
+  "/images/mobile-development.png": {
+    "src": "/images/optimized/mobile-development-1200.webp",
+    "srcSet": "/images/optimized/mobile-development-480.webp 480w, /images/optimized/mobile-development-800.webp 800w, /images/optimized/mobile-development-1200.webp 1200w",
+    "width": 1536,
+    "height": 1024
+  },
+  "/images/service-freelance-software.png": {
+    "src": "/images/optimized/service-freelance-software-1200.webp",
+    "srcSet": "/images/optimized/service-freelance-software-480.webp 480w, /images/optimized/service-freelance-software-800.webp 800w, /images/optimized/service-freelance-software-1200.webp 1200w",
+    "width": 1536,
+    "height": 1024
+  },
+  "/images/service-machine-cad.png": {
+    "src": "/images/optimized/service-machine-cad-1200.webp",
+    "srcSet": "/images/optimized/service-machine-cad-480.webp 480w, /images/optimized/service-machine-cad-800.webp 800w, /images/optimized/service-machine-cad-1200.webp 1200w",
+    "width": 1536,
+    "height": 1024
+  },
+  "/images/service-technical-consulting.png": {
+    "src": "/images/optimized/service-technical-consulting-1200.webp",
+    "srcSet": "/images/optimized/service-technical-consulting-480.webp 480w, /images/optimized/service-technical-consulting-800.webp 800w, /images/optimized/service-technical-consulting-1200.webp 1200w",
+    "width": 1536,
+    "height": 1024
+  }
+}

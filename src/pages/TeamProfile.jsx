@@ -38,15 +38,13 @@ export default function TeamProfile() {
   const [state, setState] = useState("loading");
 
   useEffect(() => {
-    loadData();
-  }, [id]);
-
-  async function loadData() {
+    const controller = new AbortController();
+    async function loadData() {
     setState("loading");
     try {
       const [memberRes, articlesRes] = await Promise.all([
-        fetch(`/api/team/${id}`),
-        fetch(`/api/team/${id}/articles`),
+        fetch(`/api/team/${id}`, { signal: controller.signal }),
+        fetch(`/api/team/${id}/articles`, { signal: controller.signal }),
       ]);
       if (!memberRes.ok) { setState("error"); return; }
       const memberBody = await memberRes.json();
@@ -73,9 +71,12 @@ export default function TeamProfile() {
       setArticles(list);
       setState("ready");
     } catch {
-      setState("error");
+      if (!controller.signal.aborted) setState("error");
     }
-  }
+    }
+    loadData();
+    return () => controller.abort();
+  }, [id]);
 
   if (state === "loading") {
     return (
