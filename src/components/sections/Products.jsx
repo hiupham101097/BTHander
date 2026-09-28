@@ -15,7 +15,7 @@ export default function Products() {
     <section className="section services-section" id="products">
       <div className="wrap">
         <div className="services-heading">
-          <Reveal><h2 className="section-title">Đội ngũ kỹ thuật cho những bài toán cần làm thật.</h2></Reveal>
+          <h2 className="section-title">Đội ngũ kỹ thuật cho những bài toán cần làm thật.</h2>
           <Reveal delay={70}><div className="services-side-copy"><p>Từ phần mềm đến thiết kế máy, chúng tôi tham gia với phạm vi rõ ràng và đầu ra có thể triển khai.</p><a href="#contact">Nhận tư vấn <ArrowUpRight size={15} /></a></div></Reveal>
         </div>
 

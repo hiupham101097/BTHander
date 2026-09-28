@@ -2818,6 +2818,7 @@
 .public-shell .projects-heading .section-sub,
 .public-shell .free-apps-head .section-sub,
 .public-shell .services-side-copy { margin: 0 !important; max-width: 42ch; justify-self: end; }
+.public-shell .services-heading > .section-title { margin: 0 !important; opacity: 1 !important; transform: none !important; }
 .public-shell .core-project-grid,
 .public-shell .prod-grid,
 .public-shell .free-apps-grid { gap: 20px !important; margin-top: 0 !important; }
