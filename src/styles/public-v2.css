@@ -218,6 +218,7 @@
 }
 .public-shell .core-project-grid > .reveal { grid-column: span 4; }
 .public-shell .core-project-grid > .reveal:first-child { grid-column: span 8; }
+.public-shell .core-project-grid > .reveal:nth-child(n + 3) { grid-column: span 6; }
 .public-shell .core-project-card {
   border: 1px solid var(--studio-line) !important;
   border-radius: var(--studio-radius) !important;
