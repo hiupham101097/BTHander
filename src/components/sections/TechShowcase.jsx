@@ -46,7 +46,7 @@ export default function TechShowcase() {
           <div className="tech-intro">
             <div>
               <span className="eyebrow">Năng lực thực thi</span>
-              <h2>Năng lực đa ngành.<br />Một chuẩn triển khai.</h2>
+              <h2>Năng lực đa ngành. Một chuẩn triển khai.</h2>
             </div>
             <p>
               Từ mã nguồn phần mềm đến bản vẽ chế tạo cơ khí, mọi sản phẩm của BThander đều được xây dựng để vận hành chính xác trong thực tế.

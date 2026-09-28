@@ -37,7 +37,7 @@ export default function Projects() {
     <section className="section projects-section" id="projects">
       <div className="wrap">
         <div className="projects-heading">
-          <Reveal><h2 className="section-title">Sản phẩm thật.<br />Năng lực nhìn thấy được.</h2></Reveal>
+          <Reveal><h2 className="section-title">Sản phẩm thật. Năng lực nhìn thấy được.</h2></Reveal>
           <Reveal delay={70}><p className="section-sub">Mỗi dự án được thiết kế, kiểm chứng và bàn giao với phạm vi rõ ràng.</p></Reveal>
         </div>
 

@@ -2806,6 +2806,42 @@
 .public-shell .hero-visual { animation: studio-focus .85s cubic-bezier(.22,1,.36,1) 120ms both; }
 .public-shell .reveal { transition-duration: .7s !important; }
 .public-shell .reveal-in { opacity: 1 !important; transform: translateY(0) !important; }
+.public-shell .projects-heading,
+.public-shell .services-heading,
+.public-shell .free-apps-head {
+  display: grid !important;
+  grid-template-columns: minmax(0, 1.15fr) minmax(240px, .85fr) !important;
+  align-items: end !important;
+  gap: clamp(28px, 6vw, 88px) !important;
+  margin-bottom: 30px !important;
+}
+.public-shell .projects-heading .section-sub,
+.public-shell .free-apps-head .section-sub,
+.public-shell .services-side-copy { margin: 0 !important; max-width: 42ch; justify-self: end; }
+.public-shell .core-project-grid,
+.public-shell .prod-grid,
+.public-shell .free-apps-grid { gap: 20px !important; margin-top: 0 !important; }
+.public-shell .team-heading { gap: clamp(28px, 6vw, 88px) !important; margin-bottom: 30px !important; }
+.public-shell .contact-layout { gap: clamp(34px, 7vw, 96px) !important; }
+.public-shell .core-project-card,
+.public-shell .prod-card,
+.public-shell .free-app-card,
+.public-shell .team-card.team-card-v2 { transition: transform .4s cubic-bezier(.22,1,.36,1), border-color .3s ease, box-shadow .4s ease !important; }
+.public-shell .core-project-card:hover,
+.public-shell .prod-card:hover,
+.public-shell .free-app-card:hover,
+.public-shell .team-card.team-card-v2:hover { transform: translateY(-6px) !important; }
+@media (max-width: 820px) {
+  .public-shell .projects-heading,
+  .public-shell .services-heading,
+  .public-shell .free-apps-head { grid-template-columns: 1fr !important; gap: 14px !important; }
+  .public-shell .projects-heading .section-sub,
+  .public-shell .free-apps-head .section-sub,
+  .public-shell .services-side-copy { justify-self: start; }
+  .public-shell .team-heading { grid-template-columns: 1fr !important; gap: 18px !important; }
+  .public-shell .hero { grid-template-columns: 1fr !important; }
+  .public-shell .hero-visual { min-height: 320px !important; height: min(72vw, 480px) !important; }
+}
 @media (prefers-reduced-motion: reduce) {
   .public-shell .hero-copy > *, .public-shell .hero-visual { animation: none !important; }
 }
