@@ -2774,3 +2774,39 @@
 .public-shell .contact-form input::placeholder,
 .public-shell .contact-form textarea::placeholder { color: var(--ink-subtle) !important; }
 
+/* Composition pass: shorter vertical rhythm, deliberate type wrapping, visible motion. */
+.public-shell .section { padding-block: clamp(56px, 6vw, 82px) !important; }
+.public-shell .hero { padding-block: clamp(54px, 7vw, 88px) !important; gap: clamp(28px, 4vw, 56px) !important; }
+.public-shell .h1 { max-width: 16ch !important; font-size: clamp(42px, 5.2vw, 70px) !important; line-height: 1.06 !important; font-weight: 700 !important; }
+.public-shell .section-title { max-width: 24ch !important; font-size: clamp(34px, 4vw, 52px) !important; line-height: 1.12 !important; font-weight: 700 !important; }
+.public-shell .team-title { max-width: 22ch !important; line-height: 1.12 !important; font-weight: 700 !important; }
+.public-shell .tech-intro h2 { max-width: 22ch !important; line-height: 1.12 !important; font-weight: 700 !important; }
+.public-shell .tech-showcase { padding-block: clamp(58px, 6vw, 82px) !important; }
+.public-shell .tech-intro { margin-bottom: 24px !important; padding-bottom: 20px !important; }
+.public-shell .lead,
+.public-shell .section-sub,
+.public-shell .tech-intro p,
+.public-shell .project-description,
+.public-shell .prod-desc,
+.public-shell .team-bio { color: #b7c4d3 !important; }
+
+@keyframes studio-rise {
+  from { opacity: 0; transform: translateY(18px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes studio-focus {
+  from { opacity: 0; transform: translateX(20px) scale(.985); }
+  to { opacity: 1; transform: translateX(0) scale(1); }
+}
+.public-shell .hero-copy > * { animation: studio-rise .7s cubic-bezier(.22,1,.36,1) both; }
+.public-shell .hero-copy > *:nth-child(2) { animation-delay: 90ms; }
+.public-shell .hero-copy > *:nth-child(3) { animation-delay: 160ms; }
+.public-shell .hero-copy > *:nth-child(4) { animation-delay: 230ms; }
+.public-shell .hero-copy > *:nth-child(5) { animation-delay: 300ms; }
+.public-shell .hero-visual { animation: studio-focus .85s cubic-bezier(.22,1,.36,1) 120ms both; }
+.public-shell .reveal { transition-duration: .7s !important; }
+.public-shell .reveal-in { opacity: 1 !important; transform: translateY(0) !important; }
+@media (prefers-reduced-motion: reduce) {
+  .public-shell .hero-copy > *, .public-shell .hero-visual { animation: none !important; }
+}
+
