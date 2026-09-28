@@ -2,7 +2,7 @@
 
 .admin-shell,
 .admin-shell * {
-  font-family: 'Plus Jakarta Sans', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
+  font-family: 'Source Sans 3', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif !important;
 }
 
 .admin-shell button,
@@ -10,6 +10,349 @@
 .admin-shell textarea,
 .admin-shell select {
   font-family: inherit !important;
+}
+
+/* Operations UI: calm surfaces, clear hierarchy, predictable input mechanics. */
+.admin-shell {
+  --admin-bg: #f5f7fa;
+  --admin-surface: #ffffff;
+  --admin-surface-subtle: #f8fafc;
+  --admin-border: #d8e0ea;
+  --admin-border-strong: #b9c6d5;
+  --admin-ink: #17212f;
+  --admin-muted: #526174;
+  --admin-faint: #738196;
+  --admin-accent: #146c54;
+  --admin-accent-hover: #0f5745;
+  --admin-danger: #b42318;
+  background: var(--admin-bg);
+  color: var(--admin-ink);
+}
+
+.admin-shell button,
+.admin-shell input,
+.admin-shell textarea,
+.admin-shell select {
+  font-size: 14px;
+}
+
+.admin-shell input,
+.admin-shell textarea,
+.admin-shell select {
+  min-height: 44px;
+  border: 1px solid var(--admin-border);
+  border-radius: 8px;
+  background: var(--admin-surface);
+  color: var(--admin-ink);
+  transition: border-color 160ms ease, box-shadow 160ms ease, background-color 160ms ease;
+}
+
+.admin-shell textarea {
+  min-height: 112px;
+  resize: vertical;
+  line-height: 1.5;
+}
+
+.admin-shell input::placeholder,
+.admin-shell textarea::placeholder {
+  color: var(--admin-faint);
+  opacity: 1;
+}
+
+.admin-shell input:hover,
+.admin-shell textarea:hover,
+.admin-shell select:hover {
+  border-color: var(--admin-border-strong);
+}
+
+.admin-shell input:focus,
+.admin-shell textarea:focus,
+.admin-shell select:focus,
+.admin-shell input:focus-visible,
+.admin-shell textarea:focus-visible,
+.admin-shell select:focus-visible {
+  outline: 3px solid rgba(20, 108, 84, 0.18);
+  outline-offset: 1px;
+  border-color: var(--admin-accent);
+  box-shadow: none;
+}
+
+.admin-shell label,
+.admin-shell .admin-field-label {
+  color: var(--admin-ink);
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1.35;
+}
+
+.admin-shell .form-error,
+.admin-shell [role="alert"] {
+  color: var(--admin-danger);
+}
+
+.admin-shell .btn-primary,
+.admin-shell button[type="submit"] {
+  min-height: 44px;
+  border: 1px solid var(--admin-accent);
+  background: var(--admin-accent);
+  color: #fff;
+  box-shadow: none;
+  transition: background-color 160ms ease, transform 160ms ease, box-shadow 160ms ease;
+}
+
+.admin-shell .btn-primary:hover,
+.admin-shell button[type="submit"]:hover {
+  background: var(--admin-accent-hover);
+  box-shadow: 0 3px 10px rgba(20, 108, 84, 0.18);
+  transform: translateY(-1px);
+}
+
+.admin-shell button:active {
+  transform: translateY(0);
+}
+
+.admin-shell button:disabled,
+.admin-shell input:disabled,
+.admin-shell textarea:disabled,
+.admin-shell select:disabled {
+  cursor: not-allowed;
+  opacity: 0.58;
+}
+
+.admin-shell .admin-form,
+.admin-shell .admin-panel,
+.admin-shell .admin-table-wrap,
+.admin-shell .admin-card {
+  background: var(--admin-surface);
+  border-color: var(--admin-border);
+  box-shadow: 0 1px 3px rgba(23, 33, 47, 0.05);
+}
+
+.admin-shell .admin-card::before {
+  height: 2px;
+  background: var(--admin-accent);
+}
+
+.admin-shell .admin-card:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 5px 16px rgba(23, 33, 47, 0.09);
+}
+
+.admin-shell .admin-card-value,
+.admin-shell .admin-section-title,
+.admin-shell .admin-panel-title,
+.admin-shell .admin-form-header h3 {
+  color: var(--admin-ink);
+  font-family: inherit;
+}
+
+.admin-shell .admin-card-label,
+.admin-shell .admin-welcome,
+.admin-shell .admin-panel-item-sub,
+.admin-shell .admin-topbar-breadcrumb {
+  color: var(--admin-muted);
+}
+
+.admin-shell .admin-table th {
+  color: var(--admin-muted);
+  background: var(--admin-surface-subtle);
+  text-transform: none;
+  letter-spacing: 0.01em;
+  font-size: 12px;
+}
+
+.admin-shell .admin-table td {
+  color: var(--admin-ink);
+}
+
+.admin-shell .admin-table tbody tr:hover td {
+  background: #f2f7f5;
+}
+
+.admin-shell .admin-search {
+  min-height: 44px;
+  border-color: var(--admin-border);
+}
+
+.admin-shell .admin-search input {
+  min-height: 30px;
+  border: 0;
+  box-shadow: none;
+}
+
+.admin-shell .admin-search input:focus {
+  outline: none;
+}
+
+.admin-shell .admin-nav-link.active {
+  background: var(--admin-accent);
+  box-shadow: none;
+}
+
+.admin-shell .admin-nav-link,
+.admin-shell .admin-back-site,
+.admin-shell .admin-logout {
+  transition: background-color 160ms ease, color 160ms ease, transform 160ms ease;
+}
+
+.admin-shell .admin-nav-link:focus-visible,
+.admin-shell .admin-back-site:focus-visible,
+.admin-shell .admin-logout:focus-visible {
+  outline: 2px solid #8de1c5;
+  outline-offset: 2px;
+}
+
+@media (max-width: 760px) {
+  .admin-shell .admin-sidebar {
+    width: 100%;
+    height: auto;
+    min-height: 0;
+    position: relative;
+    flex-basis: auto;
+  }
+
+  .admin-shell .admin-nav {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    padding: 10px;
+  }
+
+  .admin-shell .admin-nav-section-label,
+  .admin-shell .admin-sidebar-footer {
+    display: none;
+  }
+
+  .admin-shell .admin-content {
+    padding: 20px 16px;
+  }
+
+  .admin-shell .admin-topbar {
+    padding: 0 16px;
+    min-height: 64px;
+  }
+
+  .admin-shell .admin-user-info {
+    display: none;
+  }
+
+  .admin-shell .admin-toolbar-right {
+    width: 100%;
+  }
+
+  .admin-shell .admin-search {
+    flex: 1;
+  }
+
+  .admin-shell .admin-search input {
+    width: 100%;
+  }
+
+  .admin-shell .admin-table-wrap {
+    overflow-x: auto;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .admin-shell *,
+  .admin-shell *::before,
+  .admin-shell *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Final cascade guard: legacy admin rules above cannot lower contrast or replace the UI font. */
+.admin-shell,
+.admin-shell * {
+  font-family: 'Source Sans 3', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif !important;
+}
+
+.admin-shell .admin-card-value,
+.admin-shell .admin-topbar-title,
+.admin-shell .admin-section-title,
+.admin-shell .admin-panel-title,
+.admin-shell .admin-form-header h3,
+.admin-shell .admin-table td {
+  color: var(--admin-ink);
+}
+
+.admin-shell .admin-form-grid input,
+.admin-shell .admin-form-grid textarea,
+.admin-shell .admin-form-grid select,
+.admin-shell .admin-field-label input,
+.admin-shell .admin-field-label textarea {
+  min-height: 44px;
+  color: var(--admin-ink);
+  background: var(--admin-surface);
+  border-color: var(--admin-border);
+}
+
+.admin-shell .admin-form-grid textarea,
+.admin-shell .admin-field-label textarea {
+  min-height: 112px;
+}
+
+.admin-shell .admin-form-grid input:focus,
+.admin-shell .admin-form-grid textarea:focus,
+.admin-shell .admin-form-grid select:focus,
+.admin-shell .admin-field-label input:focus,
+.admin-shell .admin-field-label textarea:focus {
+  border-color: var(--admin-accent);
+  outline: 3px solid rgba(20, 108, 84, 0.18);
+  box-shadow: none;
+}
+
+.admin-shell .admin-form-grid {
+  gap: 18px 20px;
+}
+
+.admin-shell .admin-form-header {
+  margin-bottom: 22px;
+}
+
+.admin-shell .form-error {
+  padding: 10px 12px;
+  border: 1px solid #f2b8b5;
+  border-radius: 8px;
+  background: #fff4f2;
+  color: var(--admin-danger);
+  font-size: 13px;
+  line-height: 1.45;
+}
+
+.admin-shell .admin-note {
+  color: var(--admin-muted);
+  line-height: 1.5;
+}
+
+.admin-shell .status-pill,
+.admin-shell .role-badge {
+  font-weight: 600;
+  letter-spacing: 0;
+}
+
+.admin-shell .icon-btn {
+  min-width: 36px;
+  min-height: 36px;
+  border-color: var(--admin-border);
+  color: var(--admin-muted);
+  background: var(--admin-surface);
+  transition: color 160ms ease, border-color 160ms ease, background-color 160ms ease, transform 160ms ease;
+}
+
+.admin-shell .icon-btn:hover {
+  border-color: var(--admin-accent);
+  color: var(--admin-accent);
+  background: #f2f7f5;
+  transform: translateY(-1px);
+}
+
+.admin-shell .icon-danger:hover {
+  border-color: #d92d20;
+  color: #b42318;
+  background: #fff4f2;
 }
 
 .admin-shell {
@@ -403,7 +746,8 @@
   aspect-ratio: 16 / 10;
   max-height: 140px;
   border-radius: 8px;
-  border-top: 14px solid #1e293b;
+  border: 1px solid #cbd5e1;
+  box-shadow: inset 0 14px 0 #1e293b;
 }
 
 .admin-mockup-img {
@@ -721,16 +1065,6 @@
   transform: translateY(-2px);
 }
 
-.admin-card::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 3px;
-  background: linear-gradient(90deg, var(--accent) 0%, #34d399 100%);
-}
-
 .admin-card-icon {
   width: 42px;
   height: 42px;
@@ -744,7 +1078,7 @@
 }
 
 .admin-card-value {
-  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-family: 'Source Sans 3', system-ui, sans-serif;
   font-size: 30px;
   font-weight: 800;
   color: #0f172a;

@@ -1,5 +1,379 @@
 /* BThander public studio — scoped so admin stays on the existing system. */
 
+.public-shell,
+.auth-page {
+  font-family: 'Source Sans 3', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+}
+
+.public-shell input,
+.public-shell textarea,
+.public-shell select,
+.auth-page input,
+.auth-page textarea,
+.auth-page select {
+  font-family: inherit;
+  font-size: 16px;
+}
+
+/* Public visual reset: a quiet editorial surface for client-facing pages. */
+.public-shell {
+  --bg-base: #f7f9fc;
+  --bg-panel: #ffffff;
+  --bg-card: #ffffff;
+  --bg-card-2: #f1f5f9;
+  --line: #e1e7ef;
+  --line-strong: #c9d3df;
+  --ink: #162235;
+  --ink-mid: #536174;
+  --ink-subtle: #738196;
+  --accent: #1f6feb;
+  --accent-light: #1558c0;
+  --accent-soft: #edf4ff;
+  --neon: #1f6feb;
+  --neon-dim: #edf4ff;
+  --neon-glow: rgba(31, 111, 235, 0.18);
+  background: var(--bg-base);
+  color: var(--ink);
+}
+
+.public-shell .nav {
+  background: rgba(247, 249, 252, 0.92);
+  border-bottom-color: var(--line);
+  backdrop-filter: blur(14px);
+}
+
+.public-shell .nav.nav-scrolled,
+.public-shell .nav.scrolled {
+  background: rgba(247, 249, 252, 0.98);
+  border-bottom-color: var(--line-strong);
+  box-shadow: 0 2px 12px rgba(22, 34, 53, 0.06);
+}
+
+.public-shell .brand-name,
+.public-shell .nav-links a:hover,
+.public-shell .nav-login:hover {
+  color: var(--ink);
+}
+
+.public-shell .brand-name span,
+.public-shell .nav-links a,
+.public-shell .nav-login {
+  color: var(--ink-mid);
+}
+
+.public-shell .nav-cta,
+.public-shell .btn-primary {
+  background: var(--accent);
+  color: #fff;
+  border: 1px solid var(--accent);
+}
+
+.public-shell .nav-cta:hover,
+.public-shell .btn-primary:hover {
+  background: var(--accent-light);
+  filter: none;
+  box-shadow: 0 5px 14px rgba(31, 111, 235, 0.18);
+}
+
+.public-shell .btn-ghost {
+  color: var(--ink);
+  border-color: var(--line-strong);
+  background: #fff;
+}
+
+.public-shell .btn-ghost:hover {
+  border-color: var(--accent);
+  background: var(--accent-soft);
+}
+
+.public-shell .hero-shell,
+.public-shell .tech-showcase,
+.public-shell .services-section,
+.public-shell .projects-section,
+.public-shell .contact-section,
+.public-shell .footer {
+  background: var(--bg-base);
+}
+
+.public-shell .hero-shell {
+  border-bottom: 1px solid var(--line);
+}
+
+.public-shell .h1,
+.public-shell .section-title,
+.public-shell .team-title,
+.public-shell .tech-intro h2,
+.public-shell .detail-hero-title {
+  color: var(--ink);
+  letter-spacing: -0.032em;
+}
+
+.public-shell .h1 .accent {
+  color: var(--accent);
+}
+
+.public-shell .lead,
+.public-shell .section-sub,
+.public-shell .tech-intro p,
+.public-shell .team-intro,
+.public-shell .services-side-copy p,
+.public-shell .contact-note,
+.public-shell .footer-desc {
+  color: var(--ink-mid);
+}
+
+.public-shell .kicker,
+.public-shell .eyebrow,
+.public-shell .hero-capabilities,
+.public-shell .hero-trust-row,
+.public-shell .tech-card-tag,
+.public-shell .hero-visual-label {
+  color: var(--ink-subtle);
+}
+
+.public-shell .kicker-dot,
+.public-shell .hero-trust-row svg,
+.public-shell .tech-card-link,
+.public-shell .services-side-copy a,
+.public-shell .proj-detail-link,
+.public-shell .project-languages,
+.public-shell .prod-price,
+.public-shell .team-cta-button {
+  color: var(--accent);
+}
+
+.public-shell .tech-card,
+.public-shell .core-project-card,
+.public-shell .prod-card,
+.public-shell .free-app-card,
+.public-shell .team-card.team-card-v2,
+.public-shell .contact-terminal-box {
+  background: var(--bg-panel);
+  border: 1px solid var(--line);
+  box-shadow: 0 8px 28px rgba(22, 34, 53, 0.06);
+}
+
+.public-shell .tech-card:hover,
+.public-shell .core-project-card:hover,
+.public-shell .prod-card:hover,
+.public-shell .free-app-card:hover,
+.public-shell .team-card.team-card-v2:hover {
+  border-color: #b8cce9;
+  box-shadow: 0 14px 34px rgba(22, 34, 53, 0.10);
+  transform: translateY(-3px);
+}
+
+.public-shell .tech-card-shade,
+.public-shell .project-cover-overlay {
+  background: linear-gradient(to bottom, transparent 28%, rgba(12, 24, 42, 0.74));
+}
+
+.public-shell .project-card-description,
+.public-shell .project-description,
+.public-shell .prod-desc,
+.public-shell .team-bio,
+.public-shell .free-app-copy p {
+  color: var(--ink-mid);
+}
+
+.public-shell .project-meta-row,
+.public-shell .prod-footer,
+.public-shell .team-card-footer {
+  border-top-color: var(--line);
+}
+
+.public-shell .project-interest,
+.public-shell .contact-chip,
+.public-shell .free-app-tags span,
+.public-shell .team-skill-badge {
+  color: var(--accent);
+  background: var(--accent-soft);
+  border-color: #c9dcfa;
+}
+
+.public-shell .stats-strip,
+.public-shell .team-section,
+.public-shell .free-apps-section {
+  background: #eef3f8;
+  border-block: 1px solid var(--line);
+}
+
+.public-shell .stat-cell,
+.public-shell .stat-cell:last-child {
+  border-color: var(--line);
+}
+
+.public-shell .stat-value,
+.public-shell .stat-label,
+.public-shell .team-name,
+.public-shell .core-project-card h3,
+.public-shell .prod-name,
+.public-shell .free-app-copy h3 {
+  color: var(--ink);
+}
+
+.public-shell .contact-terminal-box {
+  border-radius: 14px;
+}
+
+.public-shell .contact-form input,
+.public-shell .contact-form textarea {
+  color: var(--ink);
+  background: #fff;
+  border-color: var(--line-strong);
+}
+
+.public-shell .contact-form input::placeholder,
+.public-shell .contact-form textarea::placeholder {
+  color: var(--ink-subtle);
+}
+
+.public-shell .contact-form input:focus,
+.public-shell .contact-form textarea:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(31, 111, 235, 0.13);
+}
+
+.public-shell .footer {
+  color: var(--ink-mid);
+  border-top-color: var(--line);
+}
+
+@media (max-width: 760px) {
+  .public-shell .hero {
+    gap: 34px;
+  }
+
+  .public-shell .hero-actions {
+    flex-wrap: wrap;
+  }
+
+  .public-shell .section {
+    padding-block: 68px;
+  }
+}
+
+/* Final public cascade: these values intentionally win over legacy studio rules above. */
+.public-shell {
+  background: #f7f9fc;
+  color: #162235;
+}
+
+.public-shell .nav,
+.public-shell .nav.nav-scrolled,
+.public-shell .nav.scrolled {
+  background: rgba(247, 249, 252, 0.96);
+  border-bottom-color: #e1e7ef;
+  box-shadow: 0 2px 12px rgba(22, 34, 53, 0.06);
+}
+
+.public-shell .hero-shell,
+.public-shell .tech-showcase,
+.public-shell .projects-section,
+.public-shell .services-section,
+.public-shell .contact-section,
+.public-shell .footer {
+  background: #f7f9fc;
+}
+
+.public-shell .stats-strip,
+.public-shell .team-section,
+.public-shell .free-apps-section {
+  background: #eef3f8;
+  border-block: 1px solid #e1e7ef;
+}
+
+.public-shell .h1,
+.public-shell .section-title,
+.public-shell .team-title,
+.public-shell .tech-intro h2,
+.public-shell .detail-hero-title,
+.public-shell .core-project-card h3,
+.public-shell .prod-name,
+.public-shell .team-name,
+.public-shell .free-app-copy h3 {
+  color: #162235;
+}
+
+.public-shell .lead,
+.public-shell .section-sub,
+.public-shell .tech-intro p,
+.public-shell .team-intro,
+.public-shell .services-side-copy p,
+.public-shell .project-description,
+.public-shell .prod-desc,
+.public-shell .team-bio,
+.public-shell .free-app-copy p {
+  color: #536174;
+}
+
+.public-shell .h1 .accent,
+.public-shell .tech-card-link,
+.public-shell .proj-detail-link,
+.public-shell .project-languages,
+.public-shell .services-side-copy a,
+.public-shell .prod-price,
+.public-shell .team-cta-button {
+  color: #1f6feb;
+}
+
+.public-shell .nav-cta,
+.public-shell .btn-primary {
+  color: #fff;
+  background: #1f6feb;
+  border-color: #1f6feb;
+}
+
+.public-shell .btn-ghost {
+  color: #162235;
+  background: #fff;
+  border-color: #c9d3df;
+}
+
+.public-shell .tech-card,
+.public-shell .core-project-card,
+.public-shell .prod-card,
+.public-shell .free-app-card,
+.public-shell .team-card.team-card-v2,
+.public-shell .contact-terminal-box {
+  background: #fff;
+  border-color: #e1e7ef;
+  box-shadow: 0 8px 28px rgba(22, 34, 53, 0.06);
+}
+
+.public-shell .tech-card:hover,
+.public-shell .core-project-card:hover,
+.public-shell .prod-card:hover,
+.public-shell .free-app-card:hover,
+.public-shell .team-card.team-card-v2:hover {
+  border-color: #b8cce9;
+  box-shadow: 0 14px 34px rgba(22, 34, 53, 0.1);
+}
+
+.public-shell .contact-form input,
+.public-shell .contact-form textarea {
+  color: #162235;
+  background: #fff;
+  border-color: #c9d3df;
+}
+
+.public-shell .contact-form input::placeholder,
+.public-shell .contact-form textarea::placeholder {
+  color: #738196;
+}
+
+.public-shell .contact-form input:focus,
+.public-shell .contact-form textarea:focus {
+  border-color: #1f6feb;
+  box-shadow: 0 0 0 3px rgba(31, 111, 235, 0.13);
+}
+
+@media (max-width: 760px) {
+  .public-shell .section {
+    padding-block: 68px;
+  }
+}
+
 .public-shell :focus-visible,
 .auth-page :focus-visible {
   outline: 2px solid var(--neon, #3ecf8e);
@@ -2242,4 +2616,64 @@
     align-items: flex-start;
   }
 }
+
+/* Final public cascade: client-facing pages use the calm light system. */
+.public-shell { background: #f7f9fc; color: #162235; }
+.public-shell .nav,
+.public-shell .nav.nav-scrolled,
+.public-shell .nav.scrolled { background: rgba(247,249,252,.97); border-bottom-color: #e1e7ef; box-shadow: 0 2px 12px rgba(22,34,53,.06); }
+.public-shell .hero-shell,
+.public-shell .tech-showcase,
+.public-shell .projects-section,
+.public-shell .services-section,
+.public-shell .contact-section,
+.public-shell .footer { background: #f7f9fc; }
+.public-shell .stats-strip,
+.public-shell .team-section,
+.public-shell .free-apps-section { background: #eef3f8; border-block: 1px solid #e1e7ef; }
+.public-shell .h1,
+.public-shell .section-title,
+.public-shell .team-title,
+.public-shell .tech-intro h2,
+.public-shell .detail-hero-title,
+.public-shell .core-project-card h3,
+.public-shell .prod-name,
+.public-shell .team-name,
+.public-shell .free-app-copy h3 { color: #162235; }
+.public-shell .lead,
+.public-shell .section-sub,
+.public-shell .tech-intro p,
+.public-shell .team-intro,
+.public-shell .services-side-copy p,
+.public-shell .project-description,
+.public-shell .prod-desc,
+.public-shell .team-bio,
+.public-shell .free-app-copy p { color: #536174; }
+.public-shell .h1 .accent,
+.public-shell .tech-card-link,
+.public-shell .proj-detail-link,
+.public-shell .project-languages,
+.public-shell .services-side-copy a,
+.public-shell .prod-price,
+.public-shell .team-cta-button { color: #1f6feb; }
+.public-shell .nav-cta,
+.public-shell .btn-primary { color: #fff; background: #1f6feb; border-color: #1f6feb; }
+.public-shell .btn-ghost { color: #162235; background: #fff; border-color: #c9d3df; }
+.public-shell .tech-card,
+.public-shell .core-project-card,
+.public-shell .prod-card,
+.public-shell .free-app-card,
+.public-shell .team-card.team-card-v2,
+.public-shell .contact-terminal-box { background: #fff; border-color: #e1e7ef; box-shadow: 0 8px 28px rgba(22,34,53,.06); }
+.public-shell .tech-card:hover,
+.public-shell .core-project-card:hover,
+.public-shell .prod-card:hover,
+.public-shell .free-app-card:hover,
+.public-shell .team-card.team-card-v2:hover { border-color: #b8cce9; box-shadow: 0 14px 34px rgba(22,34,53,.1); }
+.public-shell .contact-form input,
+.public-shell .contact-form textarea { color: #162235; background: #fff; border-color: #c9d3df; }
+.public-shell .contact-form input::placeholder,
+.public-shell .contact-form textarea::placeholder { color: #738196; }
+.public-shell .contact-form input:focus,
+.public-shell .contact-form textarea:focus { border-color: #1f6feb; box-shadow: 0 0 0 3px rgba(31,111,235,.13); }
 
