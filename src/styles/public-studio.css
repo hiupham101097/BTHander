@@ -2842,6 +2842,25 @@
   .public-shell .hero { grid-template-columns: 1fr !important; }
   .public-shell .hero-visual { min-height: 320px !important; height: min(72vw, 480px) !important; }
 }
+
+/* Mobile navigation: preserve brand, menu control and account action in one row. */
+.public-shell .nav-inner { min-width: 0; gap: 12px; }
+.public-shell .brand-link { min-width: 0; flex: 1 1 auto; overflow: hidden; }
+.public-shell .brand { min-width: 0; }
+.public-shell .brand-name { white-space: nowrap; }
+.public-shell .nav-actions { flex: 0 0 auto; margin-left: auto; }
+.public-shell .profile-menu,
+.public-shell .profile-trigger { opacity: 1 !important; }
+.public-shell .profile-trigger { background: #101924 !important; border: 1px solid #38506a !important; color: #f3f7fb !important; }
+.public-shell .profile-trigger span { color: #f3f7fb !important; opacity: 1 !important; }
+.public-shell .profile-trigger svg { color: #4de0a5 !important; opacity: 1 !important; }
+@media (max-width: 520px) {
+  .public-shell .nav-inner { padding-inline: 16px !important; height: 62px; }
+  .public-shell .brand-mark { width: 30px; height: 30px; }
+  .public-shell .brand-name { font-size: 16px; }
+  .public-shell .profile-trigger { padding: 7px 9px; }
+  .public-shell .profile-trigger span { max-width: 74px; overflow: hidden; text-overflow: ellipsis; }
+}
 @media (prefers-reduced-motion: reduce) {
   .public-shell .hero-copy > *, .public-shell .hero-visual { animation: none !important; }
 }
