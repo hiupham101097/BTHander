@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useRef } from "react";
 import ResponsiveImage from "../ui/ResponsiveImage.jsx";
 import { ArrowUpRight, Gamepad2, MonitorSmartphone, Smartphone, Wrench } from "lucide-react";
 import Reveal from "../ui/Reveal.jsx";
@@ -6,84 +6,122 @@ import Reveal from "../ui/Reveal.jsx";
 const showcase = [
   {
     icon: Smartphone,
-    tag: "MOBILE",
-    title: "Ứng dụng Mobile",
-    description: "Lập trình ứng dụng iOS, Android và đa nền tảng với trải nghiệm mượt mà, tối ưu hiệu năng và dễ mở rộng.",
+    tag: "MOBILE APPS",
+    modId: "01",
+    title: "Ứng dụng Di động Đa nền tảng",
+    description: "Lập trình ứng dụng iOS, Android và React Native / Flutter với trải nghiệm mượt mà, tối ưu hiệu năng 60fps và kiến trúc mở rộng linh hoạt.",
     image: "/images/mobile-development.png",
-    className: "tech-card-mobile",
   },
   {
     icon: MonitorSmartphone,
-    tag: "WEB SYSTEM",
-    title: "Website quản lý & Nền tảng số",
-    description: "Xây dựng hệ thống quản lý, website doanh nghiệp và landing page tốc độ cao, bảo mật và chuẩn SEO.",
+    tag: "WEB & CLOUD",
+    modId: "02",
+    title: "Hệ thống Web & Nền tảng Doanh nghiệp",
+    description: "Xây dựng dashboard quản trị nội bộ, web app chuyên sâu và landing page tốc độ cao, chuẩn bảo mật phân tán và tối ưu SEO bền vững.",
     image: "/images/management-website.png",
-    className: "tech-card-web",
   },
   {
     icon: Gamepad2,
-    tag: "IMMERSIVE",
-    title: "Game & Trải nghiệm 3D",
-    description: "Phát triển gameplay, thế giới số và các sản phẩm tương tác đồ họa cao có cá tính kỹ thuật riêng biệt.",
+    tag: "3D & GAMING",
+    modId: "03",
+    title: "Game & Trải nghiệm Tương tác 3D",
+    description: "Phát triển gameplay, thế giới số tương tác và các sản phẩm đồ họa kỹ thuật cao với bản sắc thiết kế độc bản và công nghệ hiện đại.",
     image: "/images/game-development.png",
-    className: "tech-card-game",
   },
   {
     icon: Wrench,
-    tag: "ENGINEERED",
-    title: "Thiết kế & Chế tạo máy",
-    description: "Từ mô hình 3D, bản vẽ kỹ thuật chi tiết đến giải pháp máy móc cơ điện tử có thể gia công và sản xuất thực tế.",
+    tag: "ENGINEERING",
+    modId: "04",
+    title: "Thiết kế Bản vẽ & Chế tạo máy",
+    description: "Từ mô hình 3D, bản vẽ kỹ thuật chi tiết CAD/CAM đến giải pháp máy móc cơ điện tử có thể gia công, chế tạo và vận hành thực tế.",
     image: "/images/ai-machine-engineering.png",
-    className: "tech-card-machine",
   },
 ];
 
+function SpotlightCard({ item, index }) {
+  const cardRef = useRef(null);
+
+  const handleMouseMove = (e) => {
+    if (!cardRef.current) return;
+    const rect = cardRef.current.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+    cardRef.current.style.setProperty("--mouse-x", `${x}px`);
+    cardRef.current.style.setProperty("--mouse-y", `${y}px`);
+  };
+
+  return (
+    <Reveal delay={index * 80} className="tech-card-cell">
+      <article
+        ref={cardRef}
+        onMouseMove={handleMouseMove}
+        className="tech-card spotlight-card"
+      >
+        <div className="card-spotlight-glow" />
+
+        <div className="tech-card-image-wrapper">
+          <ResponsiveImage src={item.image} alt={item.title} className="tech-img-banner" />
+          <div className="tech-card-gradient-overlay" />
+        </div>
+
+        <div className="tech-card-body">
+          <div className="tech-card-header">
+            <div className="tech-icon-container">
+              <item.icon size={22} />
+            </div>
+            <div className="tech-badge-group">
+              <span className="tech-tag-chip">{item.tag}</span>
+              <span className="tech-mod-id">{"// 0" + item.modId}</span>
+            </div>
+          </div>
+
+          <div className="tech-card-text">
+            <h3>{item.title}</h3>
+            <p>{item.description}</p>
+          </div>
+
+          <div className="tech-card-footer">
+            <a href="#contact" className="tech-card-action">
+              <span>Trao đổi giải pháp</span>
+              <ArrowUpRight size={16} />
+            </a>
+          </div>
+        </div>
+      </article>
+    </Reveal>
+  );
+}
+
 export default function TechShowcase() {
   return (
-    <section className="tech-showcase" id="capabilities" aria-label="Năng lực công nghệ">
+    <section className="section tech-showcase" id="capabilities" aria-label="Năng lực công nghệ">
       <div className="wrap">
-        <Reveal>
-          <div className="tech-intro">
-            <div>
-              <span className="eyebrow">Năng lực thực thi</span>
-              <h2>Năng lực đa ngành. Một chuẩn triển khai.</h2>
+        <div className="section-head-center">
+          <Reveal>
+            <div className="section-eyebrow-box">
+              <span className="eyebrow-tag">NĂNG LỰC CỐT LÕI</span>
+              <span className="eyebrow-id">{"// CAPABILITIES.01"}</span>
             </div>
-            <p>
-              Từ mã nguồn phần mềm đến bản vẽ chế tạo cơ khí, mọi sản phẩm của BThander đều được xây dựng để vận hành chính xác trong thực tế.
+            <h2 className="section-title">
+              Năng lực đa ngành. <span className="shimmer-text">Một chuẩn triển khai.</span>
+            </h2>
+            <p className="section-sub">
+              Từ kiến trúc mã nguồn phần mềm đến bản vẽ chế tạo cơ khí chính xác, mọi sản phẩm của BThander đều được thiết kế để vận hành bền bỉ và hiệu quả trong thực tế.
             </p>
-          </div>
-        </Reveal>
+          </Reveal>
+        </div>
 
-        <div className="tech-grid">
+        <div className="tech-airy-grid">
           {showcase.map((item, index) => (
-            <Reveal key={item.title} delay={index * 90} className="tech-card-wrap">
-              <article className={`tech-card ${item.className}`}>
-                <ResponsiveImage src={item.image} alt={item.title} />
-                <div className="tech-card-shade" />
-                <div className="tech-card-content">
-                  <div className="tech-card-top">
-                    <div className="tech-card-icon">
-                      <item.icon size={22} />
-                    </div>
-                    <span className="tech-card-tag">{item.tag}</span>
-                  </div>
-                  <div className="tech-card-bottom">
-                    <h3>{item.title}</h3>
-                    <p>{item.description}</p>
-                    <a href="#contact" className="tech-card-link">
-                      Trao đổi giải pháp <ArrowUpRight size={15} />
-                    </a>
-                  </div>
-                </div>
-              </article>
-            </Reveal>
+            <SpotlightCard key={item.title} item={item} index={index} />
           ))}
         </div>
 
-        <Reveal delay={240}>
-          <p className="ai-support-note">
-            AI hỗ trợ nghiên cứu, tối ưu sáng tạo và tăng tốc quy trình kỹ thuật. BThander không cung cấp dịch vụ huấn luyện mô hình AI riêng lẻ.
-          </p>
+        <Reveal delay={200}>
+          <div className="ai-support-banner">
+            <span className="banner-glow-dot" />
+            <span>AI hỗ trợ nghiên cứu, tối ưu sáng tạo và tăng tốc quy trình kỹ thuật. BThander không cung cấp dịch vụ huấn luyện mô hình AI riêng lẻ.</span>
+          </div>
         </Reveal>
       </div>
     </section>

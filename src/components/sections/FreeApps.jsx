@@ -1,52 +1,134 @@
-import React from "react";
-import { ArrowUpRight, Download, LayoutGrid, Sparkles } from "lucide-react";
+import React, { useRef } from "react";
+import { ArrowUpRight, Download, LayoutGrid, Sparkles, Terminal, Cpu, ShieldCheck } from "lucide-react";
 import Reveal from "../ui/Reveal.jsx";
-
 import useApiList from "../../hooks/useApiList.js";
-const colors = ["app-cyan", "app-violet", "app-orange", "app-green"];
 
-export default function FreeApps() {
-  const { data: products, state, retry } = useApiList("/api/products");
-  const apps = products.filter(item => item.product_type === "trial");
+const DEFAULT_LAB_APPS = [
+  {
+    name: "CAD Mesh Inspector & Convert",
+    desc: "Tiện ích kiểm tra lỗi lưới polygon và tính toán khối lượng vật liệu file STL/STEP phục vụ gia công 3D.",
+    specifications: ["Browser WebAssembly", "Độ chính xác cao", "Bảo mật cục bộ"],
+    icon: Cpu,
+  },
+  {
+    name: "Network & Web Performance Benchmark",
+    desc: "Công cụ đo lường tốc độ phản hồi máy chủ, Core Web Vitals và phát hiện tài nguyên thắt nút cổ chai.",
+    specifications: ["Lighthouse Engine", "Phân tích Real-time", "Tối ưu nén"],
+    icon: Terminal,
+  },
+  {
+    name: "BThander Security Token Generator",
+    desc: "Bộ tạo khóa định danh mật mã học và kiểm tra độ mạnh của chuỗi xác thực API phân tán.",
+    specifications: ["Chuẩn SHA-256", "Không lưu dữ liệu", "Mã nguồn mở"],
+    icon: ShieldCheck,
+  },
+];
 
+function AppCard({ app, index }) {
+  const cardRef = useRef(null);
+  const Icon = app.icon || Sparkles;
+
+  const handleMouseMove = (e) => {
+    if (!cardRef.current) return;
+    const rect = cardRef.current.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+    cardRef.current.style.setProperty("--mouse-x", `${x}px`);
+    cardRef.current.style.setProperty("--mouse-y", `${y}px`);
+  };
 
   return (
-    <section className="section free-apps-section" id="free-apps">
-      <div className="wrap">
-        <div className="free-apps-head">
-          <div>
-            <Reveal><h2 className="section-title">Ứng dụng từ BThander.</h2></Reveal>
-            <Reveal delay={90}><p className="section-sub">Các công cụ miễn phí được phát triển từ nhu cầu sử dụng thực tế.</p></Reveal>
+    <Reveal delay={(index % 6) * 70} className="app-card-cell">
+      <article
+        ref={cardRef}
+        onMouseMove={handleMouseMove}
+        className="free-app-card spotlight-card"
+      >
+        <div className="card-spotlight-glow" />
+
+        <div className="free-app-top-row">
+          <div className="free-app-icon-wrapper">
+            <Icon size={22} />
           </div>
-          {apps.length > 0 && <Reveal delay={120}><div className="free-apps-count"><LayoutGrid size={18} /><strong>{apps.length}</strong><span>ứng dụng<br />đang có</span></div></Reveal>}
+          <span className="free-app-status-pill">
+            <span className="pill-pulse-dot" /> MIỄN PHÍ
+          </span>
         </div>
 
-        {state === "loading" && <div className="project-loading"><span /><span /><span /></div>}
-        {state === "error" && <p role="alert" className="api-state api-state-error">Chưa thể tải danh sách ứng dụng. <button type="button" className="btn-ghost" onClick={retry}>Thử lại</button></p>}
-        {state === "ready" && apps.length === 0 && <div className="free-apps-empty"><Sparkles size={22} /><div><strong>Danh mục đang được cập nhật</strong><p>Ứng dụng mới sẽ xuất hiện tại đây sau khi hoàn tất kiểm thử.</p></div></div>}
+        <div className="free-app-info-body">
+          <h3>{app.name}</h3>
+          <p>{app.description || app.desc}</p>
+          {app.specifications?.length > 0 && (
+            <div className="free-app-chip-row">
+              {app.specifications.slice(0, 3).map((item) => (
+                <span key={item} className="app-spec-chip">
+                  {item}
+                </span>
+              ))}
+            </div>
+          )}
+        </div>
 
-        {apps.length > 0 && <div className="free-apps-grid">
-          {apps.map((app, index) => {
-            const Icon = app.icon || Sparkles;
-            return (
-              <Reveal key={app.id || app.name} delay={(index % 6) * 55}>
-                <article className={`free-app-card ${colors[index % colors.length]}`}>
-                  <div className="free-app-cover">{app.image_url ? <img loading="lazy" decoding="async" src={app.image_url} alt={`Ảnh ứng dụng ${app.name}`} /> : <div className="free-app-cover-empty"><Icon size={30} /></div>}</div>
-                  <div className="free-app-icon"><Icon size={21} /></div>
-                  <div className="free-app-copy">
-                    <h3>{app.name}</h3>
-                    <p>{app.description || app.desc}</p>
-                    {app.specifications?.length > 0 && <div className="free-app-tags">{app.specifications.slice(0, 3).map((item) => <span key={item}>{item}</span>)}</div>}
-                  </div>
-                  <div className="free-app-footer">
-                    <span><Download size={13} /> Miễn phí</span>
-                    <a href={app.app_url || "#contact"} target={app.app_url ? "_blank" : undefined} rel={app.app_url ? "noreferrer" : undefined} aria-label={`Xem ứng dụng ${app.name}`}><ArrowUpRight size={17} /></a>
-                  </div>
-                </article>
-              </Reveal>
-            );
-          })}
-        </div>}
+        <div className="free-app-bottom-bar">
+          <span className="free-app-license-note">
+            <Download size={14} /> Trực tuyến / Không tính phí
+          </span>
+          <a
+            href={app.app_url || "#contact"}
+            target={app.app_url ? "_blank" : undefined}
+            rel={app.app_url ? "noreferrer" : undefined}
+            className="free-app-action-link"
+            aria-label={`Trải nghiệm ${app.name}`}
+          >
+            <span>Sử dụng ngay</span>
+            <ArrowUpRight size={16} />
+          </a>
+        </div>
+      </article>
+    </Reveal>
+  );
+}
+
+export default function FreeApps() {
+  const { data: products } = useApiList("/api/products");
+  const apiApps = (products || []).filter((item) => item.product_type === "trial");
+  const displayApps = apiApps.length > 0 ? apiApps : DEFAULT_LAB_APPS;
+
+  return (
+    <section className="section free-apps-section" id="free-apps" aria-label="Ứng dụng miễn phí">
+      <div className="wrap">
+        <div className="free-apps-spacious-head">
+          <div>
+            <Reveal>
+              <div className="section-eyebrow-box">
+                <span className="eyebrow-tag">CÔNG CỤ TIỆN ÍCH</span>
+                <span className="eyebrow-id">{"// UTILITIES.03"}</span>
+              </div>
+              <h2 className="section-title">
+                Ứng dụng &amp; Tiện ích <span className="shimmer-text">từ BThander.</span>
+              </h2>
+              <p className="section-sub">
+                Các giải pháp phần mềm và công cụ thực nghiệm được xây dựng từ nhu cầu tối ưu hóa công việc kỹ thuật hằng ngày.
+              </p>
+            </Reveal>
+          </div>
+
+          <Reveal delay={120}>
+            <div className="free-apps-counter-badge">
+              <LayoutGrid size={18} />
+              <div>
+                <strong>{displayApps.length}</strong>
+                <span>TIỆN ÍCH SẴN CÓ</span>
+              </div>
+            </div>
+          </Reveal>
+        </div>
+
+        <div className="free-apps-spacious-grid">
+          {displayApps.map((app, index) => (
+            <AppCard key={app.id || app.name} app={app} index={index} />
+          ))}
+        </div>
       </div>
     </section>
   );
