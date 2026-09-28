@@ -203,12 +203,35 @@
 .public-shell a:hover svg,
 .public-shell button:hover svg { transform: translateX(3px); }
 
-/* Statistics are an open data rail, not four boxes. */
-.public-shell .stats-strip { width: min(100% - 48px, 1240px); margin-inline: auto; background: transparent !important; border: 0 !important; }
-.public-shell .stats-grid { border-block: 1px solid var(--studio-line); }
-.public-shell .stat-cell { padding: 38px 26px !important; }
+/* Statistics are a compact data rail. */
+.public-shell .stats-strip {
+  width: min(100% - 48px, 1240px);
+  margin-inline: auto;
+  padding: 0 !important;
+  background: transparent !important;
+  border: 0 !important;
+}
+.public-shell .stats-strip::before { display: none !important; }
+.public-shell .stats-grid {
+  min-height: 148px;
+  gap: 0 !important;
+  border-block: 1px solid var(--studio-line);
+}
+.public-shell .stats-grid > .reveal { min-width: 0; }
+.public-shell .stat-cell {
+  min-height: 146px;
+  padding: 24px 28px !important;
+  display: grid;
+  grid-template-columns: 38px minmax(0, 1fr);
+  grid-template-rows: auto auto;
+  column-gap: 16px;
+  align-content: center;
+  border-right: 1px solid var(--studio-line) !important;
+}
+.public-shell .stats-grid > .reveal:last-child .stat-cell { border-right: 0 !important; }
+.public-shell .stat-icon { grid-row: 1 / 3; align-self: center; margin: 0 !important; background: rgba(76, 163, 255, .12) !important; color: var(--studio-accent) !important; }
 .public-shell .stat-value { font-size: clamp(36px, 4vw, 54px) !important; }
-.public-shell .stat-label { color: var(--studio-muted) !important; }
+.public-shell .stat-label { margin-top: 4px !important; color: var(--studio-muted) !important; font-size: 14px !important; line-height: 1.35; }
 
 /* Projects: editorial collection, varying width instead of equal tiles. */
 .public-shell .core-project-grid {
@@ -231,7 +254,32 @@
 .public-shell .project-description { color: var(--studio-muted) !important; }
 
 /* Apps become a compact utility shelf. */
-.public-shell .free-apps-section { background: var(--studio-surface) !important; }
+.public-shell .free-apps-section { padding-block: 88px !important; background: var(--studio-surface) !important; }
+.public-shell .free-apps-section::before { display: none !important; }
+.public-shell .free-apps-head {
+  width: 100%;
+  max-width: none !important;
+  display: grid !important;
+  grid-template-columns: minmax(0, 720px) auto !important;
+  align-items: end !important;
+  justify-content: space-between;
+  gap: 48px !important;
+  margin: 0 0 40px !important;
+}
+.public-shell .free-apps-head > div:first-child { min-width: 0; }
+.public-shell .free-apps-head .section-title { max-width: 15ch !important; }
+.public-shell .free-apps-head .section-sub { max-width: 58ch !important; margin: 18px 0 0 !important; }
+.public-shell .free-apps-head > .reveal { width: auto; justify-self: end; }
+.public-shell .free-apps-count {
+  min-width: 170px;
+  justify-content: center;
+  border-color: var(--studio-line-strong) !important;
+  border-radius: 10px !important;
+  background: #0a131e !important;
+}
+.public-shell .free-apps-count svg { color: var(--studio-accent) !important; }
+.public-shell .free-apps-empty { min-height: 112px; margin: 0 !important; border-color: var(--studio-line-strong) !important; border-radius: 12px !important; }
+.public-shell .free-apps-empty svg { color: var(--studio-accent) !important; }
 .public-shell .free-apps-grid { grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)) !important; }
 .public-shell .free-app-card { border: 0 !important; border-radius: var(--studio-radius) !important; background: var(--studio-surface-2) !important; }
 
@@ -349,6 +397,7 @@
   .public-shell .prod-grid > .reveal:first-child .prod-card { display: block; }
   .public-shell .prod-grid > .reveal:first-child .service-visual { min-height: 0; height: 260px; }
   .public-shell .contact-layout { grid-template-columns: 1fr !important; }
+  .public-shell .free-apps-head { grid-template-columns: 1fr auto !important; gap: 28px !important; }
 }
 
 @media (max-width: 680px) {
@@ -378,5 +427,12 @@
   .public-shell .contact-terminal-box { border-radius: 12px !important; }
   .public-shell .prod-grid > .reveal:first-child .prod-card { display: block; }
   .public-shell .prod-grid > .reveal:first-child .service-visual { min-height: 0; height: 230px; }
+  .public-shell .stats-grid { grid-template-columns: 1fr 1fr !important; }
+  .public-shell .stat-cell { min-height: 128px; padding: 20px 16px !important; grid-template-columns: 34px minmax(0, 1fr); column-gap: 12px; }
+  .public-shell .stat-value { font-size: 30px !important; }
+  .public-shell .stat-label { font-size: 12px !important; }
+  .public-shell .free-apps-section { padding-block: 64px !important; }
+  .public-shell .free-apps-head { grid-template-columns: 1fr !important; gap: 22px !important; }
+  .public-shell .free-apps-head > .reveal { justify-self: start; }
 }
 

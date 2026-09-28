@@ -15,15 +15,15 @@ export default function FreeApps() {
       <div className="wrap">
         <div className="free-apps-head">
           <div>
-            <Reveal><h2 className="section-title">Công cụ nhỏ. Giá trị dùng mỗi ngày.</h2></Reveal>
-            <Reveal delay={90}><p className="section-sub">Bộ sưu tập ứng dụng tiện ích do chúng tôi phát triển và mở miễn phí cho cộng đồng.</p></Reveal>
+            <Reveal><h2 className="section-title">Ứng dụng từ BThander.</h2></Reveal>
+            <Reveal delay={90}><p className="section-sub">Các công cụ miễn phí được phát triển từ nhu cầu sử dụng thực tế.</p></Reveal>
           </div>
-          <Reveal delay={120}><div className="free-apps-count"><LayoutGrid size={18} /><strong>{apps.length}</strong><span>ứng dụng<br />đang có</span></div></Reveal>
+          {apps.length > 0 && <Reveal delay={120}><div className="free-apps-count"><LayoutGrid size={18} /><strong>{apps.length}</strong><span>ứng dụng<br />đang có</span></div></Reveal>}
         </div>
 
         {state === "loading" && <div className="project-loading"><span /><span /><span /></div>}
         {state === "error" && <p role="alert" className="api-state api-state-error">Chưa thể tải danh sách ứng dụng. <button type="button" className="btn-ghost" onClick={retry}>Thử lại</button></p>}
-        {state === "ready" && apps.length === 0 && <div className="free-apps-empty"><Sparkles size={22} /><div><strong>Ứng dụng đang được cập nhật</strong><p>Các ứng dụng miễn phí mới sẽ xuất hiện tại đây.</p></div></div>}
+        {state === "ready" && apps.length === 0 && <div className="free-apps-empty"><Sparkles size={22} /><div><strong>Danh mục đang được cập nhật</strong><p>Ứng dụng mới sẽ xuất hiện tại đây sau khi hoàn tất kiểm thử.</p></div></div>}
 
         {apps.length > 0 && <div className="free-apps-grid">
           {apps.map((app, index) => {
