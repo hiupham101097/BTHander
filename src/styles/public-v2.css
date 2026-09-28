@@ -1,0 +1,381 @@
+/* BThander public redesign v2
+   One dark engineering system, one blue accent, varied section compositions. */
+
+.public-shell {
+  --studio-bg: #080d14;
+  --studio-surface: #0d1621;
+  --studio-surface-2: #121e2b;
+  --studio-line: #243548;
+  --studio-line-strong: #38516c;
+  --studio-text: #f2f6fb;
+  --studio-muted: #b7c4d3;
+  --studio-subtle: #8494a8;
+  --studio-accent: #4ca3ff;
+  --studio-accent-strong: #7fbeff;
+  --studio-radius: 16px;
+  --accent: var(--studio-accent);
+  --neon: var(--studio-accent);
+  --ink: var(--studio-text);
+  --ink-mid: var(--studio-muted);
+  --ink-subtle: var(--studio-subtle);
+  --line: var(--studio-line);
+  --line-strong: var(--studio-line-strong);
+  color: var(--studio-text);
+  background: var(--studio-bg);
+}
+
+.public-shell .wrap {
+  width: min(100% - 48px, 1240px);
+  max-width: 1240px;
+  padding-inline: 0;
+}
+
+.public-shell .section,
+.public-shell .tech-showcase,
+.public-shell .team-section,
+.public-shell .free-apps-section,
+.public-shell .contact-section {
+  padding-block: clamp(76px, 8vw, 112px) !important;
+  scroll-margin-top: 72px;
+}
+
+.public-shell .eyebrow,
+.public-shell .kicker,
+.public-shell .hero-trust-row,
+.public-shell .hero-capabilities,
+.public-shell .tech-card-tag,
+.public-shell .team-card-rank,
+.public-shell .hero-visual-label {
+  display: none !important;
+}
+
+/* Navigation */
+.public-shell .nav,
+.public-shell .nav.nav-scrolled,
+.public-shell .nav.scrolled {
+  background: rgba(8, 13, 20, .88) !important;
+  border-bottom: 1px solid rgba(76, 163, 255, .18) !important;
+  box-shadow: 0 12px 32px rgba(2, 6, 12, .2) !important;
+}
+.public-shell .nav-inner { height: 72px; }
+.public-shell .nav-links { gap: 34px; }
+.public-shell .nav-links a,
+.public-shell .nav-login { color: #c8d4e0 !important; font-size: 14px; }
+.public-shell .nav-links a:hover,
+.public-shell .nav-login:hover { color: #fff !important; }
+.public-shell .nav-links a::after { background: var(--studio-accent); bottom: -9px; }
+.public-shell .nav-cta,
+.public-shell .btn-primary {
+  min-height: 46px;
+  border-radius: 10px !important;
+  background: var(--studio-accent) !important;
+  color: #06101b !important;
+  box-shadow: 0 10px 28px rgba(76, 163, 255, .18) !important;
+}
+.public-shell .nav-cta:hover,
+.public-shell .btn-primary:hover { background: var(--studio-accent-strong) !important; transform: translateY(-2px); }
+.public-shell .btn-ghost { min-height: 46px; border-radius: 10px !important; }
+
+/* Hero: one statement, one asset, one action group. */
+.public-shell .hero {
+  min-height: calc(100dvh - 72px);
+  grid-template-columns: minmax(0, 1fr) minmax(500px, 1.02fr);
+  gap: clamp(48px, 5vw, 80px) !important;
+  padding-block: clamp(64px, 8vh, 96px) !important;
+}
+.public-shell .h1 {
+  max-width: 16ch !important;
+  font-size: clamp(54px, 5vw, 72px) !important;
+  font-weight: 720 !important;
+  line-height: 1.02 !important;
+  letter-spacing: -.04em !important;
+}
+.public-shell .h1 .accent { color: var(--studio-text) !important; }
+.public-shell .lead {
+  max-width: 52ch;
+  margin-top: 28px;
+  color: var(--studio-muted) !important;
+  font-size: 18px;
+  line-height: 1.75;
+}
+.public-shell .hero-actions { margin-top: 34px; gap: 12px; }
+.public-shell .hero-visual {
+  height: min(68vh, 620px);
+  min-height: 500px;
+  border: 0;
+  border-radius: 22px;
+  box-shadow: 0 32px 80px rgba(0, 0, 0, .42) !important;
+  isolation: isolate;
+}
+.public-shell .hero-visual::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border: 1px solid rgba(139, 190, 255, .24);
+  border-radius: inherit;
+  pointer-events: none;
+}
+.public-shell .hero-visual img { filter: saturate(.95) contrast(1.08) brightness(.88); }
+
+/* Headings now stack naturally instead of repeating split headers. */
+.public-shell .tech-intro,
+.public-shell .projects-heading,
+.public-shell .services-heading,
+.public-shell .free-apps-head,
+.public-shell .team-heading {
+  display: block !important;
+  max-width: 760px;
+  margin: 0 0 48px !important;
+  padding: 0 !important;
+  border: 0 !important;
+}
+.public-shell .section-title,
+.public-shell .team-title,
+.public-shell .tech-intro h2 {
+  max-width: 24ch !important;
+  margin: 0 !important;
+  font-size: clamp(40px, 4vw, 56px) !important;
+  font-weight: 680 !important;
+  line-height: 1.05 !important;
+  letter-spacing: -.038em !important;
+}
+.public-shell .section-sub,
+.public-shell .tech-intro p,
+.public-shell .team-intro,
+.public-shell .services-side-copy {
+  max-width: 60ch !important;
+  margin: 20px 0 0 !important;
+  color: var(--studio-muted) !important;
+  font-size: 17px !important;
+  line-height: 1.72 !important;
+  justify-self: auto !important;
+}
+.public-shell .services-side-copy a { margin-top: 10px; color: var(--studio-accent) !important; }
+
+/* Capability mosaic */
+.public-shell .tech-grid {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr)) !important;
+  gap: 20px !important;
+}
+.public-shell .tech-card-wrap:nth-child(1),
+.public-shell .tech-card-wrap:nth-child(4) { grid-column: span 7; }
+.public-shell .tech-card-wrap:nth-child(2),
+.public-shell .tech-card-wrap:nth-child(3) { grid-column: span 5; }
+.public-shell .tech-card {
+  min-height: 430px !important;
+  border: 0 !important;
+  border-radius: var(--studio-radius) !important;
+  box-shadow: none !important;
+}
+.public-shell .tech-card-wrap:nth-child(2) .tech-card,
+.public-shell .tech-card-wrap:nth-child(3) .tech-card { min-height: 360px !important; }
+.public-shell .tech-card-shade { background: linear-gradient(180deg, rgba(4,8,14,.02) 20%, rgba(4,8,14,.92) 88%) !important; }
+.public-shell .tech-card-content { padding: 28px !important; }
+.public-shell .tech-card-bottom h3 { font-size: clamp(24px, 2.4vw, 34px) !important; letter-spacing: -.025em; }
+.public-shell .tech-card-bottom p { max-width: 52ch; color: #c8d3df !important; }
+.public-shell .tech-card:hover img { transform: scale(1.045); }
+.public-shell .tech-card,
+.public-shell .core-project-card,
+.public-shell .free-app-card,
+.public-shell .prod-card,
+.public-shell .team-card.team-card-v2 {
+  transition: transform .45s cubic-bezier(.16,1,.3,1), border-color .3s ease, box-shadow .45s ease;
+}
+.public-shell .tech-card:hover,
+.public-shell .core-project-card:hover,
+.public-shell .free-app-card:hover,
+.public-shell .prod-card:hover,
+.public-shell .team-card.team-card-v2:hover {
+  transform: translateY(-6px);
+  border-color: var(--studio-line-strong) !important;
+  box-shadow: 0 24px 56px rgba(0, 0, 0, .22) !important;
+}
+.public-shell a:focus-visible,
+.public-shell button:focus-visible,
+.public-shell input:focus-visible,
+.public-shell textarea:focus-visible {
+  outline: 2px solid var(--studio-accent) !important;
+  outline-offset: 3px;
+}
+.public-shell a svg,
+.public-shell button svg { transition: transform .25s ease; }
+.public-shell a:hover svg,
+.public-shell button:hover svg { transform: translateX(3px); }
+
+/* Statistics are an open data rail, not four boxes. */
+.public-shell .stats-strip { width: min(100% - 48px, 1240px); margin-inline: auto; background: transparent !important; border: 0 !important; }
+.public-shell .stats-grid { border-block: 1px solid var(--studio-line); }
+.public-shell .stat-cell { padding: 38px 26px !important; }
+.public-shell .stat-value { font-size: clamp(36px, 4vw, 54px) !important; }
+.public-shell .stat-label { color: var(--studio-muted) !important; }
+
+/* Projects: editorial collection, varying width instead of equal tiles. */
+.public-shell .core-project-grid {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  gap: 22px !important;
+}
+.public-shell .core-project-grid > .reveal { grid-column: span 4; }
+.public-shell .core-project-grid > .reveal:first-child { grid-column: span 8; }
+.public-shell .core-project-card {
+  border: 1px solid var(--studio-line) !important;
+  border-radius: var(--studio-radius) !important;
+  background: var(--studio-surface) !important;
+}
+.public-shell .core-project-grid > .reveal:first-child .project-cover { height: 390px; }
+.public-shell .project-cover { height: 240px; }
+.public-shell .project-card-body { padding: 24px; }
+.public-shell .core-project-card h3 { font-size: 22px !important; }
+.public-shell .project-description { color: var(--studio-muted) !important; }
+
+/* Apps become a compact utility shelf. */
+.public-shell .free-apps-section { background: var(--studio-surface) !important; }
+.public-shell .free-apps-grid { grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)) !important; }
+.public-shell .free-app-card { border: 0 !important; border-radius: var(--studio-radius) !important; background: var(--studio-surface-2) !important; }
+
+/* Services: asymmetric editorial cards. */
+.public-shell .prod-grid {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr)) !important;
+  gap: 22px !important;
+}
+.public-shell .prod-grid > .reveal:nth-child(1) { grid-column: 1 / -1; }
+.public-shell .prod-grid > .reveal:nth-child(2),
+.public-shell .prod-grid > .reveal:nth-child(3) { grid-column: span 6; }
+.public-shell .prod-card {
+  min-height: 100%;
+  border: 1px solid var(--studio-line) !important;
+  border-radius: var(--studio-radius) !important;
+  background: var(--studio-surface) !important;
+}
+.public-shell .prod-grid > .reveal:first-child .prod-card {
+  display: grid;
+  grid-template-columns: minmax(0, 1.08fr) minmax(420px, .92fr);
+}
+.public-shell .prod-grid > .reveal:first-child .service-visual {
+  height: 100%;
+  min-height: 390px;
+}
+.public-shell .service-visual { height: 260px; }
+.public-shell .service-card-content { padding: 28px; }
+.public-shell .prod-name { font-size: 24px !important; letter-spacing: -.02em; }
+.public-shell .prod-desc { color: var(--studio-muted) !important; font-size: 16px !important; }
+.public-shell .prod-specs li { color: #c9d5e1; }
+
+/* Team: larger profiles with an uneven grid. */
+.public-shell .team-section { background: var(--studio-surface) !important; }
+.public-shell .team-grid { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)) !important; gap: 22px !important; }
+.public-shell .team-card-reveal:nth-child(1),
+.public-shell .team-card-reveal:nth-child(4) { grid-column: span 7; }
+.public-shell .team-card-reveal:nth-child(2),
+.public-shell .team-card-reveal:nth-child(3) { grid-column: span 5; }
+.public-shell .team-card.team-card-v2 {
+  min-height: 360px;
+  padding: 30px;
+  border: 1px solid var(--studio-line) !important;
+  border-radius: var(--studio-radius) !important;
+  background: #0b141f !important;
+}
+.public-shell .team-name { font-size: 24px !important; }
+.public-shell .team-bio { color: var(--studio-muted) !important; font-size: 16px; }
+
+/* Contact: product form, less terminal costume. */
+.public-shell .contact-layout { grid-template-columns: minmax(0, .8fr) minmax(560px, 1.2fr) !important; align-items: center; }
+.public-shell .contact-terminal-box {
+  border: 1px solid var(--studio-line) !important;
+  border-radius: var(--studio-radius) !important;
+  background: var(--studio-surface) !important;
+  box-shadow: 0 28px 70px rgba(0,0,0,.28) !important;
+}
+.public-shell .contact-terminal-header { display: none !important; }
+.public-shell .contact-form { padding: 32px !important; }
+.public-shell .contact-form label,
+.public-shell .contact-category-label,
+.public-shell .contact-copy [style*="monospace"] {
+  font-family: Inter, ui-sans-serif, system-ui, sans-serif !important;
+  letter-spacing: 0 !important;
+}
+.public-shell .contact-category-label {
+  color: var(--studio-text) !important;
+  font-size: 13px !important;
+}
+.public-shell .contact-chip {
+  border-radius: 999px !important;
+  font-family: Inter, ui-sans-serif, system-ui, sans-serif !important;
+}
+.public-shell .contact-chip.active {
+  border-color: var(--studio-accent) !important;
+  background: rgba(76, 163, 255, .12) !important;
+  color: var(--studio-text) !important;
+}
+.public-shell .contact-submit-btn {
+  border-radius: 10px !important;
+  background: var(--studio-accent) !important;
+  color: #06101b !important;
+}
+.public-shell .contact-form input,
+.public-shell .contact-form textarea {
+  min-height: 48px;
+  border-radius: 9px;
+  background: #08111b !important;
+  border-color: var(--studio-line-strong) !important;
+  color: var(--studio-text) !important;
+}
+.public-shell .contact-form textarea { min-height: 118px; }
+.public-shell .contact-form input::placeholder,
+.public-shell .contact-form textarea::placeholder { color: #90a0b4 !important; opacity: 1; }
+
+/* Motion: visible-by-default, then one measured entrance language. */
+@media (prefers-reduced-motion: no-preference) {
+  .public-shell .hero-copy > * { animation: studio-rise .72s cubic-bezier(.16,1,.3,1) both; }
+  .public-shell .hero-visual { animation: studio-focus .9s cubic-bezier(.16,1,.3,1) both; }
+  .public-shell .reveal-in { animation: studio-rise .62s cubic-bezier(.16,1,.3,1) both; }
+  .public-shell .tech-card img,
+  .public-shell .project-cover img,
+  .public-shell .service-visual img { transition: transform .8s cubic-bezier(.16,1,.3,1), filter .5s ease; }
+}
+
+@media (max-width: 980px) {
+  .public-shell .wrap { width: min(100% - 40px, 900px); }
+  .public-shell .hero { min-height: auto; grid-template-columns: 1fr !important; }
+  .public-shell .hero-copy { max-width: 720px; }
+  .public-shell .hero-visual { min-height: 440px !important; height: 58vw !important; }
+  .public-shell .tech-card-wrap,
+  .public-shell .core-project-grid > .reveal,
+  .public-shell .prod-grid > .reveal,
+  .public-shell .team-card-reveal { grid-column: span 6 !important; }
+  .public-shell .prod-grid > .reveal:first-child .prod-card { display: block; }
+  .public-shell .prod-grid > .reveal:first-child .service-visual { min-height: 0; height: 260px; }
+  .public-shell .contact-layout { grid-template-columns: 1fr !important; }
+}
+
+@media (max-width: 680px) {
+  .public-shell .wrap { width: min(100% - 32px, 640px); }
+  .public-shell .section,
+  .public-shell .tech-showcase,
+  .public-shell .team-section,
+  .public-shell .free-apps-section,
+  .public-shell .contact-section { padding-block: 64px !important; }
+  .public-shell .h1 { max-width: 15ch !important; font-size: clamp(42px, 13vw, 58px) !important; }
+  .public-shell .lead { font-size: 16px; }
+  .public-shell .hero-visual { min-height: 310px !important; height: 82vw !important; border-radius: 14px; }
+  .public-shell .section-title,
+  .public-shell .team-title,
+  .public-shell .tech-intro h2 { font-size: clamp(34px, 10vw, 46px) !important; }
+  .public-shell .tech-card-wrap,
+  .public-shell .core-project-grid > .reveal,
+  .public-shell .prod-grid > .reveal,
+  .public-shell .prod-grid > .reveal:nth-child(3),
+  .public-shell .team-card-reveal { grid-column: 1 / -1 !important; }
+  .public-shell .tech-card,
+  .public-shell .tech-card-wrap:nth-child(2) .tech-card,
+  .public-shell .tech-card-wrap:nth-child(3) .tech-card { min-height: 360px !important; }
+  .public-shell .core-project-grid > .reveal:first-child .project-cover,
+  .public-shell .project-cover { height: 230px; }
+  .public-shell .team-card.team-card-v2 { min-height: 0; }
+  .public-shell .contact-terminal-box { border-radius: 12px !important; }
+  .public-shell .prod-grid > .reveal:first-child .prod-card { display: block; }
+  .public-shell .prod-grid > .reveal:first-child .service-visual { min-height: 0; height: 230px; }
+}
+
