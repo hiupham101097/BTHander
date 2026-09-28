@@ -2,7 +2,7 @@
 
 .public-shell,
 .auth-page {
-  font-family: 'Be Vietnam Pro', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
 }
 
 .public-shell input,
@@ -2676,4 +2676,101 @@
 .public-shell .contact-form textarea::placeholder { color: #738196; }
 .public-shell .contact-form input:focus,
 .public-shell .contact-form textarea:focus { border-color: #1f6feb; box-shadow: 0 0 0 3px rgba(31,111,235,.13); }
+
+/* Final studio direction: dark engineering workspace, crisp Inter typography. */
+.public-shell,
+.auth-page {
+  font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --bg-base: #080d14;
+  --bg-panel: #101924;
+  --bg-card: #121e2b;
+  --bg-card-2: #172638;
+  --line: #25364a;
+  --line-strong: #38506a;
+  --ink: #f3f7fb;
+  --ink-mid: #b7c4d3;
+  --ink-subtle: #8192a8;
+  --accent: #3f9cff;
+  --accent-light: #73b8ff;
+  --accent-soft: rgba(63, 156, 255, 0.14);
+  --neon: #4de0a5;
+  background: var(--bg-base) !important;
+  color: var(--ink) !important;
+  color-scheme: dark;
+}
+
+.public-shell *,
+.auth-page * { font-family: inherit !important; }
+
+.public-shell .nav,
+.public-shell .nav.nav-scrolled,
+.public-shell .nav.scrolled {
+  background: rgba(8, 13, 20, .92) !important;
+  border-bottom-color: var(--line) !important;
+  box-shadow: 0 8px 24px rgba(0,0,0,.2) !important;
+}
+.public-shell .hero-shell,
+.public-shell .tech-showcase,
+.public-shell .projects-section,
+.public-shell .services-section,
+.public-shell .contact-section,
+.public-shell .footer { background: var(--bg-base) !important; }
+.public-shell .stats-strip,
+.public-shell .team-section,
+.public-shell .free-apps-section { background: #0c141f !important; border-block-color: var(--line) !important; }
+.public-shell .brand-name,
+.public-shell .nav-links a,
+.public-shell .nav-login,
+.public-shell .h1,
+.public-shell .section-title,
+.public-shell .team-title,
+.public-shell .tech-intro h2,
+.public-shell .detail-hero-title,
+.public-shell .core-project-card h3,
+.public-shell .prod-name,
+.public-shell .team-name,
+.public-shell .free-app-copy h3,
+.public-shell .stat-value { color: var(--ink) !important; }
+.public-shell .brand-name span,
+.public-shell .lead,
+.public-shell .section-sub,
+.public-shell .tech-intro p,
+.public-shell .team-intro,
+.public-shell .services-side-copy p,
+.public-shell .project-description,
+.public-shell .prod-desc,
+.public-shell .team-bio,
+.public-shell .free-app-copy p,
+.public-shell .stat-label { color: var(--ink-mid) !important; }
+.public-shell .kicker,
+.public-shell .eyebrow,
+.public-shell .hero-capabilities,
+.public-shell .hero-trust-row,
+.public-shell .tech-card-tag,
+.public-shell .hero-visual-label { color: var(--ink-subtle) !important; }
+.public-shell .h1 .accent,
+.public-shell .tech-card-link,
+.public-shell .proj-detail-link,
+.public-shell .project-languages,
+.public-shell .services-side-copy a,
+.public-shell .prod-price,
+.public-shell .team-cta-button { color: var(--neon) !important; }
+.public-shell .tech-card,
+.public-shell .core-project-card,
+.public-shell .prod-card,
+.public-shell .free-app-card,
+.public-shell .team-card.team-card-v2,
+.public-shell .contact-terminal-box { background: var(--bg-panel) !important; border-color: var(--line) !important; box-shadow: 0 16px 38px rgba(0,0,0,.24) !important; }
+.public-shell .tech-card:hover,
+.public-shell .core-project-card:hover,
+.public-shell .prod-card:hover,
+.public-shell .free-app-card:hover,
+.public-shell .team-card.team-card-v2:hover { border-color: var(--accent) !important; box-shadow: 0 20px 44px rgba(0,0,0,.34) !important; }
+.public-shell .btn-primary,
+.public-shell .nav-cta { background: var(--accent) !important; border-color: var(--accent) !important; color: #06111e !important; font-weight: 700; }
+.public-shell .btn-ghost { background: transparent !important; border-color: var(--line-strong) !important; color: var(--ink) !important; }
+.public-shell .contact-form input,
+.public-shell .contact-form textarea { background: #0b131e !important; border-color: var(--line-strong) !important; color: var(--ink) !important; }
+.public-shell .contact-form input::placeholder,
+.public-shell .contact-form textarea::placeholder { color: var(--ink-subtle) !important; }
 
