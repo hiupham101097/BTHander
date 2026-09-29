@@ -62,7 +62,7 @@ function ServiceCard({ p, i }) {
               <span className="prod-price">{p.price}</span>
             </div>
             <a className="prod-link" href="#contact" aria-label={`Trao đổi về ${p.name}`}>
-              <span>Bắt đầu</span>
+              <span>Bắt đầu 123 </span>
               <ArrowRight size={16} />
             </a>
           </div>
